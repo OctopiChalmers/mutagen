@@ -1,0 +1,53 @@
+cabal-version:  2.2
+
+name:           Mutagen
+version:        0.1.0.0
+synopsis:       Property-based testing framework for Haskell using type-preserving mutations.
+description:    Please see the README on GitHub at <https://github.com/agustinmista/Mutagen#readme>
+category:       Testing
+homepage:       https://github.com/OctopiChalmers/Mutagen#readme
+bug-reports:    https://github.com/OctopiChalmers/Mutagen/issues
+author:         Agustin Mista
+copyright:      2021 Agustin Mista
+maintainer:     mista@chalmers.se
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+extra-source-files:
+  README.md
+
+source-repository head
+  type: git
+  location: https://github.com/OctopiChalmers/Mutagen
+
+library
+  exposed-modules:
+    Tracer
+    Test.Mutagen
+    Test.Mutagen.Test
+    Test.Mutagen.Property
+    Test.Mutagen.Exception
+    Test.Mutagen.Mutation
+    Test.Mutagen.Shell
+  hs-source-dirs:
+    src
+  build-depends:
+      base >=4.7 && <5
+    , containers
+    , random
+    , QuickCheck
+    , pqueue
+    , extra
+    , time
+    , pretty-simple
+    , pretty-tree
+    , ansi-terminal
+    , process
+    , ghc
+    , syb
+  ghc-options:
+    -Wall 
+  default-language: 
+    Haskell2010
+
