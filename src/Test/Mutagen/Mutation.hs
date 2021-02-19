@@ -159,7 +159,7 @@ newMutationBatchFromParent :: Mutable a => MutationBatch a -> Bool -> a  -> Muta
 newMutationBatchFromParent mb passed a =
   let (prevPos, newPos) = partition (`elem` mb_past_pos mb) (mb_order mb (positions a))
   in mb { mb_value = a
-        , mb_next_pos = newPos 
+        , mb_next_pos = newPos
         , mb_past_pos =
             if mb_test_passed mb
             then reverse prevPos
@@ -225,31 +225,31 @@ instance Arbitrary a => Mutable (Rigid a)
 
 instance Mutable Int where
   def = 0
-  mutate x = [ Random ((x+) <$> arbitrary) ]
+  mutate _ = [ Random arbitrary ]
 
 instance Mutable Double where
   def = 0
-  mutate x = [ Random ((x+) <$> arbitrary) ]
+  mutate _ = [ Random arbitrary ]
 
 instance Mutable Float where
   def = 0
-  mutate x = [ Random ((x+) <$> arbitrary) ]
+  mutate _ = [ Random arbitrary ]
 
 instance Mutable Word8 where
   def = 0
-  mutate x = [ Random ((x+) <$> arbitrary) ]
+  mutate _ = [ Random arbitrary ]
 
 instance Mutable Word16 where
   def = 0
-  mutate x = [ Random ((x+) <$> arbitrary) ]
+  mutate _ = [ Random arbitrary ]
 
 instance Mutable Word32 where
   def = 0
-  mutate x = [ Random ((x+) <$> arbitrary) ]
+  mutate _ = [ Random arbitrary ]
 
 instance Mutable Word64 where
   def = 0
-  mutate x = [ Random ((x+) <$> arbitrary) ]
+  mutate _ = [ Random arbitrary ]
 
 instance Mutable Char where
   def = chr 0
@@ -520,4 +520,3 @@ instance (Mutable a, Mutable b, Mutable c, Mutable d, Mutable e, Mutable f, Muta
   inside (8:ps) mut (a, b, c, d, e, f, g, h, i, j) = wrap (inside ps mut i) (\x -> (a, b, c, d, e, f, g, h, x, j))
   inside (9:ps) mut (a, b, c, d, e, f, g, h, i, j) = wrap (inside ps mut j) (\x -> (a, b, c, d, e, f, g, h, i, x))
   inside pos    _   _                              = invalidPosition pos
-

@@ -36,6 +36,7 @@ data Config
   , chatty          :: Bool
   , timeout         :: Maybe Integer
   , randomMutations :: Int
+  , resetAfter      :: Maybe Int
   , mutationOrder   :: MutationOrder
   , maxTraceLength  :: Int
   , examples        :: [Args]
@@ -45,12 +46,13 @@ defaultConfig :: Config
 defaultConfig =
   Config
   { maxSuccess      = 1000000
-  , maxDiscardRatio = 10 
+  , maxDiscardRatio = 1000
   , maxSize         = 10
   , replay          = Nothing
   , chatty          = False
   , timeout         = Nothing
-  , randomMutations = 25
+  , randomMutations = 1
+  , resetAfter      = Just 1000
   , mutationOrder   = levelorder
   , maxTraceLength  = 100
   , examples        = []
@@ -71,14 +73,16 @@ data State
   , stTimeout            :: (Maybe Integer)
   , stStartTime          :: Integer
   , stRandomMutations    :: Int
+  , stResetAfter         :: Maybe Int
   , stMutationOrder      :: MutationOrder
-  , stMaxTraceLength     :: Int 
+  , stMaxTraceLength     :: Int
   , stExamples           :: [Args]
   -- Dynamic
   , stUsedSeed          :: !(Maybe (QCGen, Int))
   , stNextSeed          :: !QCGen
   , stNumExGenMut       :: !(Int, Int, Int, Int)
   , stLastInteresting   :: !Int
+  , stTraceLogResets    :: !Int
   , stNumPassed         :: !Int
   , stPassedTraceLog    :: !TraceLog
   , stPassedQueue       :: !MutationQueue
@@ -88,8 +92,8 @@ data State
   }
 
 -- Mutation candidates
-type MutationQueue = 
-  MinPQueue 
+type MutationQueue =
+  MinPQueue
     Int                  -- The candidate priority
     ( Args               -- The test case inputs
     , Trace              -- The code coverage it triggered
@@ -169,12 +173,14 @@ mutagenWithResult cfg p
             , stDebug = chatty cfg
             , stTimeout = timeout cfg
             , stStartTime = now
-            , stMaxTraceLength = maxTraceLength cfg 
+            , stMaxTraceLength = maxTraceLength cfg
             , stExamples = examples cfg
             , stRandomMutations = randomMutations cfg
+            , stResetAfter = resetAfter cfg
             , stMutationOrder = mutationOrder cfg
             , stNumExGenMut = (0,0,0,0)
             , stLastInteresting = 0
+            , stTraceLogResets = 0
             , stNumPassed = 0
             , stPassedTraceLog = emptyTraceLog
             , stPassedQueue = mempty
@@ -200,6 +206,18 @@ loop st
   -- the time bugdet is over, we check this every so often
   | (stNumPassed st + stNumDiscarded st) `mod` 100 == 0 =
       ifM (passedTimeout st) (giveUp st "timeout") (newTest st)
+  -- reset the trace log if we havent enqueued anything interesting in a while
+  -- additionally, increase the number of random mutations
+  | maybe False (stLastInteresting st >=) (stResetAfter st) &&
+    null (stPassedQueue st) && null (stDiscardedQueue st) =
+      let st' = st { stPassedTraceLog = emptyTraceLog
+                   , stDiscardedTraceLog = emptyTraceLog
+                   , stResetAfter = maybe (stResetAfter st) (Just . (*2))(stResetAfter st)
+                   , stRandomMutations = min (2^8) (stRandomMutations st * 2)
+                   , stTraceLogResets = stTraceLogResets st + 1
+                   , stLastInteresting = 0
+                   }
+      in newTest st'
   -- nothing new under the sun, continue testing
   | otherwise =
       newTest st
@@ -331,17 +349,17 @@ mutateFromDiscarded st = do
       return (args', Just mbatch', st')
 
 
--- | Inherit the mutation batch of a parent test case of it exists, otherwise create a new one. 
+-- | Inherit the mutation batch of a parent test case of it exists, otherwise create a new one.
 createOrInheritMutationBatch :: State -> Args -> Maybe (MutationBatch Args) -> Bool -> MutationBatch Args
 createOrInheritMutationBatch st args parentbatch isPassed =
   case parentbatch of
     -- test case was mutated from an existing one, we can augment its parent mutation batch
-    Just mb -> 
+    Just mb ->
       newMutationBatchFromParent mb isPassed args
     -- test case was freshly generated, we need to initialize a new mutation batch
-    Nothing -> 
+    Nothing ->
       newMutationBatch (stMutationOrder st) (stRandomMutations st) (stMaxSize st) (stMaxSize st) isPassed args
-                 
+
 
 -- | Run the test and check the result, if it passes then continue testing
 runTestCase :: State -> Args -> Maybe (MutationBatch Args) -> IO Report
@@ -352,19 +370,19 @@ runTestCase st args parentbatch = do
   (test, Trace entries) <- withTrace (unResult (protectResult (stArgsRunner st args)))
   -- record the test trace and check if it was interesting
   let tr = Trace (take (stMaxTraceLength st) entries)
-  let (tlog', new, depth) = registerTrace tr (stPassedTraceLog st)
-  let interesting = new > 0
-  when (stDebug st) $ do
-    printMutatedTestCaseTrace tr
-    when interesting $ do
-      printf "\nTest case was interesting! (new trace nodes=%d, prio=%d)\n" new depth
   -- inspect the test result
   case test of
     Failed -> do
       counterexample st args test
     Passed -> do
       when (stDebug st) (printf "\nTest result: PASSED\n")
-      let mbatch = createOrInheritMutationBatch st args parentbatch True 
+      let (tlog', new, depth) = registerTrace tr (stPassedTraceLog st)
+      let interesting = new > 0
+      when (stDebug st) $ do
+        printMutatedTestCaseTrace tr
+      when interesting $ do
+        printf "\nTest case was interesting! (new trace nodes=%d, prio=%d)\n" new depth
+      let mbatch = createOrInheritMutationBatch st args parentbatch True
       loop st { stNumPassed = stNumPassed st + 1
               , stPassedTraceLog = tlog'
               , stPassedQueue =
@@ -378,7 +396,13 @@ runTestCase st args parentbatch = do
               }
     Discarded -> do
       when (stDebug st) (printf "\nTest result: DISCARDED\n")
-      let mbatch = createOrInheritMutationBatch st args parentbatch False 
+      let (tlog', new, depth) = registerTrace tr (stDiscardedTraceLog st)
+      let interesting = new > 0 && parentPassed parentbatch
+      when (stDebug st) $ do
+        printMutatedTestCaseTrace tr
+      when interesting $ do
+        printf "\nTest case was interesting! (new trace nodes=%d, prio=%d)\n" new depth
+      let mbatch = createOrInheritMutationBatch st args parentbatch False
       loop st { stNumDiscarded = stNumDiscarded st + 1
               , stDiscardedTraceLog = tlog'
               , stDiscardedQueue =
@@ -487,8 +511,8 @@ printGlobalStats st = do
     ne ngen nmp nmd
   printf "* Enqueued tests for mutation: %d passed, %d discarded\n"
     (PQueue.size (stPassedQueue st)) (PQueue.size (stDiscardedQueue st))
-  printf "* Tests since last enqueued: %d\n"
-    (stLastInteresting st)
+  printf "* Tests since last interesting: %d \t(trace log was reset %d times)\n"
+    (stLastInteresting st) (stTraceLogResets st)
 
 reportCounterexample :: Args -> Test -> IO ()
 reportCounterexample as res = do
@@ -529,6 +553,9 @@ prettyPrint a =
 ----------------------------------------
 -- Helpers
 
+parentPassed :: Maybe (MutationBatch Args) -> Bool
+parentPassed (Nothing) = False
+parentPassed (Just mb) = mb_test_passed mb
 
 ifM :: Monad m => m Bool -> m b -> m b -> m b
 ifM mb mth mel = mb >>= \b -> if b then mth else mel
@@ -549,4 +576,3 @@ roundTo n m = (n `div` m) * m
 at0 :: (Int -> Int -> Int) -> Int -> Int -> Int -> Int
 at0 _ s 0 0 = s
 at0 f _ n d = f n d
-
