@@ -36,6 +36,7 @@ data Config
   , chatty          :: Bool
   , timeout         :: Maybe Integer
   , randomMutations :: Int
+  , mutationLimit   :: Maybe Int
   , resetAfter      :: Maybe Int
   , mutationOrder   :: MutationOrder
   , maxTraceLength  :: Int
@@ -52,6 +53,7 @@ defaultConfig =
   , chatty          = False
   , timeout         = Nothing
   , randomMutations = 1
+  , mutationLimit   = Nothing
   , resetAfter      = Just 1000
   , mutationOrder   = levelorder
   , maxTraceLength  = 100
@@ -73,6 +75,7 @@ data State
   , stTimeout            :: (Maybe Integer)
   , stStartTime          :: Integer
   , stRandomMutations    :: Int
+  , stMutationLimit      :: Int
   , stResetAfter         :: Maybe Int
   , stMutationOrder      :: MutationOrder
   , stMaxTraceLength     :: Int
@@ -176,6 +179,7 @@ mutagenWithResult cfg p
             , stMaxTraceLength = maxTraceLength cfg
             , stExamples = examples cfg
             , stRandomMutations = randomMutations cfg
+            , stMutationLimit = maybe (maxSize cfg) id (mutationLimit cfg)
             , stResetAfter = resetAfter cfg
             , stMutationOrder = mutationOrder cfg
             , stNumExGenMut = (0,0,0,0)
@@ -212,8 +216,8 @@ loop st
     null (stPassedQueue st) && null (stDiscardedQueue st) =
       let st' = st { stPassedTraceLog = emptyTraceLog
                    , stDiscardedTraceLog = emptyTraceLog
-                   , stResetAfter = maybe (stResetAfter st) (Just . (*2))(stResetAfter st)
-                   , stRandomMutations = min (2^8) (stRandomMutations st * 2)
+                   , stResetAfter = maybe (stResetAfter st) (Just . (*2)) (stResetAfter st)
+                   , stRandomMutations = min 256 (stRandomMutations st * 2)
                    , stTraceLogResets = stTraceLogResets st + 1
                    , stLastInteresting = 0
                    }
@@ -355,10 +359,12 @@ createOrInheritMutationBatch st args parentbatch isPassed =
   case parentbatch of
     -- test case was mutated from an existing one, we can augment its parent mutation batch
     Just mb ->
-      newMutationBatchFromParent mb isPassed args
+      newMutationBatchFromParent mb
+        isPassed args
     -- test case was freshly generated, we need to initialize a new mutation batch
     Nothing ->
-      newMutationBatch (stMutationOrder st) (stRandomMutations st) (stMaxSize st) (stMaxSize st) isPassed args
+      newMutationBatch (stMutationOrder st) (stRandomMutations st) (stMaxSize st) (stMutationLimit st)
+        isPassed args
 
 
 -- | Run the test and check the result, if it passes then continue testing
