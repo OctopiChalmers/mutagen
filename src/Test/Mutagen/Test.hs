@@ -393,7 +393,11 @@ runTestCase st args parentbatch = do
               , stPassedTraceLog = tlog'
               , stPassedQueue =
                   if interesting
+#ifdef MUTAGEN_NO_FIFO
+                  then PQueue.insertBehind 1 (args, tr, mbatch) (stPassedQueue st)
+#else
                   then PQueue.insert depth (args, tr, mbatch) (stPassedQueue st)
+#endif
                   else stPassedQueue st
               , stLastInteresting =
                   if interesting
@@ -413,7 +417,11 @@ runTestCase st args parentbatch = do
               , stDiscardedTraceLog = tlog'
               , stDiscardedQueue =
                   if interesting
+#ifdef MUTAGEN_NO_FIFO
+                  then PQueue.insertBehind 1 (args, tr, mbatch) (stDiscardedQueue st)
+#else
                   then PQueue.insert depth (args, tr, mbatch) (stDiscardedQueue st)
+#endif
                   else stDiscardedQueue st
               , stLastInteresting =
                   if interesting

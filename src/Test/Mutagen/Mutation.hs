@@ -157,6 +157,15 @@ newMutationBatch order nrand size nmuts passed a =
 
 newMutationBatchFromParent :: Mutable a => MutationBatch a -> Bool -> a  -> MutationBatch a
 newMutationBatchFromParent mb passed a =
+#ifdef MUTAGEN_NO_INHERITANCE
+  mb { mb_value = a
+     , mb_next_pos = mb_order mb (positions a)
+     , mb_past_pos = mempty
+     , mb_test_passed = passed
+     , mb_curr_queue = mempty
+     , mb_nmuts = mb_nmuts mb - 1
+     }
+#else
   let (prevPos, newPos) = partition (`elem` mb_past_pos mb) (mb_order mb (positions a))
   in mb { mb_value = a
         , mb_next_pos = newPos
@@ -168,6 +177,7 @@ newMutationBatchFromParent mb passed a =
         , mb_curr_queue = mempty
         , mb_nmuts = mb_nmuts mb - 1
         }
+#endif
 
 nextMutation :: Mutable a => MutationBatch a -> IO (Maybe (a, MutationBatch a))
 nextMutation mb | mb_nmuts mb == 0 = return Nothing -- too many mutations
