@@ -1,0 +1,562 @@
+\documentclass[10pt,conference]{IEEEtran}
+
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote.
+% If that is unneeded, please comment it out.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Packages
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{listings}
+\usepackage{xspace}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{flushend}
+%% \usepackage{caption}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Macros and definitions
+\linepenalty=1000
+\widowpenalty10000
+\clubpenalty10000
+
+\lstset{
+  frame=none,
+  stepnumber=1,
+  belowcaptionskip=\bigskipamount,
+  captionpos=b,
+  escapeinside={*'}{'*},
+  language=haskell,
+  tabsize=2,
+  emphstyle={\bf},
+  commentstyle=\it,
+  stringstyle=\mdseries\ttfamily,
+  showspaces=false,
+  keywordstyle=\ttfamily,
+  columns=flexible,
+  basicstyle=\footnotesize\ttfamily,
+  showstringspaces=false,
+  morecomment=[l]\%,
+}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\setlength{\tabcolsep}{0.5em}
+
+\newcommand{\ourtool}{\textsc{Mutagen}\xspace}
+
+%% \captionsetup[figure]{labelfont={bf},name={Table},labelsep=period}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Document
+
+\begin{document}
+
+
+\title{\ourtool: Faster Mutation-Based Random Testing}
+
+\author{
+  \IEEEauthorblockN{Agust\'in Mista}
+  \IEEEauthorblockA{
+    %% \textit{Department of Computer Science} \\
+    \textit{Chalmers University of Technology}\\
+    Gothenburg, Sweden \\
+    \texttt{mista@chalmers.se}
+  }
+}
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Abstract
+
+\begin{abstract}
+We present \ourtool, a fully automated mutation-oriented framework for
+property-based testing.
+%
+Our tool uses novel heuristics to improve the performance of the testing loop,
+and it is capable of finding complex bugs within seconds.
+%
+We evaluate \ourtool by generating random WebAssembly programs that we use to
+find bugs in a faulty validator.
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Keywords
+
+\begin{IEEEkeywords}
+random testing, mutation, heuristics
+\end{IEEEkeywords}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Sections
+
+\section{Introduction}
+
+% Randomly generated values
+%
+Using randomly generated inputs is a popular and powerful approach when it comes
+to testing software \cite{duran1984evaluation}.
+%
+While plenty, the tools designed for this purpose can be divided into two main
+categories: those that use an existing corpus of inputs, and those that generate
+such inputs from scratch.
+
+% Corpus-based approaches
+%
+On one hand, corpus-based tools create new inputs by combining and mutating
+seeds from their input corpora using several heuristics
+\cite{zalewski2014american, swiecki2017honggfuzz}.
+%
+Being mostly black-box, this approach is often limited by the lack of knowledge
+about the structure of its inputs, although there exist efforts to improve this
+situation, e.g., by using grammars describing the syntactic structure of the
+generated data while combining seeds in order to produce syntactically valid
+test cases \cite{miller2007analysis, wang2019superion, holler2012fuzzing}.
+
+% Generational approaches
+%
+On the other hand, generational approaches can circumvent this limitation by
+generating valid data from scratch using specialized random generators
+\cite{eddington2011peach, dharma, grieco2016quickfuzz, grieco2017quickfuzz}.
+%
+However, writing good random generators by hand is a demanding task that
+involves several iterations of trial and error and can take hundreds of hours
+\cite{lampropoulos2019coverage}.
+%
+While there exist tools that tackle this problem by automatically synthesizing
+(with varying degrees of complexity) random generators directly from the static
+information present in the codebase \cite{mista2018branching,
+  mista2019generating, duregaard2012feat, lampropoulos2017generating}, such
+approaches are unable to derive suitable generators when the target data
+involves complex invariants like those required to generate random programs,
+e.g., well-scopedness and well-typedness.
+%
+In such cases, generators obtained by automatic tools are extremely unlikely to
+produce random data with enough structure to penetrate deep layers of our
+systems before being discarded.
+%
+% early as completely invalid.
+
+%% % Random property-based testing
+%% %
+%% Random property-based testing is a powerful technique for finding bugs.
+%% %
+%% The expected behavior of a system under test is expressed in terms of
+%% a collection of properties that can be executed when given certain inputs.
+%% %
+%% Then, automated tools can be used for repeteadly probing these properties using
+%% randomly generated inputs until any of them gets falsified.
+
+%% % QuickCheck and random generators
+%% %
+%% In the Haskell realm, QuickCheck is the dominant tool of this sort
+%% \cite{hall1996type}.
+%% %
+%% As well as most other property-based frameworks, QuickCheck provides default
+%% random generators for the base types, along with with a library of combinators
+%% for writing random generators for any other used-defined algebraic data type
+%% (ADT) -- a task that lies on the developers' shoulders.
+
+%% % Automated derivation tools
+%% %
+%% For simple ADTs, writing custom random generators manually is often just a
+%% cumbersome task.
+%% %
+%% However, as the complexity of the input data grows, developing random generators
+%% capable of generating \emph{good} random values can be extremely tricky.
+%% %
+%% Fortunately, there exists tools that alleviate this problem by automatically
+%% synthesizing (with varying degrees of complexity) random data generators
+%% directly from the static information present in the codebase.
+%% %
+%% Most of these tools are solely focused on the ADT definition of the data to be
+%% generated, which is often enough to ensure that the derived generators always
+%% produce finite well-typed values that can be use for finding bugs in practice.
+
+%% % Limitation
+%% %
+%% Despite these automated efforts, most of these tools are unable to synthesize
+%% random generators capable of producing data satisfying complex invariants.
+%% %
+%% Perhaps the most clear example of this issue arises while trying to generate
+%% random code.
+%% %
+%% In most host programming languages, invariants like well-scopedness and
+%% well-typedness are quite difficult to express directly at the type level.
+%% %
+%% Thus, any automated mechanism that synthesizes random generators by only looking
+%% at the type definition of the generated data will fail to provide acceptable
+%% results in practice.
+%% %
+%% In this scenario, developers are often forced to spend countless hours of trial
+%% and error while developing their random generators by hand.
+
+% Mutation-based approach
+%
+%% Considering that interesting test cases are very unlikely to be produced from
+%% scratch when using automatically derived generators,
+%
+%% other random testing frameworks like FuzzChick (implemented for the Coq
+%% programming language) instead focus their efforts on those that actually are.
+
+Recently, Lampropoulos et al. introduced FuzzChick
+\cite{lampropoulos2019coverage}, a property-based testing framework for the Coq
+programming language that borrows ideas from the fuzzing community to generate
+highly structured values while using automatically derived generators.
+%
+Instead of continuously generating random invalid test cases from scratch,
+FuzzChick keeps a queue of interesting previously executed test cases that can
+be mutated using type-preserving transformations in order to produce new ones.
+%
+The logic behind this is simple, mutating an interesting test case in a
+small way (at the data constructor level) has a much higher probability of
+producing a new interesting test case than generating a new one from scratch
+using a na\"ive generator.
+%
+FuzzChick is likely to preserve the semantic structure of the mutated data, as
+mutations are applied directly at the data type level -- the random AST in case
+of generating code.
+
+In order to work in practice, FuzzChick relies on execution traces to
+distinguish which executed test cases were interesting and are therefore worth
+mutating.
+%
+%% For this purpose, FuzzChick captures the execution trace of the system under
+%% test and compares it with the ones already executed.
+%
+Mutated test cases are considered interesting for mutation only when they
+produce new execution traces -- any other test case is simply discarded.
+%
+%% %
+%% This coverage-based guidance resembles that used by popular software fuzzers
+%% like AFL or Honggfuzz, and it helps focusing the mutation mechanism towards a
+%% wider variety of tests cases.
+%
+%% Moreover, it avoids putting effort in undesired cases like continuously mutating
+%% irrelevant subexpressions of a test case, or triggering cyclic mutations loops.
+%
+While powerful, the implementation of FuzzChick is relatively simple, leaving
+the door open for future extensions.
+
+
+In this work we present \ourtool, a random property-based testing framework
+implemented in the strongly typed language Haskell that follows the mutational
+approach behind FuzzChick, extending it with novel mutation heuristics designed
+to converge to counterexamples in fewer tests.
+%
+We outline these heuristics in the next section and evaluate them in Section
+\ref{sec:casestudy}.
+
+%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure*}[t]
+  \renewcommand{\figurename}{Table}
+  \vspace{-10pt}
+  \scriptsize
+  \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+      \hline
+      \multirow{2}{*}{Bug} &
+      \multicolumn{3}{c|}{QuickCheck} &
+      \multicolumn{3}{c|}{\ourtool} &
+      \multicolumn{3}{c|}{\ourtool (no inheritance)} &
+      \multicolumn{3}{c|}{\ourtool (no scheduling)}  \\
+      \cline{2-13} &
+      Time (s) & Passed & Discarded &
+      Time (s) & Passed & Discarded &
+      Time (s) & Passed & Discarded &
+      Time (s) & Passed & Discarded \\
+      \hline
+      1 & N/A & 14.8 & 1000000 & 2.16 & 2194 & 11706.7 & 4.06 & 4079 & 15123.3 & 3659.45 & 101536.4 & 134107.1 \\
+      \hline
+      2 & N/A & 12.7 & 1000000 & 0.07 & 83.7  & 131.6 & 0.23 & 159.5 & 206.5 & 0.33 & 261.9 & 234 \\
+      \hline
+      3 & N/A & 14.9 & 1000000 & 0.03 & 56.7 & 91.8 & 0.04 & 51 & 71.9 & 0.28 & 217.2 & 107.1 \\
+      \hline
+      4 & N/A & 13.7 & 1000000 & 0.21 & 157.2 & 314.2 & 0.63 & 427.2 & 903.3 & 10.85 & 6740.6 & 7372.2 \\
+      \hline
+      5 & N/A & 14.3 & 1000000 & 6.45 & 6464 & 34856 & 0.82 & 560.1  & 1543.6 & 454.26 & 31577.9 & 43837.5 \\
+      \hline
+    \end{tabular}
+    \vspace{-2pt}
+    \caption{\label{fig:results} Time to first failure, passed and discarded
+      tests accross different bugs for the faulty WebAssembly validator. Mean values computed after 10 executions.}
+  \vspace{-15pt}
+\end{figure*}
+
+%%%%%%%%%%%%%%%%%%%%
+
+\section{\ourtool's Heuristics}
+\label{sec:heuristics}
+
+\noindent This section introduces some of \ourtool's novel heuristics.
+
+\paragraph{Exhaustive Uniform Mutations}
+
+Perhaps the biggest distinction between FuzzChick and \ourtool lies in how
+mutations are applied over test cases.
+%
+Along with random data generators, FuzzChick automatically derives simple
+type-preserving mutators.
+%
+These mutators work in a simple recursive manner: with uniform probability, they
+either mutate a node at the top level of the given value, or apply a mutation
+recursively to one of its subexpressions.
+%
+This mechanism favors mutations to happen on the shallower levels of their
+inputs, while deeper mutations are unlikely to happen due to the multiplicative
+decline of their probability on each recursive call.
+
+To find complex bugs, we believe that mutations should be able to occur deep
+inside of the generated values in a reasonable proportion.
+%
+%% If our target is to generate data with a complex and deep structure, e.g.,
+%% program's ASTs, we certainly want every deep subexpression of a test candidate
+%% to be likely to be mutated at some point.
+%%
+To allow this, the mutators derived by our tool follow a different approach.
+%
+\emph{They first traverse the input, collecting the path to each mutable
+  subexpression.}
+%
+Then, the testing loop schedules mutations targeted over each one of them,
+ensuring that all of them are mutated in a timely manner.
+
+Furthermore, for a given target subexpression, the testing loop produces and
+tests every possible mutation exhaustively, reducing the reliance on randomness
+in order to find bugs.
+%
+%% ensuring that if a test candidate is one mutation away
+%% from discovering a bug, then the bug will be found deterministically.
+%
+This approach is inspired by exhaustive testing tools like SmallCheck
+\cite{runciman2008smallcheck} or Korat \cite{boyapati2002korat}.
+%
+However, testing mutations exhaustively comes attached to a high testing cost
+per test candidate, so the next heuristic is, in part, focused on reducing the
+time complexity of the testing loop of our tool.
+
+\paragraph{Mutation Inheritance}
+
+The second mutation heuristic focuses on preserving the semantically important
+subexpressions generated on previous steps.
+%
+For this purpose, child mutants keep a record of the subexpressions that were
+already mutated by their ancestors.
+%
+This allows each mutant to focus on the previously untouched subexpressions, as
+well as the ones freshly generated by its parent.
+
+As a consequence, this heuristic greatly reduces the available positions where
+mutations can occur on each new mutant.
+%
+This, in turn, helps to cope with the cost of running mutations exhaustively, as
+described above.
+
+\paragraph{Mutants Scheduling}
+
+FuzzChick keeps a queue of mutation candidates obtained by analyzing the
+execution trace of every executed mutant.
+%
+If a candidate executes a completely new branch in the code, it is inserted at
+the end of the queue, and the testing loop will first have to process every
+candidate ahead of it before it can start mutating this new (and likely more
+interesting) test case.
+
+To account for this, our tool uses a preemptive (FIFO) schedule with priority for
+scheduling mutant candidates.
+%
+In this setting, we capture the depth at which each new execution trace differs
+from all the previous ones.
+%
+This depth is later used to give more priority to those candidates that
+``discover'' new parts of the code at earlier stages, favoring a wider
+traversal of the execution trace space in less time.
+
+%%%%%%%%%%%%%%%%%%%%
+
+\section{Case Study: WebAssembly Validator}
+\label{sec:casestudy}
+
+This section evaluates how the heuristics implemented in our \ourtool affect the
+testing performance.
+%
+For this purpose, we use the validator of the WebAssembly programming language \cite{haas2017bringing}
+as a case study.
+%
+%% WebAssembly is recent a stack-based low level programming language that can run
+%% natively on most web browsers, and that is proposed as a compilation target for
+%% a variety of higher level languages.
+%% %
+%% In practice, WebAssembly modules need to be validated before they can be used
+%% --- a process similar to type checking in other languages.
+%
+We took an exiting Haskell implementation of the WebAssembly validator
+\cite{wasm-lib} and injected several bugs into it.
+%
+These bugs let invalid WebAssembly modules pass the validation process.
+%
+Then, we tested for false positives of the faulty validator by comparing it
+against the output of the validator from the WebAssembly reference
+implementation (written in OCaml).
+%
+This was expressed using the following property:
+
+\vspace{-3pt}
+\begin{lstlisting}
+prop_valid :: WasmModule -> Result
+prop_valid wasm = validHs wasm ==> validOCaml wasm
+\end{lstlisting}
+\vspace{-3pt}
+
+Using {\small\texttt{validHs}} as a precondition, we avoid executing the
+reference validator on invalid modules.
+%
+Instead, they get automatically discarded and the testing loop continues.
+
+
+Table \ref{fig:results} shows the performance of our tool against QuickCheck
+\cite{claessen2011quickcheck} (the reference tool for random testing in Haskell)
+across five different bugs, using the same automatically derived random
+generator.
+%
+To evaluate the effectiveness of our inheritance and scheduling heuristics, we
+included the results obtained when they are disabled.
+
+
+Unsurprisingly, QuickCheck fails to find any of the bugs we planted after
+generating more than a million values.
+%
+This is because the automatically derived generator is virtually unable to
+produce valid modules on its own.
+%
+In comparison, \ourtool is able to find all the bugs in a couple of seconds.
+%
+Guided by the execution traces, the type-preserving mutations that our tool
+applies allows us to run a much larger number of valid WebAssembly modules through
+the reference validator, which in turn helps finding bugs faster.
+%
+As an example of the level of invariants required to find bugs, the following
+WebAssembly module AST is a counterexample for bug \#1:
+
+\vspace{-3pt}
+\begin{lstlisting}
+Module {
+  types=*'\textcolor{red}{[}'*FuncType{params=[], results=*'\textcolor{blue}{[]}'*}*'\textcolor{red}{]}'*,
+  functions=[
+    Function{resultType=*'\textcolor{red}{0}'*, localTypes=[], body=[
+      I32Const 0,
+      If{resultType=*'\textcolor{blue}{[]}'*, then=*'\textcolor{blue}{[]}'*, else=[I32Const 0]}]]},
+  tables=[], mems=[], globals=[], elems=[],
+  datas=[], start=Nothing, imports=[], exports=[],
+}
+\end{lstlisting}
+\vspace{-3pt}
+
+\noindent This bug causes false validations by not checking that the type of an
+\textbf{else} branch in an \textbf{if} expression matches that of the
+\textbf{then} one.
+%
+%% when the type of an \textbf{else}
+%% branch of an \textbf{if} expression does not match the \textbf{then} one ---
+%% it can be observed in the example above.
+%
+%% Despite the actual cause for this counterexample to trigger the bug is quite
+%% simple (\textbf{if} branches with different types),
+%
+Despite this, several other things need to be in place for this value to be
+considered valid: the type of the generated function must be declared
+beforehand, and the function must refer to it by its index in the types list
+(marked in red).
+%
+Moreover, the type of its actual outputs must match the one declared by its type
+(marked in blue).
+%
+Generating valid modules satisfying such invariants is extremely rare using
+automatically derived generators.\looseness=-1
+
+
+If we look at the effect of our heuristics, we can observe that mutation
+inheritance can provide substantial speedups in most cases.
+%
+%% (e.g., bugs \#1, \#3, and \#4).
+%
+In the case of bug \#5, however, disabling mutation inheritance seems to
+help as a shortcut to find counterexamples faster.
+%
+This suggests that perhaps a hybrid approach would work best in the general case.
+
+Furthermore, our preemptive scheduling heuristic greatly improves the testing
+performance in most cases, being orders of magnitude faster in the case of
+bugs \#1, \#4, and \#5.
+
+
+%% At the light of these results,
+The heuristics we developed for \ourtool offer a substantial improvement over
+the simple (though still powerful) approach taken by FuzzChick.
+%
+Our current work focuses on gathering more empirical evidence to strengthen this
+claim.
+
+%%%%%%%%%%%%%%%%%%%%
+
+\section{Future Work}
+
+%% We presented \ourtool, an automated framework for property-based testing in
+%% Haskell focused on generating complex test cases by progressively applying
+%% type-preserving mutations over previously generated ones.
+%% %
+%% Our tool follows a testing approach similar to that of FuzzChick, extending it
+%% with heuristics to improve the performance in terms of convergence speed to
+%% counterexamples and reproductibility.
+
+%% \ourtool is guided by the execution trace of the mutated test cases, and favours
+%% mutating the ones that discover new parts of the code on each step.
+%% %
+%% Compared to just using automatically derived generators in a purely random
+%% fashion, our tool is capable of finding bugs triggered only by inputs satisfying
+%% complex invariants that are extremely unlikey to be produced by such generators
+%% alone.
+
+%% In the future, we are focused on extending \ourtool with the ability of producing
+%% semantic-preserving paired mutations.
+%% %
+%% This would entail finding related subexpressions within mutated test cases that
+%% need to be handled in tandem in order to preserve their semantic correctness.
+%% %
+%% With this information at hand, we foresee that it could be possible to train our
+%% mutation mechanism so these hard-to-find semantic relations are preserved
+%% throughout the testing process.
+
+As for future work, we are focused on extending \ourtool with dependent mutations,
+where the existence of certain subexpressions would allow or disallow certain
+mutations to occur.
+%
+Concretely, this could be useful to improve the performance of our tool when
+used for testing systems expecting programs as inputs.
+%
+There, for instance, a mutation that introduces a new identifier would allow
+subsequent mutations to refer to it, preserving the well-scopedness of the
+program.
+%% %
+%% We foresee that this extension would require external knowdledge from the
+%% developer in order to recognize which kinds of subexpression define identifiers,
+%% and which other kinds can use them.
+%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Bibliography
+
+\bibliography{references}{}
+\bibliographystyle{IEEEtran}
+
+\end{document}

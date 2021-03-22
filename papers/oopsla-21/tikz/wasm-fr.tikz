@@ -1,0 +1,186 @@
+\begin{tikzpicture}
+  \pgfplotsset{
+    scale only axis,
+  }
+
+  \begin{axis}[
+      height=2cm,
+      width=9.5cm,
+      ybar=0cm,
+      bar width=0.12cm,
+      ylabel style={yshift=-2mm},
+      enlarge x limits=0.1,
+      axis y line*=left,
+      axis x line*=bottom,
+      xmin=1, xmax=10,
+      ymin=0, ymax=1.05,
+      xtick={1, 2, ..., 10},
+      xlabel={Injected Bug (\emph{prop\_validator})},
+      ytick={0.0, 0.5, 1.0},
+      xticklabels={5, 3, 4, 1, 2, 8, 6, 10, 9, 7},
+      minor y tick num=1,
+      ylabel={Failure Rate},
+      ymajorgrids={true},
+      yminorgrids={true},
+      legend style={
+        legend columns=-1,
+        draw=none,
+        at={ (0.5,-0.2) },
+        anchor=north
+      },
+      legend style={/tikz/every even column/.append style={column sep=0.2cm}}]
+    ]
+    % MTTF QuickCheck
+    \addplot[fill=cyan, fill opacity=0.75] coordinates {
+      (4  , 0)
+      (5  , 0)
+      (2  , 0)
+      (3  , 0)
+      (1  , 0)
+      (7  , 0)
+      (10 , 0)
+      (6  , 0)
+      (9  , 0)
+      (8  , 0)
+    };
+
+    % MTTF Mutagen (all heuristics)
+    \addplot[fill=red, fill opacity=0.75] coordinates {
+      (4  , 1)
+      (5  , 1)
+      (2  , 1)
+      (3  , 1)
+      (1  , 1)
+      (7  , 1)
+      (10 , 1)
+      (6  , 1)
+      (9  , 1)
+      (8  , 1)
+    };
+
+    % Mutagen (no FIFO)
+    \addplot[fill=orange, fill opacity=0.75] coordinates {
+      (4  , 0.866666667)
+      (5  , 1          )
+      (2  , 1          )
+      (3  , 1          )
+      (1  , 1          )
+      (7  , 0.833333333)
+      (10 , 0.133333333)
+      (6  , 0.866666667)
+      (9  , 0.5        )
+      (8  , 0.666666667)
+    };
+
+    % Mutagen (no reset, 25 random mutations)
+    \addplot[fill=yellow, fill opacity=0.75] coordinates {
+      (4  , 1)
+      (5  , 1)
+      (2  , 1)
+      (3  , 1)
+      (1  , 1)
+      (7  , 1)
+      (10 , 0.933333333)
+      (6  , 1)
+      (9  , 1)
+      (8  , 1)
+    };
+
+    % Mutagen (no inheritance)
+    \addplot[fill=lime, fill opacity=0.75] coordinates {
+      (4  , 1)
+      (5  , 1)
+      (2  , 1)
+      (3  , 1)
+      (1  , 1)
+      (7  , 1)
+      (10 , 1)
+      (6  , 1)
+      (9  , 1)
+      (8  , 1)
+    };
+
+  \end{axis}
+
+\end{tikzpicture}%
+\begin{tikzpicture}
+  \pgfplotsset{
+    scale only axis,
+  }
+
+  \begin{axis}[
+      height=2cm,
+      width=5.5cm,
+      ybar=0cm,
+      bar width=0.12cm,
+      ylabel style={yshift=-5mm},
+      enlarge x limits=0.25,
+      axis y line*=left,
+      axis x line*=bottom,
+      xmin=11, xmax=15,
+      ymin=0, ymax=1.05,
+      xtick={11, 12, ..., 15},
+      y axis line style= { draw opacity=0 },
+      ytick={0.0, 0.5, 1.0},
+      minor y tick num=1,
+      xlabel={Injected Bug (\emph{prop\_interpreter\_i32})},
+      ytick style={draw=none},
+      yticklabels={,,},
+      xticklabels={14,13,15,11,12},
+      ymajorgrids={true},
+      yminorgrids={true},
+      legend style={
+        legend columns=-1,
+        draw=none,
+        at={ (0.5,-0.2) },
+        anchor=north
+      },
+      legend style={/tikz/every even column/.append style={column sep=0.2cm}}]
+    ]
+    % MTTF QuickCheck
+    \addplot[fill=cyan, fill opacity=0.75] coordinates {
+      (14, 0)
+      (15, 0)
+      (12, 0)
+      (11, 0)
+      (13, 0)
+    };
+
+    % MTTF Mutagen (all heuristics)
+    \addplot[fill=red, fill opacity=0.75] coordinates {
+      (14, 0)
+      (15, 0)
+      (12, 0.1)
+      (11, 0.5)
+      (13, 0.1)
+    };
+
+    % Mutagen (no FIFO)
+    \addplot[fill=orange, fill opacity=0.75] coordinates {
+      (14, 0 )
+      (15, 0.2)
+      (12, 0 )
+      (11, 0.3)
+      (13, 0 )
+    };
+
+    % Mutagen (no reset, 25 random mutations)
+    \addplot[fill=yellow, fill opacity=0.75] coordinates {
+      (14, 0.6)
+      (15, 0.9)
+      (12, 0.6)
+      (11, 0.3)
+      (13, 0)
+    };
+
+    % Mutagen (no inheritance)
+    \addplot[fill=lime, fill opacity=0.75] coordinates {
+      (14, 1)
+      (15, 1)
+      (12, 1)
+      (11, 1)
+      (13, 1)
+    };
+
+  \end{axis}
+\end{tikzpicture}

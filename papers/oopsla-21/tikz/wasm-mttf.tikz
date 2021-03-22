@@ -1,0 +1,190 @@
+\begin{tikzpicture}
+  \pgfplotsset{
+    scale only axis,
+  }
+
+  \begin{axis}[
+      height=3cm,
+      width=9.5cm,
+      ybar=0cm,
+      bar width=0.12cm,
+      ymode = log,
+      ylabel style={yshift=-2mm},
+      enlarge x limits=0.1,
+      axis y line*=left,
+      axis x line*=bottom,
+      xmin=1, xmax=10,
+      ymin=1, ymax=10000000,
+      xtick={1, 2, ..., 10},
+      xticklabels={5, 3, 4, 1, 2, 8, 6, 10, 9, 7},
+      % xlabel={Injected Bug (Validator)},
+      ylabel={Milliseconds},
+      ymajorgrids={true},
+      legend style={
+        legend columns=-1,
+        draw=none,
+        at={ (0.5,-0.2) },
+        anchor=north
+      },
+      legend style={/tikz/every even column/.append style={column sep=0.2cm}}]
+    ]
+    % MTTF QuickCheck
+    \addplot[fill=cyan, fill opacity=0.75] coordinates {
+      (4  , 0)
+      (5  , 0)
+      (2  , 0)
+      (3  , 0)
+      (1  , 0)
+      (7  , 0)
+      (10 , 0)
+      (6  , 0)
+      (9  , 0)
+      (8  , 0)
+    };
+
+    % MTTF Mutagen (all heuristics)
+    \addplot[fill=red, fill opacity=0.75] coordinates {
+      (4  , 3103.935759)
+      (5  , 6390.94903 )
+      (2  , 49.79998427)
+      (3  , 184.651155 )
+      (1  , 8.091828967)
+      (7  , 21637.66144)
+      (10 , 819828.2806)
+      (6  , 13469.91096)
+      (9  , 45750.45432)
+      (8  , 24711.5764 )
+    };
+
+    % Mutagen (no FIFO)
+    \addplot[fill=orange, fill opacity=0.75] coordinates {
+      (4  , 2498964.85 )
+      (5  , 257478.3465)
+      (2  , 131.184709 )
+      (3  , 25.4131483 )
+      (1  , 8.142777767)
+      (7  , 1354022.043)
+      (10 , 3349304.584)
+      (6  , 1139021.291)
+      (9  , 2218325.504)
+      (8  , 2154156.808)
+    };
+
+
+    % Mutagen (no reset, 25 random mutations)
+    \addplot[fill=yellow, fill opacity=0.75] coordinates {
+      (4  , 2968.133678)
+      (5  , 4754.710243)
+      (2  , 65.13359763)
+      (3  , 150.5683309)
+      (1  , 8.231506833)
+      (7  , 33503.72146)
+      (10 , 964301.4802)
+      (6  , 16868.15897)
+      (9  , 53707.66736)
+      (8  , 23175.69521)
+    };
+
+    % Mutagen (no inheritance)
+    \addplot[fill=lime, fill opacity=0.75] coordinates {
+      (4  , 6693.593089)
+      (5  , 1158.86101 )
+      (2  , 100.3984609)
+      (3  , 116.3318205)
+      (1  , 8.352916367)
+      (7  , 1542.087119)
+      (10 , 2532.124308)
+      (6  , 1313.308766)
+      (9  , 1191.462026)
+      (8  , 2610.395152)
+    };
+
+  \end{axis}
+
+\end{tikzpicture}%
+\begin{tikzpicture}
+  \pgfplotsset{
+    scale only axis,
+  }
+
+  \begin{axis}[
+      height=3cm,
+      width=5.5cm,
+      ybar=0cm,
+      bar width=0.12cm,
+      ymode = log,
+      ylabel style={yshift=-5mm},
+      enlarge x limits=0.25,
+      axis y line*=left,
+      axis x line*=bottom,
+      xmin=11, xmax=15,
+      ymin=1, ymax=10000000,
+      xtick={11, 12, ..., 15},
+      y axis line style= { draw opacity=0 },
+      % xlabel={Injected Bug (Interpreter)},
+      ytick style={draw=none},
+      yticklabels={,,},
+      xticklabels={14,13,15,11,12},
+      ymajorgrids={true},
+      legend style={
+        legend columns=-1,
+        draw=none,
+        at={ (0.5,-0.2) },
+        anchor=north
+      },
+      legend style={/tikz/every even column/.append style={column sep=0.2cm}}]
+    ]
+    % MTTF QuickCheck
+    \addplot[fill=purple, fill opacity=0.75] coordinates {
+      (14,  0)
+      (15,  0)
+      (12,  0)
+      (11,  0)
+      (13,  0)
+    };
+
+    % MTTF Mutagen (all heuristics)
+    \addplot[fill=red, fill opacity=0.75] coordinates {
+      (14, 3600115.411)
+      (15, 3600218.462)
+      (12, 3241721.167)
+      (11, 1800008.007)
+      (13, 3242210.866)
+    };
+
+    % Mutagen (no FIFO)
+    \addplot[fill=orange, fill opacity=0.75] coordinates {
+      (14, 3600379.317)
+      (15, 2945322.451)
+      (12, 3600167.616)
+      (11, 2520123.507)
+      (13, 3600028.614)
+    };
+
+    % Mutagen (no reset, 25 random mutations)
+    \addplot[fill=yellow, fill opacity=0.75] coordinates {
+      (14, 1623733.213)
+      (15, 485921.2898)
+      (12, 1820167.138)
+      (11, 2520012.721)
+      (13, 3599998.909)
+    };
+
+
+    % Mutagen (no inheritance)
+    \addplot[fill=lime, fill opacity=0.75] coordinates {
+      (14, 391821.6577)
+      (15, 227998.6841)
+      (12, 211180.2487)
+      (11, 359260.7326)
+      (13, 243089.0174)
+    };
+
+  \end{axis}
+\end{tikzpicture}
+
+%\begin{tikzpicture}
+%\begin{axis}
+%\legend{QuickCheck, Mutagen, Mutagen (no FIFO), Mutagen (no reset), Mutagen (no inheritance)}
+%\end{axis}
+%\end{tikzpicture}
