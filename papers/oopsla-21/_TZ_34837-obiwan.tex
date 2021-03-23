@@ -1,0 +1,162 @@
+%% The first command in your LaTeX source must be the \documentclass command.
+\documentclass[acmsmall, anonymous]{acmart}
+
+% ----------------------------------------
+
+%% Packages
+
+\usepackage{xcolor}
+\usepackage{color}
+\usepackage{multicol}
+\usepackage[ruled,vlined,noend]{algorithm2e}
+\usepackage{xspace}
+\usepackage{tikz}
+\usepackage{tikzscale}
+\usepackage{pgfplots}
+\usepackage{paralist}
+\pgfplotsset{compat=1.3}
+
+\makeatletter
+\patchcmd{\@verbatim}
+  {\verbatim@font}
+  {\verbatim@font\footnotesize}
+  {}{}
+\makeatother
+
+\let\oldv\verbatim
+\let\oldendv\endverbatim
+
+\def\verbatim{\par\setbox0\vbox\bgroup\oldv}
+\def\endverbatim{\oldendv\egroup\fboxsep0pt \noindent\colorbox[gray]{0.95}{\usebox0}\par}
+
+% ----------------------------------------
+
+%% Rights management information. This information is sent to you when you
+%% complete the rights form. These commands have SAMPLE values in them; it is
+%% your responsibility as an author to replace the commands and values with
+%% those provided to you when you complete the rights form.
+\setcopyright{acmcopyright}
+\copyrightyear{2021}
+\acmYear{2021}
+%% \acmDOI{10.1145/1122445.1122456}
+
+%% These commands are for a JOURNAL article.
+\acmConference[OOPSLA '21]{OOPSLA '21: ACM SIGPLAN conference on Systems,
+  Programming, Languages, and Applications}{October 17--22 2021}{Chicago, IL}
+
+%% \acmJournal{JACM}
+%% \acmVolume{37}
+%% \acmNumber{4}
+%% \acmArticle{111}
+%% \acmMonth{8}
+
+%% Submission ID.
+%% Use this when submitting an article to a sponsored event. You'll
+%% receive a unique submission ID from the organizers
+%% of the event, and this ID should be used as the parameter to this command.
+%%\acmSubmissionID{123-A56-BU3}
+
+%% The majority of ACM publications use numbered citations and
+%% references.  The command \citestyle{authoryear} switches to the
+%% "author year" style.
+%%
+%% If you are preparing content for an event
+%% sponsored by ACM SIGGRAPH, you must use the "author year" style of
+%% citations and references.
+%% Uncommenting
+%% the next command will enable that style.
+\citestyle{acmauthoryear}
+
+% ----------------------------------------
+%% Macros
+
+\newcommand{\quickcheck}{\textit{QuickCheck}\xspace}
+\newcommand{\quickchick}{\textit{QuickChick}\xspace}
+\newcommand{\fuzzchick}{\textit{FuzzChick}\xspace}
+\newcommand{\mutagen}{\textsc{Mutagen}\xspace}
+
+% ----------------------------------------
+
+%% end of the preamble, start of the body of the document source.
+
+\begin{document}
+
+
+\section{\mutagen: Testing Mutants Exhaustively}
+\label{sec:mutagen}
+
+In this section we describe the base ideas behind \mutagen, our CGPT tool
+written in Haskell.
+%
+On top of them, Section \ref{sec:heuristics} introduces heuristics that help
+finding bugs faster in certain testing scenarios.
+
+In constrast with \fuzzchick, \mutagen does not employ a power schedule to
+assign energy to mutable candidates.
+%
+In turn, it resorts to mutate them in an exhaustive and precise basis, where
+%
+\begin{inparaenum}
+  \item each subexpression of a mutation candidate is associated with a set of
+    deterministic mutations, and
+  \item for every mutable subexpression, each of these mutations is evaluated
+    \emph{exactly once}.
+\end{inparaenum}
+%
+There is a small exception to this rules that we will introduce soon.
+
+This idea is inspired by exhaustive bounded testing tools like SmallCheck (in
+Haskell) or Korat (in Java), that produce test cases exhaustively.
+%
+In simple words, such tools work by enumerating all possible values of the
+datatypes used in the testing properties, and then executing them from smaller
+to larger until a a bug is found, or a certain size bound is reached.
+%
+The main problem with this approach is that the space of all possible test cases
+often grows exponentially as we increment the size bound, and the user
+experiences what it looks like ``hitting a wall'', where no larger test cases
+can be evaluated until we exhausted all the immediately smaller ones \cite{feat}.
+%
+In consequence, such tools can only be applied to relatively simple systems,
+where the space of inputs does not grow extremely fast.
+
+
+Not to be confused by these tools, in \mutagen we do not enumerate all possible
+test cases exhaustively.
+%
+\mutagen uses random generators to find interesting initial seeds, and only then
+proceeds to execute all possible mutations.
+%
+Moreover, these mutants will be mutated further only if they discover new paths
+in the target code, so the testing loop automatically prunes the space of test
+cases that are worth mutating.
+
+
+
+\subsection{Exhaustive Mutations}
+
+To describe \mutagen's testing loop, we first need to introduce the mechanism
+used for testing mutations exhaustively.
+%
+In contrast to \fuzzchick, where mutators are parameterized random generators,
+in \mutagen we define mutations as the set of mutants that can be obtained by
+altering the input value at the top-level (the root).
+%
+In Haskell, we define mutations as:
+
+\begin{verbatim}
+type Mutation a = a -> [Mutant a]
+\end{verbatim}
+
+Where \texttt{Mutant}s come in two flavours, pure and random:
+
+\begin{verbatim}
+data Mutant a = PURE a | RAND (Gen a)
+\end{verbatim}
+
+Pure mutants are used most of the time, and encode simple deterministic
+transformations over the top-level of the input.
+%
+Like in \fuzzchick, these tranformation can:
+
+\end{document}

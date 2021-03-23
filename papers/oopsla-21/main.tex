@@ -16,6 +16,8 @@
 \usepackage{paralist}
 \pgfplotsset{compat=1.3}
 
+\usetikzlibrary{trees}
+
 \makeatletter
 \patchcmd{\@verbatim}
   {\verbatim@font}
@@ -669,18 +671,18 @@ parameterized by the original input to be mutated.
 They use a simple set of mutation operations that are randomly applied at the
 datatype level.
 %
-In simple terms, these operations encompass:
+In simple terms, these operations encompass
 %
-\begin{itemize}
+\begin{inparaenum}
 \item \emph{shrinking the value}, replacing its top-level data constructor with
   one that contains a subset of its fields, reusing existing subexpressions;
 \item \emph{growing the value}, replacing its top-level data constructor with
   one that contains a superset of its fields, reusing existing subexpressions
   and generating random ones when needed;
-\item \emph{returning a subexpression of the same type};
+\item \emph{returning a subexpression of the same type}; and
 \item \emph{mutating recursively}, applying a mutation operation over an
   immediate subexpression.
-\end{itemize}
+\end{inparaenum}
 
 
 \begin{figure}
@@ -700,14 +702,16 @@ mutate_tree (Node l x r) =
 \caption{\label{fig:fuzzchick:mutator}\fuzzchick mutator for the \texttt{Tree} data type. }
 \end{figure}
 
-Fig. \ref{fig:fuzzchick:mutator} illustrates the idea behind a random \fuzzchick
-mutator for our previously used \texttt{Tree} data type example.
+Fig. \ref{fig:fuzzchick:mutator} illustrates a \fuzzchick mutator for our
+previously used \texttt{Tree} data type example.
 %
 Since trees are parametric, for clarity this definition is also parameterized by
-a mutator for the payload (\texttt{mutate\_a}), although in practice this can be
-abstracted away by the means of the type class system (where
-\texttt{mutate\_tree} and \texttt{mutate\_a} can be transparently coerced into
-an overloaded \texttt{mutate} function.)
+a mutator for the payload (\texttt{mutate\_a}), although this can be abstracted
+away using the type class system.
+
+%% (where \texttt{mutate\_tree} and
+%% \texttt{mutate\_a} can be transparently coerced into an overloaded
+%% \texttt{mutate} function.)
 
 
 In this mutator, branches can be shrinked into leaves by dropping the subtrees,
@@ -728,11 +732,12 @@ combinator that randomly picks one of them with uniform probability.
 \subsubsection{Limitations of \fuzzchick}
 
 \citeauthor{lampropoulos2019coverage} demonstrated empirically that \fuzzchick
-lies comfortably in the middle ground between using na\"ive automatically
-derived random generators and complex manually-written ones.
+lies comfortably in the middle ground between using pure random testing with
+na\"ive automatically derived random generators and complex manually-written
+ones.
 %
 Their results suggest that CGPT is an appealing technique for finding bugs while
-still offering a mostly automated workflow.
+still using a mostly automated workflow.
 
 However, the authors acknowledge that certain parts of their implementation have
 room for improvement, especially when it comes to the mutators design.
@@ -842,25 +847,112 @@ The next section introduces \mutagen, our CGPT tool written in Haskell that aims
 to tackle the main limitations of \fuzzchick using an exhaustive mutation
 approach that requires very little randomness and no power schedule.
 
+
 \section{\mutagen: Testing Mutants Exhaustively}
 \label{sec:mutagen}
 
-Aliquam erat volutpat \citep{devai2013edsl}. Nunc eleifend leo vitae magna. In
-id erat non orci commodo lobortis. Proin neque massa, cursus ut, gravida ut,
-lobortis eget, lacus. Sed diam. Praesent fermentum tempor tellus. Nullam tempus.
-Mauris ac felis vel velit tristique imperdiet.
-nec dui dignissim bibendum. Vivamus id enim. Phasellus neque orci, porta a,
-aliquet quis, semper a, massa. Phasellus purus. Pellentesque tristique imperdiet
-tortor. Nam euismod tellus id erat.
+In this section we describe the base ideas behind \mutagen, our CGPT tool
+written in Haskell.
+%
+On top of them, Section \ref{sec:heuristics} introduces heuristics that help
+finding bugs faster in certain testing scenarios.
+
+In constrast with \fuzzchick, \mutagen does not employ a power schedule to
+assign energy to mutable candidates.
+%
+In turn, it resorts to mutate them in an exhaustive and precise basis, where
+%
+\begin{inparaenum}
+  \item each subexpression of a mutation candidate is associated with a set of
+    deterministic mutations, and
+  \item for every mutable subexpression, each of these mutations is evaluated
+    \emph{exactly once}.
+\end{inparaenum}
+%
+There is a small exception to this rules that we will introduce soon.
+
+This idea is inspired by exhaustive bounded testing tools like SmallCheck (in
+Haskell) or Korat (in Java), that produce test cases exhaustively.
+%
+In simple words, such tools work by enumerating all possible values of the
+datatypes used in the testing properties, and then executing them from smaller
+to larger until a a bug is found, or a certain size bound is reached.
+%
+The main problem with this approach is that the space of all possible test cases
+often grows exponentially as we increment the size bound, and the user
+experiences what it looks like ``hitting a wall'', where no larger test cases
+can be evaluated until we exhausted all the immediately smaller ones \cite{feat}.
+%
+In consequence, such tools can only be applied to relatively simple systems,
+where the space of inputs does not grow extremely fast.
+
+
+Not to be confused by these tools, in \mutagen we do not enumerate all possible
+test cases exhaustively.
+%
+\mutagen uses random generators to find interesting initial seeds, and only then
+proceeds to execute all possible mutations.
+%
+Moreover, these mutants will be mutated further only if they discover new paths
+in the target code, so the testing loop automatically prunes the space of test
+cases that are worth mutating.
+
+
+\subsection{Exhaustive Mutations}
+
+To describe \mutagen's testing loop, we first need to introduce the mechanism
+used for testing mutations exhaustively.
+%
+In contrast to \fuzzchick, where mutators are parameterized random generators,
+in \mutagen we define mutations as the set of mutants that can be obtained by
+altering the input value at the top-level (the root).
+%
+In Haskell, we define mutations as:
 
 \begin{verbatim}
 type Mutation a = a -> [Mutant a]
 \end{verbatim}
 
+\noindent Where \texttt{Mutant}s come in two flavours, pure and random:
+
 \begin{verbatim}
 data Mutant a = PURE a | RAND (Gen a)
 \end{verbatim}
 
+Pure mutants are used most of the time, and encode simple deterministic
+transformations over the top-level data constructor of the input --- recursive
+mutations will be introduced soon.
+%
+These tranformation can:
+%
+\begin{inparaenum}
+\item return an immediate subexpression of the same type as the input;
+\item swap the top-level data constructor with any other constructor of the same
+  type, reusing existing subexpressions; and
+\item rearrange and replace fields using existing ones of the same type.
+\end{inparaenum}
+%
+To illustrate this, Fig. \ref{fig:mutagen:mutator} outlines a mutator for the
+\texttt{Tree} data type.
+%
+Notice how this definition simply enumerates mutants that transform the
+top-level data constructor, hence no recursion is needed here.
+%
+Moreover, notice how a default value (\texttt{def}) used to fill the subtrees
+when transforming a leaf into a branch.
+%
+This value corresponds to the smallest value we can construct in order for the
+mutant to be type-correct.
+%
+In practice (\texttt{def = Leaf def}), where the inner \texttt{def} is the
+smallest value of the payload --- we use the type class system to abstract this
+complexity away in our implementation.
+%
+Using a default smallest value is again inspired by exhaustive bounded testing
+tools, and avoids introducing unnecesary randomness when growing data
+constructors.
+
+\begin{figure}
 \begin{verbatim}
 mutate (Leaf x)     = [ PURE (Node def x def) ]   -- Swap constructor
 mutate (Node l x r) = [ PURE l, PURE r            -- Return subexpression
@@ -869,28 +961,127 @@ mutate (Node l x r) = [ PURE l, PURE r            -- Return subexpression
                       , PURE (Node r x r)         -- Rearrange subexpressions
                       , PURE (Node r x l) ]       -- Rearrange subexpressions
 \end{verbatim}
+\caption{\label{fig:mutagen:mutator}\mutagen mutator for the \texttt{Tree} data
+  type.}
+\end{figure}
+
+At this point, the reader might consider:
+%
+what about large enumeration types like integers or characters?
+%
+Does \mutagen transform them exaustively too?
+%
+\emph{Certainly not.}
+%
+Random mutants serve as a way to break exhaustiveness when mutating values of
+large enumeration types.
+%
+Instead of trying every possible integer or character, we resolve in using a
+random generator and sample a small amount of values from it --- the precise
+amount is a tunable parameter of \mutagen.
+%
+This way, a mutator for integers simply becomes:
+
+\begin{verbatim}
+mutate n = [ RAND arbitrary ]
+\end{verbatim}
+
+
+\subsubsection{Mapping top-level mutations everywhere}
+
+So far we defined mutations that transform the root of the input.
+%
+Now it is time to apply these mutations to every subexpression as well.
+%
+To do so, we will use two functions that can also be derived from the data type
+definition.
+
+
+In first place, a function \texttt{positions} traverses the mutable candidate
+and builds a multi-way tree of mutable positions.
+%
+These positions are essentially a list of indices encoding the path from the
+root to every mutable subexpression.
+%
+For instance, the positions of a \texttt{Tree} are computed as follows:
 
 \begin{verbatim}
 positions (Leaf x)       = node [ (0, positions x) ]
 positions (Branch l x r) = node [ (0, positions l), (1, positions x), (2, positions r) ]
 \end{verbatim}
 
+\noindent In this light, the mutable positions of the value \texttt{Branch (Leaf 1) 2 (Leaf 3)} are:
+%
+\begin{equation}
+  \nonumber
+  {\small \texttt{positions}}\quad
+  \left(
+  \tikz[
+    baseline=-7mm,
+    level distance=0.6cm,
+    level 1/.style={sibling distance=0.75cm},
+    level 2/.style={sibling distance=0.75cm}
+  ]{
+    \node {\small \texttt{Branch}}
+      child {node {\small \texttt{Leaf}}
+        child {node {\small \texttt{1}}}
+      }
+      child {node {\small \texttt{2}}}
+      child {node {\small \texttt{Leaf}}
+        child {node {\small \texttt{3}}}
+      };
+  }
+  \right)
+  \quad
+  =
+  \quad
+  \tikz[
+    baseline=-7mm,
+    level distance=0.6cm,
+    level 1/.style={sibling distance=0.75cm},
+    level 2/.style={sibling distance=0.75cm}
+  ]{
+    \node {\texttt{\small []}}
+      child {node {\small \texttt{[0]}}
+        child {node {\small \texttt{[0,0]}}}
+      }
+      child {node {\small \texttt{[1]}}}
+      child {node {\small \texttt{[2]}}
+        child {node {\small \texttt{[2,0]}}}
+      };
+  }
+\end{equation}
+
+\noindent Later, given a desired position to mutate within a candidate, we
+define another function \texttt{inside} that precisely finds the subexpression
+corresponding to it and applies the mutation.
+%
+A slightly simplified version of this function for the \texttt{Tree} datatype is
+as follows:
+
 \begin{verbatim}
-inside []        mut x              = mut x
-inside (0 : pos) mut (Leaf x)       = [ Leaf x'       | x' <- inside pos mut x ]
-inside (0 : pos) mut (Branch l x r) = [ Branch l' x r | l' <- inside pos mut l ]
-inside (1 : pos) mut (Branch l x r) = [ Branch l x' r | x' <- inside pos mut x ]
-inside (2 : pos) mut (Branch l x r) = [ Branch l x r' | r' <- inside pos mut r ]
+inside []        x              = mutate x
+inside (0 : pos) (Leaf x)       = [ Leaf x'       | x' <- inside pos x ]
+inside (0 : pos) (Branch l x r) = [ Branch l' x r | l' <- inside pos l ]
+inside (1 : pos) (Branch l x r) = [ Branch l x' r | x' <- inside pos x ]
+inside (2 : pos) (Branch l x r) = [ Branch l x r' | r' <- inside pos r ]
 \end{verbatim}
 
+\noindent This function simply traverses the desired position, calling itself
+recursively until it reaches the desired subexpression, where the mutation can
+be applied locally at the top-level (case \texttt{inside [] x}).
+%
+The rest of the function takes care of unwrapping and rewrapping the
+intermediate subexpressions and is not partically relevant for the point being
+made.
 
-Aliquam erat volutpat. Nunc eleifend leo vitae magna. In id erat non orci
-commodo lobortis. Proin neque massa, cursus ut, gravida ut, lobortis eget,
-lacus. Sed diam. Praesent fermentum tempor tellus. Nullam tempus. Mauris ac
-felis vel velit tristique imperdiet. Donec at pede. Etiam vel neque nec dui
-dignissim bibendum. Vivamus id enim. Phasellus neque orci, porta a, aliquet
-quis, semper a, massa. Phasellus purus. Pellentesque tristique imperdiet tortor.
-Nam euismod tellus id erat.
+
+\subsection{Testing loop}
+
+Having the mutation mechanism in place, we can finally sketch the base testing
+loop used by \mutagen.
+%
+
 
 \begin{figure}
 \begin{multicols}{2}
@@ -916,7 +1107,7 @@ Nam euismod tellus id erat.
           Enqueue(QSucc, muts)\;
         }
         \uElseIf{Passed(Parent(x))}{
-          muts $\gets$ Mutants(x, mut, R)\;
+          muts $\gets$ Mutate(x, mut, R)\;
           Enqueue(QDisc, muts)\;
         }
       }
@@ -981,17 +1172,17 @@ Nam vestibulum accumsan nisl.
   \SetKwFor{KwRepeat}{repeat}{times}
   \SetAlgoLined
   \DontPrintSemicolon
-  \SetKwFunction{Muts}{Mutants}
+  \SetKwFunction{Muts}{Mutate}
   \SetKwProg{Fn}{Function}{:}{}
   \Fn{\Muts{x, mut, R}}{
     muts $\gets$ $\varnothing$\;
     \For{pos \KwIn Flatten(Positions(x))}{
       \For{mutant \KwIn Inside(pos, mut, x)}{
         \Switch{mutant}{
-          \Case{PURE $\hat{x}$}{
+          \Case{\texttt{PURE} $\hat{x}$}{
             Enqueue($\hat{x}$, muts)\;
           }
-          \Case{RAND gen}{
+          \Case{\texttt{RAND} gen}{
             \KwRepeat{R}{
               $\hat{x}$ $\gets$ Sample(gen)\;
               Enqueue($\hat{x}$, muts)\;
@@ -1006,6 +1197,10 @@ Nam vestibulum accumsan nisl.
 \end{algorithm}
 
 \end{figure}
+
+
+The next section introduces three heurisitics we added to the base testing loop
+of \mutagen and can that offer a substantial improvement in practice.
 
 
 \section{\mutagen Heuristics}

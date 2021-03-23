@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.6.18)  23 MAR 2021 18:51
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=latex 2020.6.18)  23 MAR 2021 16:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**\nonstopmode\input main.tex
-(./main.tex (./acmart.cls
+**\nonstopmode\input _TZ_34837-obiwan.tex
+(./_TZ_34837-obiwan.tex (./acmart.cls
 Document Class: acmart 2020/11/15 v1.75 Typesetting articles for the Associatio
 n for Computing Machinery
 (/usr/share/texlive/texmf-dist/tex/latex/xkeyval/xkeyval.sty
@@ -227,7 +227,7 @@ Package: pdftexcmds 2019/11/24 v0.31 Utility functions of pdfTeX for LuaTeX (HO
 )
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
-Package pdftexcmds Info: \pdfdraftmode found.
+Package pdftexcmds Info: \pdfdraftmode is ignored in DVI mode.
 )
 (/usr/share/texlive/texmf-dist/tex/generic/kvsetkeys/kvsetkeys.sty
 Package: kvsetkeys 2019/12/15 v1.18 Key value parser (HO)
@@ -319,20 +319,27 @@ Package: atbegshi 2019/12/05 v1.19 At begin shipout hook (HO)
 \c@Item=\count272
 \c@Hfootnote=\count273
 )
-Package hyperref Info: Driver (autodetected): hpdftex.
+Package hyperref Info: Driver (default): hdvips.
 
-(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
-File: hpdftex.def 2020/01/14 v7.00d Hyperref driver for pdfTeX
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hdvips.def
+File: hdvips.def 2020/01/14 v7.00d Hyperref driver for dvips
 
-(/usr/share/texlive/texmf-dist/tex/latex/atveryend/atveryend.sty
-Package: atveryend 2019-12-11 v1.11 Hooks at the very end of document (HO)
-)
-\Fld@listcount=\count274
-\c@bookmark@seq@number=\count275
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pdfmark.def
+File: pdfmark.def 2020/01/14 v7.00d Hyperref definitions for pdfmark specials
+\pdf@docset=\toks28
+\pdf@box=\box48
+\pdf@toks=\toks29
+\pdf@defaulttoks=\toks30
+\HyField@AnnotCount=\count274
+\Fld@listcount=\count275
+\c@bookmark@seq@number=\count276
 
 (/usr/share/texlive/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
 Package: rerunfilecheck 2019/12/05 v1.9 Rerun checks for auxiliary files (HO)
 
+(/usr/share/texlive/texmf-dist/tex/latex/atveryend/atveryend.sty
+Package: atveryend 2019-12-11 v1.11 Hooks at the very end of document (HO)
+)
 (/usr/share/texlive/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
 Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 )
@@ -340,10 +347,29 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 86.
 )
 \Hy@SectionHShift=\skip60
-)
+))
 (/usr/share/texlive/texmf-dist/tex/latex/hyperxmp/hyperxmp.sty
 Package: hyperxmp 2019/04/05 v4.1 Store hyperref metadata in XMP format
 
+(/usr/share/texlive/texmf-dist/tex/latex/atenddvi/atenddvi.sty
+Package: atenddvi 2019-12-11 v1.4 At end DVI hook (HO)
+
+(/usr/share/texlive/texmf-dist/tex/latex/zref/zref-abspage.sty
+Package: zref-abspage 2019/11/29 v2.28 Module abspage for zref (HO)
+
+(/usr/share/texlive/texmf-dist/tex/latex/zref/zref-base.sty
+Package: zref-base 2019/11/29 v2.28 Module base for zref (HO)
+Package zref Info: New property list: main on input line 763.
+Package zref Info: New property: default on input line 764.
+Package zref Info: New property: page on input line 765.
+)
+\c@abspage=\count277
+Package zref Info: New property: abspage on input line 66.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/zref/zref-lastpage.sty
+Package: zref-lastpage 2019/11/29 v2.28 Module lastpage for zref (HO)
+Package zref Info: New property list: LastPage on input line 59.
+))
 (/usr/share/texlive/texmf-dist/tex/generic/stringenc/stringenc.sty
 Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
 )
@@ -369,10 +395,10 @@ Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
 (/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
-Package graphics Info: Driver file: pdftex.def on input line 105.
+Package graphics Info: Driver file: dvips.def on input line 105.
 
-(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def
-File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/dvips.def
+File: dvips.def 2017/06/20 v3.1d Graphics/color driver for dvips
 ))
 \Gin@req@height=\dimen164
 \Gin@req@width=\dimen165
@@ -383,9 +409,11 @@ Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
 (/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
-Package xcolor Info: Driver file: pdftex.def on input line 225.
+Package xcolor Info: Driver file: dvips.def on input line 225.
+\XC@@xcp=\write3
+\openout3 = `_TZ_34837-obiwan.xcp'.
+
 Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
-Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1352.
 Package xcolor Info: Model `RGB' extended on input line 1364.
 Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1366.
 Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1367.
@@ -400,9 +428,9 @@ Package: geometry 2020/01/02 v5.9 Page Geometry
 (/usr/share/texlive/texmf-dist/tex/generic/iftex/ifvtex.sty
 Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 )
-\Gm@cnth=\count276
-\Gm@cntv=\count277
-\c@Gm@tempcnt=\count278
+\Gm@cnth=\count278
+\Gm@cntv=\count279
+\c@Gm@tempcnt=\count280
 \Gm@bindingoffset=\dimen166
 \Gm@wd@mp=\dimen167
 \Gm@odd@mp=\dimen168
@@ -411,7 +439,7 @@ Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 \Gm@layoutheight=\dimen171
 \Gm@layouthoffset=\dimen172
 \Gm@layoutvoffset=\dimen173
-\Gm@dimlist=\toks28
+\Gm@dimlist=\toks31
 )
 (/usr/share/texlive/texmf-dist/tex/latex/ncctools/manyfoot.sty
 Package: manyfoot 2019/08/03 v1.11 Many Footnote Levels Package (NCC)
@@ -422,17 +450,20 @@ Package: nccfoots 2005/02/03 v1.2 NCC Footnotes Package (NCC)
 \MFL@columnwidth=\dimen174
 )
 \footinsauthorsaddresses=\insert252
-\c@footnoteauthorsaddresses=\count279
+\c@footnoteauthorsaddresses=\count281
 \footinscopyrightpermission=\insert251
-\c@footnotecopyrightpermission=\count280
+\c@footnotecopyrightpermission=\count282
 
 (/usr/share/texlive/texmf-dist/tex/generic/pdftex/glyphtounicode.tex)
 (/usr/share/texlive/texmf-dist/tex/latex/cmap/cmap.sty
 Package: cmap 2008/03/06 v1.0h CMap support: searchable PDF
-)
-(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+
+
+Package cmap Warning: pdftex in DVI mode - exiting.
+
+) (/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
 Package: fontenc 2020/02/11 v2.0o Standard LaTeX package
-<<t1.cmap>>)
+)
 (/usr/share/texlive/texmf-dist/tex/latex/libertine/libertine.sty
 Package: libertine 2019/07/01 (Bob Tennent) Supports Libertine and Biolinum fon
 ts for all LaTeX engines.
@@ -463,7 +494,7 @@ LaTeX Info: Redefining \oldstylenums on input line 494.
 Package: zi4 2019/05/17 v1.12
 
 `inconsolata-zi4' v1.12, 2019/05/17 Text macros for Inconsolata (msharpe)
-\zifour@ocount=\count281
+\zifour@ocount=\count283
 )
 (/usr/share/texlive/texmf-dist/tex/latex/newtx/newtxmath.sty
 Package: newtxmath 2020/01/25 v1.624
@@ -472,13 +503,13 @@ Package: newtxmath 2020/01/25 v1.624
 ) (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/centernot.sty
 Package: centernot 2016/05/16 v1.4 Centers the not symbol horizontally (HO)
 )
-\tx@cntz=\count282
+\tx@cntz=\count284
 
 (/usr/share/texlive/texmf-dist/tex/generic/kastrup/binhex.tex)
-\tx@Isdigit=\count283
-\tx@IsAlNum=\count284
-\tx@tA=\toks29
-\tx@tB=\toks30
+\tx@Isdigit=\count285
+\tx@IsAlNum=\count286
+\tx@tA=\toks32
+\tx@tB=\toks33
 \tx@su=\read2
 LaTeX Font Info:    Redeclaring symbol font `operators' on input line 317.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
@@ -573,7 +604,7 @@ LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
 LaTeX Font Info:    Overwriting symbol font `largesymbolsTXA' in version `bold'
 
 (Font)                  U/ntxexa/m/n --> U/ntxexa/b/n on input line 570.
-\tx@sbptoks=\toks31
+\tx@sbptoks=\toks34
 LaTeX Font Info:    Redeclaring math delimiter \lfloor on input line 792.
 LaTeX Font Info:    Redeclaring math delimiter \rfloor on input line 793.
 LaTeX Font Info:    Redeclaring math delimiter \lceil on input line 794.
@@ -587,12 +618,12 @@ LaTeX Font Info:    Redeclaring math delimiter \vert on input line 805.
 LaTeX Font Info:    Redeclaring math accent \dot on input line 876.
 LaTeX Font Info:    Redeclaring math accent \ddot on input line 877.
 LaTeX Font Info:    Redeclaring math accent \vec on input line 1940.
-\ntx@numstart=\count285
-\ntx@UCstart=\count286
-\ntx@lcstart=\count287
-\ntx@tmpc=\count288
-\ntx@imath=\count289
-\ntx@jmath=\count290
+\ntx@numstart=\count287
+\ntx@UCstart=\count288
+\ntx@lcstart=\count289
+\ntx@tmpc=\count290
+\ntx@imath=\count291
+\ntx@jmath=\count292
 LaTeX Info: Redefining \Bbbk on input line 2449.
 LaTeX Info: Redefining \not on input line 2598.
 LaTeX Info: Redefining \textsquare on input line 2628.
@@ -614,25 +645,25 @@ Package caption3 Info: TeX engine: e-TeX on input line 61.
 Package caption Info: AMS or SMF document class detected.
 )
 Package caption Info: AMS or SMF document class.
-\c@caption@flags=\count291
-\c@continuedfloat=\count292
+\c@caption@flags=\count293
+\c@continuedfloat=\count294
 Package caption Info: hyperref package is loaded.
 )
 (/usr/share/texlive/texmf-dist/tex/latex/float/float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
-\c@float@type=\count293
-\float@exts=\toks32
-\float@box=\box48
-\@float@everytoks=\toks33
-\@floatcapt=\box49
+\c@float@type=\count295
+\float@exts=\toks35
+\float@box=\box49
+\@float@everytoks=\toks36
+\@floatcapt=\box50
 )
-\@float@every@sidebar=\toks34
-\c@sidebar=\count294
+\@float@every@sidebar=\toks37
+\c@sidebar=\count296
 \fulltextwidth=\dimen182
 \@ACM@labelwidth=\dimen183
 \listisep=\skip61
-\num@authorgroups=\count295
-\num@authors=\count296
+\num@authorgroups=\count297
+\num@authors=\count298
 \@ACM@badge@width=\skip62
 \@ACM@title@width=\skip63
 \@ACM@badge@skip=\skip64
@@ -642,13 +673,13 @@ Class acmart Info: Printing folios on input line 1488.
 Class acmart Info: Setting authorsperrow to 0 on input line 1493.
 
 (/usr/share/texlive/texmf-dist/tex/latex/comment/comment.sty
-\CommentStream=\write3
+\CommentStream=\write4
 
 Excluding comment 'comment') Excluding comment 'CCSXML'
-\c@@concepts=\count297
-\mktitle@bx=\box50
-\@ACM@commabox=\box51
-\author@bx=\box52
+\c@@concepts=\count299
+\mktitle@bx=\box51
+\@ACM@commabox=\box52
+\author@bx=\box53
 \author@bx@wd=\dimen184
 \author@bx@sep=\skip65
 
@@ -682,28 +713,27 @@ LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
 )
 (/usr/share/texlive/texmf-dist/tex/latex/tools/multicol.sty
 Package: multicol 2019/12/09 v1.8y multicolumn formatting (FMi)
-\c@tracingmulticols=\count298
-\mult@box=\box53
+\c@tracingmulticols=\count300
+\mult@box=\box54
 \multicol@leftmargin=\dimen188
-\c@unbalance=\count299
-\c@collectmore=\count300
-\doublecol@number=\count301
-\multicoltolerance=\count302
-\multicolpretolerance=\count303
+\c@unbalance=\count301
+\c@collectmore=\count302
+\doublecol@number=\count303
+\multicoltolerance=\count304
+\multicolpretolerance=\count305
 \full@width=\dimen189
 \page@free=\dimen190
 \premulticols=\dimen191
 \postmulticols=\dimen192
 \multicolsep=\skip75
 \multicolbaselineskip=\skip76
-\partial@page=\box54
-\last@line=\box55
+\partial@page=\box55
+\last@line=\box56
 \maxbalancingoverflow=\dimen193
-\mult@rightbox=\box56
-\mult@grightbox=\box57
-\mult@gfirstbox=\box58
-\mult@firstbox=\box59
-\@tempa=\box60
+\mult@rightbox=\box57
+\mult@grightbox=\box58
+\mult@gfirstbox=\box59
+\mult@firstbox=\box60
 \@tempa=\box61
 \@tempa=\box62
 \@tempa=\box63
@@ -740,19 +770,20 @@ Package: multicol 2019/12/09 v1.8y multicolumn formatting (FMi)
 \@tempa=\box94
 \@tempa=\box95
 \@tempa=\box96
-\c@minrows=\count304
-\c@columnbadness=\count305
-\c@finalcolumnbadness=\count306
+\@tempa=\box97
+\c@minrows=\count306
+\c@columnbadness=\count307
+\c@finalcolumnbadness=\count308
 \last@try=\dimen194
 \multicolovershoot=\dimen195
 \multicolundershoot=\dimen196
-\mult@nat@firstbox=\box97
-\colbreak@box=\box98
-\mc@col@check@num=\count307
+\mult@nat@firstbox=\box98
+\colbreak@box=\box99
+\mc@col@check@num=\count309
 )
 (/usr/share/texlive/texmf-dist/tex/latex/algorithm2e/algorithm2e.sty
 Package: algorithm2e 2017/07/18 v5.2 algorithms environments
-\c@AlgoLine=\count308
+\c@AlgoLine=\count310
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty
 Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
@@ -761,7 +792,7 @@ Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
 
 (/usr/share/texlive/texmf-dist/tex/latex/ifoddpage/ifoddpage.sty
 Package: ifoddpage 2016/04/23 v1.1 Conditionals for odd/even page detection
-\c@checkoddpage=\count309
+\c@checkoddpage=\count311
 )
 (/usr/share/texlive/texmf-dist/tex/latex/tools/xspace.sty
 Package: xspace 2014/10/28 v1.13 Space after command names (DPC,MH)
@@ -786,38 +817,38 @@ LaTeX Info: Redefining \smaller on input line 151.
 \interspacealgoruled=\dimen258
 \interspacetitleboxruled=\dimen259
 \algocf@ruledwidth=\skip86
-\algocf@inoutbox=\box99
-\algocf@inputbox=\box100
+\algocf@inoutbox=\box100
+\algocf@inputbox=\box101
 \AlCapSkip=\skip87
 \AlCapHSkip=\skip88
 \algoskipindent=\skip89
-\algocf@nlbox=\box101
-\algocf@hangingbox=\box102
-\algocf@untilbox=\box103
+\algocf@nlbox=\box102
+\algocf@hangingbox=\box103
+\algocf@untilbox=\box104
 \algocf@skipuntil=\skip90
-\algocf@capbox=\box104
+\algocf@capbox=\box105
 \algocf@lcaptionbox=\skip91
 \algoheightruledefault=\skip92
 \algoheightrule=\skip93
 \algotitleheightruledefault=\skip94
 \algotitleheightrule=\skip95
-\c@algocfline=\count310
-\c@algocfproc=\count311
-\c@algocf=\count312
-\algocf@algoframe=\box105
-\algocf@algobox=\box106
+\c@algocfline=\count312
+\c@algocfproc=\count313
+\c@algocf=\count314
+\algocf@algoframe=\box106
+\algocf@algobox=\box107
 )
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/frontendlayer/tikz.sty
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/basiclayer/pgf.sty
 (/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgfrcs.sty
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-common.tex
-\pgfutil@everybye=\toks35
+\pgfutil@everybye=\toks38
 \pgfutil@tempdima=\dimen260
 \pgfutil@tempdimb=\dimen261
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-common-lists.t
 ex)) (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-latex.def
-\pgfutil@abb=\box107
+\pgfutil@abb=\box108
 ) (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfrcs.code.tex
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/pgf.revision.tex)
 Package: pgfrcs 2020/01/08 v3.1.5b (3.1.5b)
@@ -830,12 +861,12 @@ Package: pgf 2020/01/08 v3.1.5b (3.1.5b)
 Package: pgfsys 2020/01/08 v3.1.5b (3.1.5b)
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex
-\pgfkeys@pathtoks=\toks36
-\pgfkeys@temptoks=\toks37
+\pgfkeys@pathtoks=\toks39
+\pgfkeys@temptoks=\toks40
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeysfiltered.code.t
 ex
-\pgfkeys@tmptoks=\toks38
+\pgfkeys@tmptoks=\toks41
 ))
 \pgf@x=\dimen262
 \pgf@y=\dimen263
@@ -847,33 +878,34 @@ ex
 \pgf@yc=\dimen269
 \pgf@xd=\dimen270
 \pgf@yd=\dimen271
-\w@pgf@writea=\write4
+\w@pgf@writea=\write5
 \r@pgf@reada=\read3
-\c@pgf@counta=\count313
-\c@pgf@countb=\count314
-\c@pgf@countc=\count315
-\c@pgf@countd=\count316
-\t@pgf@toka=\toks39
-\t@pgf@tokb=\toks40
-\t@pgf@tokc=\toks41
-\pgf@sys@id@count=\count317
+\c@pgf@counta=\count315
+\c@pgf@countb=\count316
+\c@pgf@countc=\count317
+\c@pgf@countd=\count318
+\t@pgf@toka=\toks42
+\t@pgf@tokb=\toks43
+\t@pgf@tokc=\toks44
+\pgf@sys@id@count=\count319
  (/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgf.cfg
 File: pgf.cfg 2020/01/08 v3.1.5b (3.1.5b)
 )
-Driver file for pgf: pgfsys-pdftex.def
+Driver file for pgf: pgfsys-dvips.def
 
-(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-pdftex.def
-File: pgfsys-pdftex.def 2020/01/08 v3.1.5b (3.1.5b)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-dvips.def
+File: pgfsys-dvips.def 2020/01/08 v3.1.5b (3.1.5b)
 
-(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-common-pdf.de
-f
-File: pgfsys-common-pdf.def 2020/01/08 v3.1.5b (3.1.5b)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-common-postsc
+ript.def
+File: pgfsys-common-postscript.def 2020/01/08 v3.1.5b (3.1.5b)
+\pgf@objectcount=\count320
 )))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsyssoftpath.code.
 tex
 File: pgfsyssoftpath.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgfsyssoftpath@smallbuffer@items=\count318
-\pgfsyssoftpath@bigbuffer@items=\count319
+\pgfsyssoftpath@smallbuffer@items=\count321
+\pgfsyssoftpath@bigbuffer@items=\count322
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/systemlayer/pgfsysprotocol.code.
 tex
@@ -887,11 +919,11 @@ Package: pgfcore 2020/01/08 v3.1.5b (3.1.5b)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathutil.code.tex)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathparser.code.tex
 \pgfmath@dimen=\dimen272
-\pgfmath@count=\count320
-\pgfmath@box=\box108
-\pgfmath@toks=\toks42
-\pgfmath@stack@operand=\toks43
-\pgfmath@stack@operation=\toks44
+\pgfmath@count=\count323
+\pgfmath@box=\box109
+\pgfmath@toks=\toks45
+\pgfmath@stack@operand=\toks46
+\pgfmath@stack@operation=\toks47
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.code.tex
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.basic.code
@@ -911,7 +943,7 @@ tex)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.integerari
 thmetics.code.tex)))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmathfloat.code.tex
-\c@pgfmathroundto@lastzeros=\count321
+\c@pgfmathroundto@lastzeros=\count324
 ))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfint.code.tex)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepoints.code.te
@@ -947,10 +979,10 @@ File: pgfcorepathusage.code.tex 2020/01/08 v3.1.5b (3.1.5b)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorescopes.code.te
 x
 File: pgfcorescopes.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgfpic=\box109
-\pgf@hbox=\box110
-\pgf@layerbox@main=\box111
-\pgf@picture@serial@count=\count322
+\pgfpic=\box110
+\pgf@hbox=\box111
+\pgf@layerbox@main=\box112
+\pgf@picture@serial@count=\count325
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoregraphicstate.c
 ode.tex
@@ -983,8 +1015,8 @@ File: pgfcorearrows.code.tex 2020/01/08 v3.1.5b (3.1.5b)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreshade.code.tex
 File: pgfcoreshade.code.tex 2020/01/08 v3.1.5b (3.1.5b)
 \pgf@max=\dimen296
-\pgf@sys@shading@range@num=\count323
-\pgf@shadingcount=\count324
+\pgf@sys@shading@range@num=\count326
+\pgf@shadingcount=\count327
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreimage.code.tex
 File: pgfcoreimage.code.tex 2020/01/08 v3.1.5b (3.1.5b)
@@ -992,7 +1024,7 @@ File: pgfcoreimage.code.tex 2020/01/08 v3.1.5b (3.1.5b)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreexternal.code.
 tex
 File: pgfcoreexternal.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgfexternal@startupbox=\box112
+\pgfexternal@startupbox=\box113
 ))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/basiclayer/pgfcorelayers.code.te
 x
@@ -1011,7 +1043,7 @@ File: pgfcorerdf.code.tex 2020/01/08 v3.1.5b (3.1.5b)
 )))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmoduleshapes.code.tex
 File: pgfmoduleshapes.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgfnodeparttextbox=\box113
+\pgfnodeparttextbox=\box114
 ) (/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmoduleplot.code.tex
 File: pgfmoduleplot.code.tex 2020/01/08 v3.1.5b (3.1.5b)
 )
@@ -1035,8 +1067,8 @@ Package: pgffor 2020/01/08 v3.1.5b (3.1.5b)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex)
 \pgffor@iter=\dimen299
 \pgffor@skip=\dimen300
-\pgffor@stack=\toks45
-\pgffor@toks=\toks46
+\pgffor@stack=\toks48
+\pgffor@toks=\toks49
 ))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/tikz.code.tex
 Package: tikz 2020/01/08 v3.1.5b (3.1.5b)
@@ -1044,7 +1076,7 @@ Package: tikz 2020/01/08 v3.1.5b (3.1.5b)
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/pgflibraryplothandlers
 .code.tex
 File: pgflibraryplothandlers.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgf@plot@mark@count=\count325
+\pgf@plot@mark@count=\count328
 \pgfplotmarksize=\dimen301
 )
 \tikz@lastx=\dimen302
@@ -1055,22 +1087,22 @@ File: pgflibraryplothandlers.code.tex 2020/01/08 v3.1.5b (3.1.5b)
 \tikz@lastmovetoy=\dimen307
 \tikzleveldistance=\dimen308
 \tikzsiblingdistance=\dimen309
-\tikz@figbox=\box114
-\tikz@figbox@bg=\box115
-\tikz@tempbox=\box116
-\tikz@tempbox@bg=\box117
-\tikztreelevel=\count326
-\tikznumberofchildren=\count327
-\tikznumberofcurrentchild=\count328
-\tikz@fig@count=\count329
+\tikz@figbox=\box115
+\tikz@figbox@bg=\box116
+\tikz@tempbox=\box117
+\tikz@tempbox@bg=\box118
+\tikztreelevel=\count329
+\tikznumberofchildren=\count330
+\tikznumberofcurrentchild=\count331
+\tikz@fig@count=\count332
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmodulematrix.code.tex
 File: pgfmodulematrix.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgfmatrixcurrentrow=\count330
-\pgfmatrixcurrentcolumn=\count331
-\pgf@matrix@numberofcolumns=\count332
+\pgfmatrixcurrentrow=\count333
+\pgfmatrixcurrentcolumn=\count334
+\pgf@matrix@numberofcolumns=\count335
 )
-\tikz@expandcount=\count333
+\tikz@expandcount=\count336
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
 zlibrarytopaths.code.tex
@@ -1083,18 +1115,23 @@ Package: tikzscale 2013/05/22 v0.2.6 tikzscale LaTeX package
 (/usr/share/texlive/texmf-dist/tex/latex/l3kernel/expl3.sty
 Package: expl3 2020-02-14 L3 programming layer (loader) 
 
-(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdfmode.def
-File: l3backend-pdfmode.def 2020-02-03 L3 backend support: PDF mode
-\l__kernel_color_stack_int=\count334
-\l__pdf_internal_box=\box118
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-dvips.def
+File: l3backend-dvips.def 2020-02-03 L3 backend support: dvips
+\l__pdf_internal_box=\box119
+\g__pdf_backend_object_int=\count337
+\l__pdf_backend_content_box=\box120
+\l__pdf_backend_model_box=\box121
+\g__pdf_backend_annotation_int=\count338
+\g__pdf_backend_link_int=\count339
+\g__pdf_backend_link_sf_int=\count340
 ))
 Package: xparse 2020-02-14 L3 Experimental document command parser
-\l__xparse_current_arg_int=\count335
-\g__xparse_grabber_int=\count336
-\l__xparse_m_args_int=\count337
-\l__xparse_v_nesting_int=\count338
+\l__xparse_current_arg_int=\count341
+\g__xparse_grabber_int=\count342
+\l__xparse_m_args_int=\count343
+\l__xparse_v_nesting_int=\count344
 )
-\tikzscale@measuredSize=\box119
+\tikzscale@measuredSize=\box122
 )
 (/usr/share/texlive/texmf-dist/tex/latex/pgfplots/pgfplots.sty
 (/usr/share/texlive/texmf-dist/tex/generic/pgfplots/pgfplots.revision.tex)
@@ -1102,12 +1139,12 @@ Package: pgfplots 2018/03/28 v1.16 Data Visualization (1.16)
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgfplots/pgfplots.code.tex
 (/usr/share/texlive/texmf-dist/tex/generic/pgfplots/pgfplotscore.code.tex
-\t@pgfplots@toka=\toks47
-\t@pgfplots@tokb=\toks48
-\t@pgfplots@tokc=\toks49
+\t@pgfplots@toka=\toks50
+\t@pgfplots@tokb=\toks51
+\t@pgfplots@tokc=\toks52
 \pgfplots@tmpa=\dimen310
-\c@pgfplots@coordindex=\count339
-\c@pgfplots@scanlineindex=\count340
+\c@pgfplots@coordindex=\count345
+\c@pgfplots@scanlineindex=\count346
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgfplots/sys/pgfplotssysgeneric.code
 .tex))
@@ -1124,14 +1161,14 @@ tructure.code.tex)
 tructureext.code.tex)
 (/usr/share/texlive/texmf-dist/tex/generic/pgfplots/liststructure/pgfplotsarray
 .code.tex
-\c@pgfplotsarray@tmp=\count341
+\c@pgfplotsarray@tmp=\count347
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgfplots/liststructure/pgfplotsmatri
 x.code.tex)
 (/usr/share/texlive/texmf-dist/tex/generic/pgfplots/numtable/pgfplotstableshare
 d.code.tex
-\c@pgfplotstable@counta=\count342
-\t@pgfplotstable@a=\toks50
+\c@pgfplotstable@counta=\count348
+\t@pgfplotstable@a=\toks53
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgfplots/liststructure/pgfplotsdeque
 .code.tex)
@@ -1143,10 +1180,10 @@ de.tex))
 .tex)
 (/usr/share/texlive/texmf-dist/tex/generic/pgfplots/libs/pgflibrarypgfplots.sur
 fshading.code.tex
-\c@pgfplotslibrarysurf@no=\count343
+\c@pgfplotslibrarysurf@no=\count349
 
 (/usr/share/texlive/texmf-dist/tex/generic/pgfplots/sys/pgflibrarypgfplots.surf
-shading.pgfsys-pdftex.def)))
+shading.pgfsys-dvips.def)))
 (/usr/share/texlive/texmf-dist/tex/generic/pgfplots/util/pgfplotscolormap.code.
 tex
 (/usr/share/texlive/texmf-dist/tex/generic/pgfplots/util/pgfplotscolor.code.tex
@@ -1175,11 +1212,11 @@ e.tex
 \pgfdecoratedinputsegmentcompleteddistance=\dimen313
 \pgfdecoratedinputsegmentremainingdistance=\dimen314
 \pgf@decorate@distancetomove=\dimen315
-\pgf@decorate@repeatstate=\count344
+\pgf@decorate@repeatstate=\count350
 \pgfdecorationsegmentamplitude=\dimen316
 \pgfdecorationsegmentlength=\dimen317
 )
-\tikz@lib@dec@box=\box120
+\tikz@lib@dec@box=\box123
 )
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
 zlibrarydecorations.pathmorphing.code.tex
@@ -1189,7 +1226,7 @@ decorations.pathmorphing.code.tex))
 zlibrarydecorations.pathreplacing.code.tex
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/decorations/pgflibrary
 decorations.pathreplacing.code.tex))
-\pgfplots@numplots=\count345
+\pgfplots@numplots=\count351
 \pgfplots@xmin@reg=\dimen318
 \pgfplots@xmax@reg=\dimen319
 \pgfplots@ymin@reg=\dimen320
@@ -1210,123 +1247,114 @@ Package: paralist 2017/01/22 v2.7 Extended list environments
 \plpartopsep=\skip97
 \plitemsep=\skip98
 \plparsep=\skip99
-\pl@lab=\toks51
+\pl@lab=\toks54
 )
-(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
-zlibrarytrees.code.tex
-File: tikzlibrarytrees.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-)
-Package hyperref Info: Option `pdfdisplaydoctitle' set `true' on input line 84.
+Package hyperref Info: Option `pdfdisplaydoctitle' set `true' on input line 82.
 
-\c@theorem=\count346
- Excluding comment 'screenonly'
-Include comment 'printonly' Excluding comment 'anonsuppress'
-Excluding comment 'acks'
+\c@theorem=\count352
+
+Excluding comment 'screenonly' Include comment 'printonly'
+Excluding comment 'anonsuppress' Excluding comment 'acks'
 \tikzscale@accuracy=\skip100
- (./main.aux)
-\openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/nxlmi/m/it on input line 84.
+No file _TZ_34837-obiwan.aux.
+\openout1 = `_TZ_34837-obiwan.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/nxlmi/m/it on input line 82.
 LaTeX Font Info:    Trying to load font information for OML+nxlmi on input line
- 84.
-
+ 82.
 (/usr/share/texlive/texmf-dist/tex/latex/newtx/omlnxlmi.fd
 File: omlnxlmi.fd 2013/11/19 Fontinst v1.933 font definitions for OML/nxlmi.
 )
-LaTeX Font Info:    ... okay on input line 84.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 84.
-LaTeX Font Info:    ... okay on input line 84.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 84.
-LaTeX Font Info:    ... okay on input line 84.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 84.
-LaTeX Font Info:    ... okay on input line 84.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 84.
-LaTeX Font Info:    ... okay on input line 84.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 84.
-LaTeX Font Info:    ... okay on input line 84.
-LaTeX Font Info:    Checking defaults for U/ntxexa/m/n on input line 84.
+LaTeX Font Info:    ... okay on input line 82.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 82.
+LaTeX Font Info:    ... okay on input line 82.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 82.
+LaTeX Font Info:    ... okay on input line 82.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 82.
+LaTeX Font Info:    ... okay on input line 82.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 82.
+LaTeX Font Info:    ... okay on input line 82.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 82.
+LaTeX Font Info:    ... okay on input line 82.
+LaTeX Font Info:    Checking defaults for U/ntxexa/m/n on input line 82.
 LaTeX Font Info:    Trying to load font information for U+ntxexa on input line 
-84.
+82.
 
 (/usr/share/texlive/texmf-dist/tex/latex/newtx/untxexa.fd
 File: untxexa.fd 2012/04/16 Fontinst v1.933 font definitions for U/ntxexa.
 )
-LaTeX Font Info:    ... okay on input line 84.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 84.
-LaTeX Font Info:    ... okay on input line 84.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 84.
-LaTeX Font Info:    ... okay on input line 84.
-LaTeX Font Info:    Checking defaults for LMS/ntxsy/m/n on input line 84.
+LaTeX Font Info:    ... okay on input line 82.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 82.
+LaTeX Font Info:    ... okay on input line 82.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 82.
+LaTeX Font Info:    ... okay on input line 82.
+LaTeX Font Info:    Checking defaults for LMS/ntxsy/m/n on input line 82.
 LaTeX Font Info:    Trying to load font information for LMS+ntxsy on input line
- 84.
+ 82.
 
 (/usr/share/texlive/texmf-dist/tex/latex/newtx/lmsntxsy.fd
 File: lmsntxsy.fd 2016/07/02 Fontinst v1.933 font definitions for LMS/ntxsy.
 )
-LaTeX Font Info:    ... okay on input line 84.
-LaTeX Font Info:    Checking defaults for LMX/ntxexx/m/n on input line 84.
+LaTeX Font Info:    ... okay on input line 82.
+LaTeX Font Info:    Checking defaults for LMX/ntxexx/m/n on input line 82.
 LaTeX Font Info:    Trying to load font information for LMX+ntxexx on input lin
-e 84.
+e 82.
 
 (/usr/share/texlive/texmf-dist/tex/latex/newtx/lmxntxexx.fd
 File: lmxntxexx.fd 2016/07/03 Fontinst v1.933 font definitions for LMX/ntxexx.
 )
-LaTeX Font Info:    ... okay on input line 84.
+LaTeX Font Info:    ... okay on input line 82.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 8.0pt on input line 84.
+(Font)              scaled to size 8.0pt on input line 82.
 LaTeX Font Info:    Trying to load font information for OT1+LinuxLibertineT-TLF
- on input line 84.
+ on input line 82.
 
 (/usr/share/texlive/texmf-dist/tex/latex/libertine/OT1LinuxLibertineT-TLF.fd
 File: OT1LinuxLibertineT-TLF.fd 2017/03/20 (autoinst) Font definitions for OT1/
 LinuxLibertineT-TLF.
 )
 LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 8.0pt on input line 84.
-<<ot1.cmap>>
+(Font)              scaled to size 8.0pt on input line 82.
 LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 6.2pt on input line 84.
+(Font)              scaled to size 6.2pt on input line 82.
 LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 5.5pt on input line 84.
-<<oml.cmap>>
-LaTeX Font Info:    Trying to load font information for U+msa on input line 84.
+(Font)              scaled to size 5.5pt on input line 82.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 82.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 84.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 82.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Trying to load font information for U+ntxmia on input line 
-84.
+82.
 
 (/usr/share/texlive/texmf-dist/tex/latex/newtx/untxmia.fd
 File: untxmia.fd 2018/04/14 Fontinst v1.933 font definitions for U/ntxmia.
 )
 LaTeX Font Info:    Trying to load font information for U+ntxsym on input line 
-84.
+82.
 
 (/usr/share/texlive/texmf-dist/tex/latex/newtx/untxsym.fd
 File: untxsym.fd 2015/03/20 Fontinst v1.933 font definitions for U/ntxsym.
 )
 LaTeX Font Info:    Trying to load font information for U+ntxsyc on input line 
-84.
+82.
 
 (/usr/share/texlive/texmf-dist/tex/latex/newtx/untxsyc.fd
 File: untxsyc.fd 2012/04/12 Fontinst v1.933 font definitions for U/ntxsyc.
 )
-LaTeX Info: Redefining \microtypecontext on input line 84.
-Package microtype Info: Generating PDF output.
+LaTeX Info: Redefining \microtypecontext on input line 82.
+Package microtype Info: Generating DVI output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
-Package microtype Info: Automatic font expansion enabled (level 2),
-(microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
-Package microtype Info: Using default expansion set `basictext'.
-LaTeX Info: Redefining \showhyphens on input line 84.
+Package microtype Info: No font expansion.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -1336,8 +1364,8 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             See the microtype manual for details.
 
 ABD: EveryShipout initializing macros
-\AtBeginShipoutBox=\box121
-Package hyperref Info: Link coloring OFF on input line 84.
+\AtBeginShipoutBox=\box124
+Package hyperref Info: Link coloring OFF on input line 82.
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
@@ -1345,16 +1373,17 @@ Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
 (/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count347
+\c@section@level=\count353
 )
-LaTeX Info: Redefining \ref on input line 84.
-LaTeX Info: Redefining \pageref on input line 84.
-LaTeX Info: Redefining \nameref on input line 84.
+LaTeX Info: Redefining \ref on input line 82.
+LaTeX Info: Redefining \pageref on input line 82.
+LaTeX Info: Redefining \nameref on input line 82.
+\@outlinefile=\write6
+\openout6 = `_TZ_34837-obiwan.out'.
 
-(./main.out) (./main.out)
-\@outlinefile=\write5
-\openout5 = `main.out'.
 
+
+Package hyperref Warning: Rerun to get /PageLabels entry.
 
 (/usr/share/texlive/texmf-dist/tex/generic/stringenc/se-pdfdoc.def
 File: se-pdfdoc.def 2019/11/29 v1.12 stringenc: PDFDocEncoding
@@ -1362,32 +1391,10 @@ File: se-pdfdoc.def 2019/11/29 v1.12 stringenc: PDFDocEncoding
 (/usr/share/texlive/texmf-dist/tex/generic/stringenc/se-utf8.def
 File: se-utf8.def 2019/11/29 v1.12 stringenc: UTF-8
 )
-(/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
-[Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count348
-\scratchdimen=\dimen324
-\scratchbox=\box122
-\nofMPsegments=\count349
-\nofMParguments=\count350
-\everyMPshowfont=\toks52
-\MPscratchCnt=\count351
-\MPscratchDim=\dimen325
-\MPnumerator=\count352
-\makeMPintoPDFobject=\count353
-\everyMPtoPDFconversion=\toks53
-) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
-Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
-Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
-85.
-
-(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
-File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
-e
-))
 *geometry* driver: auto-detecting
-*geometry* detected driver: pdftex
+*geometry* detected driver: dvips
 *geometry* verbose mode - [ preamble ] result:
-* driver: pdftex
+* driver: dvips
 * paper: custom
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
@@ -1431,571 +1438,91 @@ Package caption Info: End \AtBeginDocument code.
 Package pgfplots notification 'compat/show suggested version=true': you might b
 enefit from \pgfplotsset{compat=1.16} (current compat level: 1.3).
 
-Excluding 'CCSXML' comment.
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 14.4pt on input line 161.
 LaTeX Font Info:    Trying to load font information for T1+LinuxBiolinumT-TLF o
-n input line 161.
-
+n input line 85.
 (/usr/share/texlive/texmf-dist/tex/latex/libertine/T1LinuxBiolinumT-TLF.fd
 File: T1LinuxBiolinumT-TLF.fd 2017/03/20 (autoinst) Font definitions for T1/Lin
 uxBiolinumT-TLF.
 )
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
-(Font)              scaled to size 14.4pt on input line 161.
+(Font)              scaled to size 10.0pt on input line 85.
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `LinuxBiolinumT-TLF' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/b/n' will be
-(Font)              scaled to size 14.4pt on input line 161.
+(Font)              scaled to size 10.0pt on input line 85.
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/b/sc' will be
-(Font)              scaled to size 14.4pt on input line 161.
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 10.95pt on input line 161.
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
-(Font)              scaled to size 10.95pt on input line 161.
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/it' will be
-(Font)              scaled to size 8.0pt on input line 161.
-LaTeX Font Info:    Trying to load font information for TS1+LinuxLibertineT-TLF
- on input line 161.
-
-(/usr/share/texlive/texmf-dist/tex/latex/libertine/TS1LinuxLibertineT-TLF.fd
-File: TS1LinuxLibertineT-TLF.fd 2017/03/20 (autoinst) Font definitions for TS1/
-LinuxLibertineT-TLF.
-)
-LaTeX Font Info:    Font shape `TS1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 8.0pt on input line 161.
-Package microtype Info: Loading generic protrusion settings for font family
-(microtype)             `LinuxLibertineT-TLF' (encoding: TS1).
-(microtype)             For optimal results, create family-specific settings.
-(microtype)             See the microtype manual for details.
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 9.0pt on input line 161.
-
-
-Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 161.
-
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
-(Font)              scaled to size 9.0pt on input line 161.
+(Font)              scaled to size 10.0pt on input line 85.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/sc' will be
-(Font)              scaled to size 9.0pt on input line 161.
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/it' will be
-(Font)              scaled to size 9.0pt on input line 161.
-LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 9.0pt on input line 161.
-Package microtype Info: Loading generic protrusion settings for font family
-(microtype)             `LinuxLibertineT-TLF' (encoding: OT1).
-(microtype)             For optimal results, create family-specific settings.
-(microtype)             See the microtype manual for details.
-LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 7.3pt on input line 161.
-(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msa.cfg
-File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
-)
-(/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msb.cfg
-File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
-)
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
-(Font)              scaled to size 10.0pt on input line 165.
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/b/n' will be
-(Font)              scaled to size 10.0pt on input line 165.
-LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 10.0pt on input line 181.
- [1.1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/it' will be
-(Font)              scaled to size 10.0pt on input line 209.
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/sc' will be
-(Font)              scaled to size 10.0pt on input line 214.
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/b/it' in size <10> not av
-ailable
-(Font)              Font shape `T1/LinuxBiolinumT-TLF/b/sl' tried instead on in
-put line 219.
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/b/sl' will be
-(Font)              scaled to size 10.0pt on input line 219.
+(Font)              scaled to size 10.0pt on input line 88.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
-(Font)              scaled to size 10.0pt on input line 224.
+(Font)              scaled to size 10.0pt on input line 91.
 
 
-Package natbib Warning: Citation `quickcheck' on page 2 undefined on input line
- 224.
+LaTeX Warning: Reference `sec:heuristics' on page 1 undefined on input line 91.
 
-LaTeX Font Info:    Trying to load font information for T1+zi4 on input line 27
-3.
+
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/it' will be
+(Font)              scaled to size 10.0pt on input line 94.
+
+Package natbib Warning: Citation `feat' on page 1 undefined on input line 118.
+
+LaTeX Font Info:    Trying to load font information for T1+zi4 on input line 14
+7.
 (/usr/share/texlive/texmf-dist/tex/latex/inconsolata/t1zi4.fd
 File: t1zi4.fd 2018/01/14 T1/zi4 (Inconsolata)
 )
 LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 10.0pt on input line 273.
+(Font)              scaled to size 10.0pt on input line 147.
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `zi4' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
-(Font)              scaled to size 8.0pt on input line 293.
- [2.2]
 LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 8.0pt on input line 294.
+(Font)              scaled to size 8.0pt on input line 147.
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/sc' will be
-(Font)              scaled to size 8.0pt on input line 401.
- [3.3]
-[4.4]
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/it' will be
-(Font)              scaled to size 10.0pt on input line 553.
-
-
-Class acmart Warning: A possible image without description on input line 664.
-
-LaTeX Font Info:    Trying to load font information for TS1+zi4 on input line 7
-01.
-(/usr/share/texlive/texmf-dist/tex/latex/inconsolata/ts1zi4.fd
-File: ts1zi4.fd 2018/01/14 TS1/zi4 (Inconsolata)
-)
-LaTeX Font Info:    Font shape `TS1/zi4/m/n' will be
-(Font)              scaled to size 8.0pt on input line 701.
-Package microtype Info: Loading generic protrusion settings for font family
-(microtype)             `zi4' (encoding: TS1).
-(microtype)             For optimal results, create family-specific settings.
-(microtype)             See the microtype manual for details.
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
-(Font)              scaled to size 9.0pt on input line 702.
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/it' will be
-(Font)              scaled to size 9.0pt on input line 702.
-LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 9.0pt on input line 702.
-
-
-Class acmart Warning: A possible image without description on input line 703.
-
-[5.5] [6.6]
-Underfull \vbox (badness 3250) has occurred while \output is active []
-
- [7.7]
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/b/sc' will be
-(Font)              scaled to size 10.0pt on input line 851.
-
-
-Package natbib Warning: Citation `feat' on page 8 undefined on input line 884.
-
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/sc' will be
-(Font)              scaled to size 9.0pt on input line 965.
-
-Class acmart Warning: A possible image without description on input line 966.
-
-
-Underfull \vbox (badness 5985) has occurred while \output is active []
-
- [8.8]
-
-LaTeX Font Warning: Command \small invalid in math mode on input line 1017.
-
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 7.3pt on input line 1017.
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 5.5pt on input line 1017.
-
-Class acmart Warning: A possible image without description on input line 1155.
-
-[9.9]
-
-Class acmart Warning: A possible image without description on input line 1199.
-
-
-Underfull \vbox (badness 3019) has occurred while \output is active []
-
- [10.10]
-
-Class acmart Warning: A possible image without description on input line 1312.
-
-[11.11] [12.12]
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/scit' will be
-(Font)              scaled to size 10.0pt on input line 1463.
-
-Underfull \vbox (badness 1067) has occurred while \output is active []
-
- [13.13]
-(./tikz/ifc-mttf.tikz) (./tikz/ifc-mttf.tikz) (./tikz/ifc-mttf.tikz)
-(./tikz/ifc-mttf.tikz) (./tikz/ifc-mttf.tikz) (./tikz/ifc-fr.tikz
-Missing character: There is no ] in font nullfont!
-)
-(./tikz/ifc-fr.tikz
-Missing character: There is no ] in font nullfont!
-) (./tikz/ifc-fr.tikz
-Missing character: There is no ] in font nullfont!
-) (./tikz/ifc-fr.tikz
-Missing character: There is no ] in font nullfont!
-)
-(./tikz/ifc-fr.tikz
-Missing character: There is no ] in font nullfont!
-)
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [14.14]
-(./tikz/wasm-mttf.tikz
-Missing character: There is no ] in font nullfont!
-
-NOTE: coordinate (1Y4.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y5.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y2.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y3.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y7.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.0e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y6.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y9.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y8.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-
-Package pgfplots Warning: the current plot has no coordinates (or all have been
- filtered away) on input line 43.
-
- [warning /pgfplots/warning/plot without coordinates]
-Missing character: There is no ] in font nullfont!
-NOTE: coordinate (1Y1.4e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.5e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.2e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.1e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.3e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-
-Package pgfplots Warning: the current plot has no coordinates (or all have been
- filtered away) on input line 144.
-
- [warning /pgfplots/warning/plot without coordinates]
-) (./tikz/wasm-mttf.tikz
-Missing character: There is no ] in font nullfont!
-
-NOTE: coordinate (1Y4.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y5.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y2.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y3.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y7.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.0e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y6.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y9.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y8.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-
-Package pgfplots Warning: the current plot has no coordinates (or all have been
- filtered away) on input line 43.
-
- [warning /pgfplots/warning/plot without coordinates]
-Missing character: There is no ] in font nullfont!
-NOTE: coordinate (1Y1.4e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.5e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.2e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.1e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.3e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-
-Package pgfplots Warning: the current plot has no coordinates (or all have been
- filtered away) on input line 144.
-
- [warning /pgfplots/warning/plot without coordinates]
-) (./tikz/wasm-mttf.tikz
-Missing character: There is no ] in font nullfont!
-
-NOTE: coordinate (1Y4.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y5.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y2.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y3.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y7.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.0e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y6.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y9.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y8.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-
-Package pgfplots Warning: the current plot has no coordinates (or all have been
- filtered away) on input line 43.
-
- [warning /pgfplots/warning/plot without coordinates]
-Missing character: There is no ] in font nullfont!
-NOTE: coordinate (1Y1.4e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.5e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.2e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.1e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.3e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-
-Package pgfplots Warning: the current plot has no coordinates (or all have been
- filtered away) on input line 144.
-
- [warning /pgfplots/warning/plot without coordinates]
-) (./tikz/wasm-mttf.tikz
-Missing character: There is no ] in font nullfont!
-
-NOTE: coordinate (1Y4.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y5.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y2.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y3.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y7.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.0e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y6.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y9.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y8.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-
-Package pgfplots Warning: the current plot has no coordinates (or all have been
- filtered away) on input line 43.
-
- [warning /pgfplots/warning/plot without coordinates]
-Missing character: There is no ] in font nullfont!
-NOTE: coordinate (1Y1.4e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.5e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.2e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.1e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.3e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-
-Package pgfplots Warning: the current plot has no coordinates (or all have been
- filtered away) on input line 144.
-
- [warning /pgfplots/warning/plot without coordinates]
-) (./tikz/wasm-mttf.tikz
-Missing character: There is no ] in font nullfont!
-
-NOTE: coordinate (1Y4.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y5.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y2.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y3.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y7.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.0e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y6.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y9.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y8.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-
-Package pgfplots Warning: the current plot has no coordinates (or all have been
- filtered away) on input line 43.
-
- [warning /pgfplots/warning/plot without coordinates]
-Missing character: There is no ] in font nullfont!
-NOTE: coordinate (1Y1.4e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.5e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.2e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.1e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.3e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-
-Package pgfplots Warning: the current plot has no coordinates (or all have been
- filtered away) on input line 144.
-
- [warning /pgfplots/warning/plot without coordinates]
-) (./tikz/wasm-fr.tikz
-Missing character: There is no ] in font nullfont!
-Missing character: There is no ] in font nullfont!
-) (./tikz/wasm-fr.tikz
-Missing character: There is no ] in font nullfont!
-Missing character: There is no ] in font nullfont!
-) (./tikz/wasm-fr.tikz
-Missing character: There is no ] in font nullfont!
-Missing character: There is no ] in font nullfont!
-)
-(./tikz/wasm-fr.tikz
-Missing character: There is no ] in font nullfont!
-Missing character: There is no ] in font nullfont!
-) (./tikz/wasm-fr.tikz
-Missing character: There is no ] in font nullfont!
-Missing character: There is no ] in font nullfont!
-)
-
-Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 1539.
-
-(./tikz/wasm-legend.tikz
-Missing character: There is no ] in font nullfont!
-
-
-Package pgfplots Warning: Axis range for axis x is approximately empty; enlargi
-ng it (it is [0.0:0.0]) on input line 56.
-
- [warning /pgfplots/warning/approx empty range enlarged]
-
-Package pgfplots Warning: Axis range for axis y is approximately empty; enlargi
-ng it (it is [0.0:0.0]) on input line 56.
-
- [warning /pgfplots/warning/approx empty range enlarged]
-) (./tikz/wasm-legend.tikz
-Missing character: There is no ] in font nullfont!
-
-
-Package pgfplots Warning: Axis range for axis x is approximately empty; enlargi
-ng it (it is [0.0:0.0]) on input line 56.
-
- [warning /pgfplots/warning/approx empty range enlarged]
-
-Package pgfplots Warning: Axis range for axis y is approximately empty; enlargi
-ng it (it is [0.0:0.0]) on input line 56.
-
- [warning /pgfplots/warning/approx empty range enlarged]
-) (./tikz/wasm-legend.tikz
-Missing character: There is no ] in font nullfont!
-
-
-Package pgfplots Warning: Axis range for axis x is approximately empty; enlargi
-ng it (it is [0.0:0.0]) on input line 56.
-
- [warning /pgfplots/warning/approx empty range enlarged]
-
-Package pgfplots Warning: Axis range for axis y is approximately empty; enlargi
-ng it (it is [0.0:0.0]) on input line 56.
-
- [warning /pgfplots/warning/approx empty range enlarged]
-) (./tikz/wasm-legend.tikz
-Missing character: There is no ] in font nullfont!
-
-
-Package pgfplots Warning: Axis range for axis x is approximately empty; enlargi
-ng it (it is [0.0:0.0]) on input line 56.
-
- [warning /pgfplots/warning/approx empty range enlarged]
-
-Package pgfplots Warning: Axis range for axis y is approximately empty; enlargi
-ng it (it is [0.0:0.0]) on input line 56.
-
- [warning /pgfplots/warning/approx empty range enlarged]
-) (./tikz/wasm-legend.tikz
-Missing character: There is no ] in font nullfont!
-
-
-Package pgfplots Warning: Axis range for axis x is approximately empty; enlargi
-ng it (it is [0.0:0.0]) on input line 56.
-
- [warning /pgfplots/warning/approx empty range enlarged]
-
-Package pgfplots Warning: Axis range for axis y is approximately empty; enlargi
-ng it (it is [0.0:0.0]) on input line 56.
-
- [warning /pgfplots/warning/approx empty range enlarged]
-) [15.15] (./main.bbl [16.16])
 
 Package natbib Warning: There were undefined citations.
 
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 7.0pt on input line 162.
 
-Class acmart Warning: Some images may lack descriptions.
+LaTeX Warning: Reference `LastPage' on page 1 undefined on input line 162.
+
+[1.1]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 162.
+Package atveryend Info: Executing hook `AfterLastShipout' on input line 162.
+ (./_TZ_34837-obiwan.aux
+
+Package atenddvi Warning: Rerun LaTeX, last page not yet found.
+
+)
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 162.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 162.
 
 
-Class acmart Warning: CCS concepts are mandatory for papers over two pages.
+Package rerunfilecheck Warning: File `_TZ_34837-obiwan.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
 
-[17.17]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1662.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1662.
- (./main.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1662.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1662.
+Package rerunfilecheck Info: Checksums for `_TZ_34837-obiwan.out':
+(rerunfilecheck)             Before: <no file>
+(rerunfilecheck)             After:  6B0CF783BE93FEF096C7E830811E0054;433.
 
-Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 7B054EB95D23BDC074311283AC13E8B3;5055.
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
  ) 
 Here is how much of TeX's memory you used:
- 42147 strings out of 481239
- 906296 string characters out of 5920377
- 1338809 words of memory out of 5000000
- 55888 multiletter control sequences out of 15000+600000
- 749711 words of font info for 402 fonts, out of 8000000 for 9000
+ 39684 strings out of 481240
+ 851611 string characters out of 5920403
+ 1316726 words of memory out of 5000000
+ 54106 multiletter control sequences out of 15000+600000
+ 590005 words of font info for 66 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
- 69i,29n,109p,814b,2488s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_jtta5h.enc}{/us
-r/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_oexx6f.enc}{/usr/shar
-e/texlive/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/usr/share/texlive
-/texmf-dist/fonts/enc/dvips/libertine/lbtn_25tcsq.enc}{/usr/share/texlive/texmf
--dist/fonts/enc/dvips/libertine/lbtn_omcwp2.enc}{/usr/share/texlive/texmf-dist/
-fonts/enc/dvips/inconsolata/i4-t1-4.enc}{/usr/share/texlive/texmf-dist/fonts/en
-c/dvips/libertine/lbtn_naooyc.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvip
-s/libertine/lbtn_7grukw.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libe
-rtine/lbtn_ncsllp.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/
-lbtn_nh77jq.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_7
-6gpa5.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/inconsolata/Inconso
-lata-zi4r.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/Libertine
-MathMI.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBioli
-numT.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinu
-mTB.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinum
-TBO.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinum
-TI.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertine
-T.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineT
-B.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineT
-I.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/NewTXMI.pfb></usr
-/share/texlive/texmf-dist/fonts/type1/public/newtx/txexs.pfb></usr/share/texliv
-e/texmf-dist/fonts/type1/public/newtx/txmiaX.pfb></usr/share/texlive/texmf-dist
-/fonts/type1/public/newtx/txsys.pfb>
-Output written on main.pdf (17 pages, 601279 bytes).
-PDF statistics:
- 395 PDF objects out of 1000 (max. 8388607)
- 335 compressed objects within 4 object streams
- 96 named destinations out of 1000 (max. 500000)
- 86269 words of extra memory for PDF output out of 89155 (max. 10000000)
+ 63i,5n,100p,826b,609s stack positions out of 5000i,500n,10000p,200000b,80000s
 
+Output written on _TZ_34837-obiwan.dvi (1 page, 15864 bytes).

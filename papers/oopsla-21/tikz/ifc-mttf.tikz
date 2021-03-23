@@ -5,7 +5,7 @@
   }
 
   \begin{axis}[
-      height=4cm,
+      height=3cm,
       width=15cm,
       ybar=0cm,
       bar width=0.1cm,
@@ -14,11 +14,11 @@
       enlarge x limits=0.05,
       axis y line*=left,
       axis x line*=bottom,
-      ymin=1, ymax=10000000,
+      ymin=1, ymax=4000000,
       xtick={1, 2, ..., 20},
       xticklabels={7, 8, 1, 16, 17, 14, 5, 20, 15, 6, 11, 2, 3, 4, 13, 19, 9, 12, 18, 10},
       % xlabel={Injected Bug},
-      ylabel={Milliseconds},
+      ylabel={MTTF (milliseconds)},
       ymajorgrids={true},
       % legend style={
       %   legend columns=-1,
