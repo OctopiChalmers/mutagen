@@ -5,6 +5,7 @@
 
 %% Packages
 
+\usepackage{wrapfig}
 \usepackage{xcolor}
 \usepackage{color}
 \usepackage{multicol}
@@ -1078,12 +1079,89 @@ made.
 
 \subsection{Testing loop}
 
-Having the mutation mechanism in place, we can finally sketch the base testing
-loop used by \mutagen.
+Having the exhaustive mutation mechanism in place, we can finally introduce the
+base testing loop used by \mutagen.
 %
+This is outlined in Algorithm \ref{algo:mutagen:loop}.
+%
+As it can be observed, we closely follow \fuzzchick's testing loop, using qtwo
+queues to keep mutant candidates, and enqueueing and retrieving interesting test
+cases from them before falling back to random generation.
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+\vspace{-10pt}
+\begin{algorithm}[H]
+  \SetArgSty{textnormal}
+  \SetInd{0em}{0.75em}
+  \SetKw{KwNot}{not}
+  \SetKw{KwIn}{in}
+  \SetKwFor{KwRepeat}{repeat}{times}
+  \SetAlgoLined
+  \DontPrintSemicolon
+  \SetKwFunction{Muts}{Mutate}
+  \SetKwProg{Fn}{Function}{:}{}
+  \Fn{\Muts{x, mut, R}}{
+    muts $\gets$ $\varnothing$\;
+    \For{pos \KwIn Flatten(Positions(x))}{
+      \For{mutant \KwIn Inside(pos, mut, x)}{
+        \Switch{mutant}{
+          \Case{\texttt{PURE} $\hat{x}$}{
+            Enqueue($\hat{x}$, muts)\;
+          }
+          \Case{\texttt{RAND} gen}{
+            \KwRepeat{R}{
+              $\hat{x}$ $\gets$ Sample(gen)\;
+              Enqueue($\hat{x}$, muts)\;
+            }
+          }
+        }
+      }
+    }
+    \KwRet muts\;
+  }
+\caption{\label{algo:mutagen:init}Mutants Initialization}
+\end{algorithm}
+\vspace{-10pt}
+\end{wrapfigure}
 
 
-\begin{figure}
+The main difference lies in that we precompute all the mutations of a given
+mutation candidate before enqueueing them.
+%
+These mutations are put together into lists that we call \emph{mutation batches}
+--- one for each mutation candidate.
+%
+To initialize a mutation batch (outlined in Algorithm \ref{algo:mutagen:init}),
+we first flatten all the mutable positions of the input value in level order
+(recall that positions are stored as a multi-way tree).
+%
+Then, we iterate over all of them and retrieve all the mutants defined for each
+subexpression.
+%
+For each one of these, there are two posible cases:
+%
+\begin{inparaenum}
+\item if it is a pure mutant carrying a concrete mutated value, we enqueue it
+  into the mutation batch directly; otherwise
+\item it is a random mutant that carries a random generator with it (e.g., a
+  numeric subexpression), in which case we sample and enqueue \textit{R} random
+  values using this generator, where \textit{R} is a parameter set by the user.
+\end{inparaenum}
+%
+At the end, we simply return the accummulated batch.
+
+
+Finally, the seed selection algorithm (Algorithm \ref{algo:mutagen:pick}) simply
+selects the next test case using the same criteria as \fuzzchick, prioritizing
+valid candidates over discarded ones, falling back to random generation when
+both queues are empty.
+%
+Since mutations are precomputed, this function only needs to pick the next test
+case from the current batch, until it becomes empty and can switch to the next
+precomputed one in line.
+
+
+\begin{figure}[b]
 \begin{multicols}{2}
 
 \begin{algorithm}[H]
@@ -1115,7 +1193,7 @@ loop used by \mutagen.
     }
     \KwRet Ok\;
   }
-\caption{\mutagen Testing Loop}
+\caption{\label{algo:mutagen:loop}\mutagen Testing Loop}
 \end{algorithm}
 
 \columnbreak
@@ -1149,59 +1227,42 @@ loop used by \mutagen.
     }
     \lElse{\KwRet Sample(gen)}
   }
-\caption{\mutagen Seed Selection}
+\caption{\label{algo:mutagen:pick}\mutagen Seed Selection}
+\vspace{1pt}
 \end{algorithm}
 \end{multicols}
 \end{figure}
 
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec hendrerit tempor
-tellus. Donec pretium posuere tellus. Proin quam nisl, tincidunt et, mattis
-eget, convallis nec, purus. Cum sociis natoque penatibus et magnis dis
-parturient montes, nascetur ridiculus mus. Nulla posuere. Donec vitae dolor.
-Nullam tristique diam non turpis. Cras placerat accumsan nulla. Nullam rutrum.
-Nam vestibulum accumsan nisl.
+Another small difference between \mutagen and \fuzzchick is the criteria for
+enqueuing discarded tests.
+%
+We found that, especially for large data types, the queue of discarded
+candidates tends to grow disproportionately during testing, making them hardly
+usable and consuming large amounts of memory.
+%
+To improve this, we resort to mutate discarded tests cases only when we have
+some evidence that they are ``almost valid.''
+%
+For this, each mutated test case remembers whether its parent (the original test
+case they derive from after being mutated) was valid.
+%
+Then, we enqueue discarded test cases only if they meet this condition.
+%
+As a result, we fill the discarded queue with lesser but much more interesting
+mutation candidates.
+%
+Moreover, this can potentially help introducing \emph{2-step mutations}, where
+an initial mutation breaks a valid test case in a small way, it gets enqueued as
+discarded, and later a subsequent mutation fixes it by changing a different
+subexpression.
 
 
-\begin{figure}
-
-\begin{algorithm}[H]
-  \SetArgSty{textnormal}
-  \SetInd{0em}{0.75em}
-  \SetKw{KwNot}{not}
-  \SetKw{KwIn}{in}
-  \SetKwFor{KwRepeat}{repeat}{times}
-  \SetAlgoLined
-  \DontPrintSemicolon
-  \SetKwFunction{Muts}{Mutate}
-  \SetKwProg{Fn}{Function}{:}{}
-  \Fn{\Muts{x, mut, R}}{
-    muts $\gets$ $\varnothing$\;
-    \For{pos \KwIn Flatten(Positions(x))}{
-      \For{mutant \KwIn Inside(pos, mut, x)}{
-        \Switch{mutant}{
-          \Case{\texttt{PURE} $\hat{x}$}{
-            Enqueue($\hat{x}$, muts)\;
-          }
-          \Case{\texttt{RAND} gen}{
-            \KwRepeat{R}{
-              $\hat{x}$ $\gets$ Sample(gen)\;
-              Enqueue($\hat{x}$, muts)\;
-            }
-          }
-        }
-      }
-    }
-    \KwRet muts\;
-  }
-\caption{Mutants Initialization}
-\end{algorithm}
-
-\end{figure}
 
 
 The next section introduces three heurisitics we added to the base testing loop
-of \mutagen and can that offer a substantial improvement in practice.
-
+of \mutagen based on the limitations we found in \fuzzchick.
+%
+These heuristics can that offer a substantial improvement in practice.
 
 \section{\mutagen Heuristics}
 \label{sec:heuristics}
