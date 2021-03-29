@@ -202,6 +202,7 @@ The contributions of this work are:
   tempor. Curabitur lacinia pulvinar nibh. Nam a sapien.
 \end{itemize}
 
+% ----------------------------------------
 
 \section{Background}
 \label{sec:background}
@@ -848,6 +849,7 @@ The next section introduces \mutagen, our CGPT tool written in Haskell that aims
 to tackle the main limitations of \fuzzchick using an exhaustive mutation
 approach that requires very little randomness and no power schedule.
 
+% ----------------------------------------
 
 \section{\mutagen: Testing Mutants Exhaustively}
 \label{sec:mutagen}
@@ -1257,30 +1259,208 @@ discarded, and later a subsequent mutation fixes it by changing a different
 subexpression.
 
 
-
-
-The next section introduces three heurisitics we added to the base testing loop
-of \mutagen based on the limitations we found in \fuzzchick.
+The next section introduces two heurisitics we added to the base testing loop of
+\mutagen based on the limitations we found in \fuzzchick.
 %
-These heuristics can that offer a substantial improvement in practice.
+%% These heuristics can that offer a substantial improvement in practice.
+
+% ----------------------------------------
 
 \section{\mutagen Heuristics}
 \label{sec:heuristics}
 
-Pellentesque dapibus suscipit ligula. Donec posuere augue in quam. Etiam vel
-tortor sodales tellus ultricies commodo. Suspendisse potenti. Aenean in sem ac
-leo mollis blandit. Donec neque quam, dignissim in, mollis nec, sagittis eu,
-wisi. Phasellus lacus. Etiam laoreet quam sed arcu. Phasellus at dui in ligula
-mollis ultricies. Integer placerat tristique nisl. Praesent augue. Fusce
-commodo.
+In this section we introduce two heuristics implemented on top of the base
+testing loop of our tool.
+%
+\mutagen enables them all by default, although they can be individually disabled
+by the user if deemed appropriate.
 
 \subsection{Priority FIFO Scheduling}
 
-Vestibulum convallis, lorem a tempus semper, dui dui euismod elit,
-vitae placerat urna tortor vitae lacus. Nullam libero mauris, consequat quis,
-varius et, dictum id, arcu. Mauris mollis tincidunt felis. Aliquam feugiat
-tellus ut neque. Nulla facilisis, risus a rhoncus fermentum, tellus tellus
-lacinia purus, et dictum nunc justo sit amet elit.
+This heuristic tackles the issue of enqueuing novel mutation candidates at the
+end of (possibly) long queues of not-so-interesting previously executed ones.
+
+\fuzzchick uses AFL instrumentation under the hood, which in turn uses an
+\emph{edge coverage} criteria to distinguish novel executions and to assign each
+mutation candidate a given energy.
+%
+In contrast, execution traces \mutagen represent the \emph{path} in the code
+taken by the program, as opposed to just the set of edges traversed in the
+control-flow graph (CFG).
+%
+Using this criteria lets us gather precise information from the each new
+execution.
+%
+%% To keep track of the execution path of each test, our tool keeps an internal
+%% prefix tree that records every new entry by traversing this data structure and
+%% inserting new nodes after a new path prefix gets discovered.
+%% %
+In particular, we are interested in the \emph{depth} where each new execution
+branches from already seen ones.
+%
+Our assumption here is that test cases that differ (branch) at shallower depths
+from the ones already executed are more likely to discover completely new
+portions of the code under test, and hence we want to assign them a higher
+priority.
+
+
+In this light, every time we insert a new execution path into the internal trace
+log, we calculate the number of new nodes that were executed, as well as the
+\emph{branching depth} where they got inserted.
+%
+The former is used to distinguish interesting test cases (whether or not new
+nodes were inserted), whereas the latter is used by this heuristic to schedule
+mutation candidates.
+%
+Fig. \ref{fig:mutagen:tracelog} illustrates this idea, inserting two execution
+traces (one after another) into a trace log that initially contains a single
+execution path.
+%
+The second insertion (with trace $1 \rightarrow 2 \rightarrow 6 \rightarrow 7$)
+branches at a shallower depth than the first one (2 vs. 3), hence its
+corresponding test case should be given a higher priority.
+
+\begin{figure}[b]
+\newcommand\stacked[2]{\underset{\textstyle #2\mathstrut}{#1}}
+\begin{equation}
+  \nonumber
+  \left[
+  \tikz[
+    baseline=-10mm,
+    level distance=0.6cm,
+    level 1/.style={sibling distance=0.75cm},
+    level 2/.style={sibling distance=0.75cm}
+  ]{
+    \node {\small \texttt{1}}
+      child {node {\small \texttt{2}}
+        child {node {\small \texttt{3}}
+          child {node {\small \texttt{4}}}
+        }
+      }
+  }
+  \right]
+  \;
+  +
+  \;
+  \tikz[
+    baseline=-10mm,
+    level distance=0.6cm,
+    level 1/.style={sibling distance=0.75cm},
+    level 2/.style={sibling distance=0.75cm}
+  ]{
+    \node {\small \texttt{1}}
+      child {node {\small \texttt{2}}
+        child {node {\small \texttt{3}}
+          child {node {\small \texttt{5}}}
+        }
+      }
+  }
+  \;
+  =
+  \;
+  \left[
+  \tikz[
+    baseline=-10mm,
+    level distance=0.6cm,
+    level 1/.style={sibling distance=0.75cm},
+    level 2/.style={sibling distance=0.75cm}
+  ]{
+    \node {\color{red} \small \texttt{1}}
+      child {node {\color{red} \small \texttt{2}}
+        child {node {\color{red} \small \texttt{3}}
+          child {node {\small \texttt{4}}}
+          child {node {\color{blue} \small \texttt{5}}}
+        }
+      }
+  }
+  \right]
+  ,
+  \stacked{{\color{blue} new=1\phantom{x}}}{{\color{red} depth=3}}
+  \qquad
+  \qquad
+  \left[
+  \tikz[
+    baseline=-10mm,
+    level distance=0.6cm,
+    level 1/.style={sibling distance=0.75cm},
+    level 2/.style={sibling distance=0.75cm}
+  ]{
+    \node {\small \texttt{1}}
+      child {node {\small \texttt{2}}
+        child {node {\small \texttt{3}}
+          child {node {\small \texttt{4}}}
+          child {node {\small \texttt{5}}}
+        }
+      }
+  }
+  \right]
+  \;
+  +
+  \;
+  \tikz[
+    baseline=-10mm,
+    level distance=0.6cm,
+    level 1/.style={sibling distance=0.75cm},
+    level 2/.style={sibling distance=0.75cm}
+  ]{
+    \node {\small \texttt{1}}
+      child {node {\small \texttt{2}}
+        child {node {\small \texttt{6}}
+          child {node {\small \texttt{7}}
+          }
+        }
+      }
+  }
+  \;
+  =
+  \;
+  \left[
+  \tikz[
+    baseline=-10mm,
+    level distance=0.6cm,
+    level 1/.style={sibling distance=0.75cm},
+    level 2/.style={sibling distance=1cm}
+  ]{
+    \node {\color{red} \small \texttt{1}}
+      child {node {\color{red} \small \texttt{2}}
+        child {node {\small \texttt{3}}
+          child {node {\small \texttt{4}}}
+          child {node {\small \texttt{5}}}
+        }
+        child {node {\color{blue}\small \texttt{6}}
+          child {node {\color{blue}\small \texttt{7}}}
+        }
+      }
+  }
+  \right]
+  ,
+  \stacked{{\color{blue} new=2\phantom{x}}}{{\color{red} depth=2}}
+\end{equation}
+\caption{\label{fig:mutagen:tracelog}Inserting two new execution traces into the
+  internal trace log (represented using brackets).}
+\end{figure}
+
+With this mechanism in place, we can modify \mutagen's base testing loop by
+replacing each mutation queue with a priority queue indexed by the branching
+depth of each new execution.
+%
+These changes are illustrated in Algorithm \ref{algo:mutagen:fifo}.
+%
+Statements in {\color{red} red} indicate important changes to the base
+algorithm, whereas ellipses denote parts of the code that are not relevant for
+the point being made.
+
+
+To pick the next test case, we simply retrieve the one with highest priority
+(the smallest branching depth).
+%
+Then, whenever we find a new interesting test case, we enqueue it at the
+beginning of the queue of its corresponding priority.
+%
+This allows the testing loop to jump immediately onto processing new interesting
+candidates as soon as they are found (even at the same priority), and to jump
+back to previous candidates as soon as their mutants become progressively less
+novel.
 
 \begin{figure}
 \begin{multicols}{2}
@@ -1295,6 +1475,7 @@ lacinia purus, et dictum nunc justo sit amet elit.
   \SetKwProg{Fn}{Function}{:}{}
   \Fn{\MG{P, N, R, gen, mut}}{
     $\cdots$\;
+    x $\gets$ Pick(QSucc, QDisc, gen, mut)\;
     (result, trace) $\gets$ WithTrace(P(x))\;
     $\cdots$\;
     \If{Interesting(TLog, trace)}{
@@ -1306,7 +1487,7 @@ lacinia purus, et dictum nunc justo sit amet elit.
       $\cdots$\;
     }
   }
-  \vspace{10pt}
+  \vspace{5pt}
   \SetKwFunction{Pick}{Pick}
   \SetKwProg{Fn}{Function}{:}{}
   \Fn{\Pick{QSucc, QDisc, gen}}{
@@ -1322,7 +1503,7 @@ lacinia purus, et dictum nunc justo sit amet elit.
     $\cdots$\;
   }
 
-\caption{Priority FIFO Heuristic}
+\caption{\label{algo:mutagen:fifo}Priority FIFO Heuristic}
 \end{algorithm}
 
 \columnbreak
@@ -1353,6 +1534,7 @@ lacinia purus, et dictum nunc justo sit amet elit.
       $\cdots$\;
       \lIf{\KwNot result}{\KwRet Bug(x)}
       \If{Interesting(TLog, trace)}{
+        {\color{red} boring  $\gets$ 0}\;
         $\cdots$\;
       }
       \lElse {
@@ -1362,32 +1544,87 @@ lacinia purus, et dictum nunc justo sit amet elit.
     }
   }
 
-\caption{Trace Saturation Heuristic}
+\caption{\label{algo:mutagen:reset}Trace Saturation Heuristic}
 \end{algorithm}
 
 \end{multicols}
-\caption{\label{fig:heuristics} The two main heuristics implemented in \mutagen.
-  Statements in {\color{red} red} indicate important changes to the base
-  algorithm. Ellipses denote parts of the code that are not relevant for the
-  point being made. }
+%% \caption{\label{fig:heuristics} The two main heuristics implemented in \mutagen.
+%%   Statements in {\color{red} red} indicate important changes to the base
+%%   algorithm. Ellipses denote parts of the code that are not relevant for the
+%%   point being made. }
 \end{figure}
 
 
 \subsection{Detecting Trace Space Saturation And Tuning Random Mutations}
 
-Vestibulum convallis, lorem a tempus semper, dui dui euismod elit, vitae
-placerat urna tortor vitae lacus. Nullam libero mauris, consequat quis, varius
-et, dictum id, arcu. Mauris mollis tincidunt felis. Aliquam feugiat tellus ut
-neque. Nulla facilisis, risus a rhoncus fermentum, tellus tellus lacinia purus,
-et dictum nunc justo sit amet elit.
+As introduced in Section \ref{sec:mutagen}, our tool is parameterized by the
+amount of random mutations to be generated over each mutable subexpression
+defined using a random mutant, e.g., numeric values, characters, etc.
+%
+But, how many random mutations should we use? A single one? A few tenths? A few
+hundreds?
+%
+Clearly, using too little, can put finding bugs at risk.
+%
+For instance, when the system under test branches on numeric values, we should
+make sure that we set enough random mutations to test each case in a reasonable
+basis.
+%
+Using too many, the other hand, can degrade the performance of the testing
+loop, as it will spend too much time producing uninteresting mutations.
+%
+This can happen for instance if the subexpressions defined using random mutants
+are only used as payloads, and their value does not affect the execution in any
+way.
 
-\subsection{Mutation Inheritance}
 
-Vestibulum convallis, lorem a tempus semper, dui dui euismod elit,
-vitae placerat urna tortor vitae lacus. Nullam libero mauris, consequat quis,
-varius et, dictum id, arcu. Mauris mollis tincidunt felis. Aliquam feugiat
-tellus ut neque. Nulla facilisis, risus a rhoncus fermentum, tellus tellus
-lacinia purus, et dictum nunc justo sit amet elit.
+Answering this question precisely is not an easy task, and the second heuristic
+we introduce in this work aims to tackle this issue.
+%
+We found that, the smaller the number of random mutations we set, the easier it
+is for the trace log that records executions to start getting saturated, i.e.,
+when interesting test cases stop getting discovered or are discovered very
+sporadically.
+%
+Our realization is that we can use this information to automatically optimize
+the number of random mutations used by our tool.
+%
+This idea is described in Algorithm \ref{algo:mutagen:reset}.
+%
+The process is simple:
+%
+\begin{inparaenum}
+  \item we start the testing loop with the amount of random mutations set to one,
+  %
+  \item each time we find that a test is not interesting (i.e. boring), we
+    increment a counter,
+  \item if we have not produced any interesting test case after a certain
+    threshold (1000 tests seems to be a reasonable value in practice), we
+    increment the amount of random mutations and the threshold by twice the
+    current amount.
+    %
+    Additionally, each time this happens we also reset the trace log, so
+    interesting test cases found on a previous iteration can be found and
+    enqueued for mutation again --- this time with a higher effort dedicated to
+    producing random mutations.
+\end{inparaenum}
+
+Then, if the execution of the system under test depends heavily on the values
+stored at randomly mutable subexpressions, starting with a single random mutation
+will quickly saturate the trace space, and this heuristic will continuosly
+increase the random mutations parameter until that stops happening.
+
+%% \subsection{Mutation Inheritance}
+
+%% The last heuristic we discuss in this work attempts to reduce the amount of
+%% mutations required when testing properties that lazily consume foldable inputs
+%% like lists or trees.
+%% %
+%% To illustrate this, suppose we define a property that aims to test a list
+%% sorting algorithm:
+
+
+% ----------------------------------------
 
 \section{Case studies}
 \label{sec:casestudies}
@@ -1601,37 +1838,41 @@ Nam euismod tellus id erat.
   \includegraphics[width=\linewidth]{tikz/wasm-legend.tikz}
 \end{center}
 
-\section{Implementation}
-\label{sec:implementation}
+% ----------------------------------------
 
-\subsection{Deriving Mutation Machinery}
+%% \section{Implementation}
+%% \label{sec:implementation}
 
-Integer placerat tristique nisl. Praesent augue. Fusce commodo. Vestibulum
-convallis, lorem a tempus semper, dui dui euismod elit, vitae placerat urna
-tortor vitae lacus. Nullam libero mauris, consequat quis, varius et, dictum id,
-arcu. Mauris mollis tincidunt felis. Aliquam feugiat tellus ut neque. Nulla
-facilisis, risus a rhoncus fermentum, tellus tellus lacinia purus, et dictum
-nunc justo sit amet elit.
+%% \subsection{Deriving Mutation Machinery}
 
-\subsection{Tracing Haskell Programs}
+%% Integer placerat tristique nisl. Praesent augue. Fusce commodo. Vestibulum
+%% convallis, lorem a tempus semper, dui dui euismod elit, vitae placerat urna
+%% tortor vitae lacus. Nullam libero mauris, consequat quis, varius et, dictum id,
+%% arcu. Mauris mollis tincidunt felis. Aliquam feugiat tellus ut neque. Nulla
+%% facilisis, risus a rhoncus fermentum, tellus tellus lacinia purus, et dictum
+%% nunc justo sit amet elit.
 
-\begin{verbatim}
-  sorted []       = True
-  sorted [x]      = True
-  sorted (x:y:xs) = if x <= y then sorted (y:xs) else False
-\end{verbatim}
+%% \subsection{Tracing Haskell Programs}
 
-\begin{verbatim}
-  sorted []       = _trace_ 1 (True)
-  sorted [x]      = _trace_ 2 (True)
-  sorted (x:y:xs) = _trace_ 3 (if x <= y then _trace_ 4 (sorted (y:xs)) else _trace_ 5 (False))
-\end{verbatim}
+%% \begin{verbatim}
+%%   sorted []       = True
+%%   sorted [x]      = True
+%%   sorted (x:y:xs) = if x <= y then sorted (y:xs) else False
+%% \end{verbatim}
 
-Pellentesque dapibus suscipit ligula. Donec posuere augue in quam. Etiam vel
-tortor sodales tellus ultricies commodo. Suspendisse potenti. Aenean in sem ac
-leo mollis blandit. Donec neque quam, dignissim in, mollis nec, sagittis eu,
-wisi. Phasellus lacus. Etiam laoreet quam sed arcu. Phasellus at dui in ligula
-mollis ultricies.
+%% \begin{verbatim}
+%%   sorted []       = _trace_ 1 (True)
+%%   sorted [x]      = _trace_ 2 (True)
+%%   sorted (x:y:xs) = _trace_ 3 (if x <= y then _trace_ 4 (sorted (y:xs)) else _trace_ 5 (False))
+%% \end{verbatim}
+
+%% Pellentesque dapibus suscipit ligula. Donec posuere augue in quam. Etiam vel
+%% tortor sodales tellus ultricies commodo. Suspendisse potenti. Aenean in sem ac
+%% leo mollis blandit. Donec neque quam, dignissim in, mollis nec, sagittis eu,
+%% wisi. Phasellus lacus. Etiam laoreet quam sed arcu. Phasellus at dui in ligula
+%% mollis ultricies.
+
+% ----------------------------------------
 
 \section{Related work}
 \label{sec:related}
@@ -1674,6 +1915,8 @@ Mauris ac felis vel velit tristique imperdiet. Donec at pede. Etiam vel neque
 nec dui dignissim bibendum. Vivamus id enim. Phasellus neque orci, porta a,
 aliquet quis, semper a, massa. Phasellus purus. Pellentesque tristique imperdiet
 tortor. Nam euismod tellus id erat.
+
+% ----------------------------------------
 
 \section{Conclusions}
 \label{sec:conclusions}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.6.18)  26 MAR 2021 15:45
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.6.18)  29 MAR 2021 17:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1514,147 +1514,147 @@ LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
 (Font)              scaled to size 10.0pt on input line 182.
  [1.1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/it' will be
-(Font)              scaled to size 10.0pt on input line 210.
+(Font)              scaled to size 10.0pt on input line 211.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/sc' will be
-(Font)              scaled to size 10.0pt on input line 215.
+(Font)              scaled to size 10.0pt on input line 216.
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/b/it' in size <10> not av
 ailable
 (Font)              Font shape `T1/LinuxBiolinumT-TLF/b/sl' tried instead on in
-put line 220.
+put line 221.
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/b/sl' will be
-(Font)              scaled to size 10.0pt on input line 220.
+(Font)              scaled to size 10.0pt on input line 221.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
-(Font)              scaled to size 10.0pt on input line 225.
+(Font)              scaled to size 10.0pt on input line 226.
 
 
 Package natbib Warning: Citation `quickcheck' on page 2 undefined on input line
- 225.
+ 226.
 
 LaTeX Font Info:    Trying to load font information for T1+zi4 on input line 27
-4.
+5.
 (/usr/share/texlive/texmf-dist/tex/latex/inconsolata/t1zi4.fd
 File: t1zi4.fd 2018/01/14 T1/zi4 (Inconsolata)
 )
 LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 10.0pt on input line 274.
+(Font)              scaled to size 10.0pt on input line 275.
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `zi4' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
-(Font)              scaled to size 8.0pt on input line 294.
+(Font)              scaled to size 8.0pt on input line 295.
  [2.2]
 LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 8.0pt on input line 295.
+(Font)              scaled to size 8.0pt on input line 296.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/sc' will be
-(Font)              scaled to size 8.0pt on input line 402.
+(Font)              scaled to size 8.0pt on input line 403.
  [3.3]
 [4.4]
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/it' will be
-(Font)              scaled to size 10.0pt on input line 554.
+(Font)              scaled to size 10.0pt on input line 555.
 
 
-Class acmart Warning: A possible image without description on input line 665.
+Class acmart Warning: A possible image without description on input line 666.
 
 LaTeX Font Info:    Trying to load font information for TS1+zi4 on input line 7
-02.
+03.
 (/usr/share/texlive/texmf-dist/tex/latex/inconsolata/ts1zi4.fd
 File: ts1zi4.fd 2018/01/14 TS1/zi4 (Inconsolata)
 )
 LaTeX Font Info:    Font shape `TS1/zi4/m/n' will be
-(Font)              scaled to size 8.0pt on input line 702.
+(Font)              scaled to size 8.0pt on input line 703.
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `zi4' (encoding: TS1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
-(Font)              scaled to size 9.0pt on input line 703.
+(Font)              scaled to size 9.0pt on input line 704.
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/it' will be
-(Font)              scaled to size 9.0pt on input line 703.
+(Font)              scaled to size 9.0pt on input line 704.
 LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 9.0pt on input line 703.
+(Font)              scaled to size 9.0pt on input line 704.
 
 
-Class acmart Warning: A possible image without description on input line 704.
+Class acmart Warning: A possible image without description on input line 705.
 
 [5.5] [6.6]
 Underfull \vbox (badness 3250) has occurred while \output is active []
 
  [7.7]
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/b/sc' will be
-(Font)              scaled to size 10.0pt on input line 852.
+(Font)              scaled to size 10.0pt on input line 854.
 
 
-Package natbib Warning: Citation `feat' on page 8 undefined on input line 885.
+Package natbib Warning: Citation `feat' on page 8 undefined on input line 887.
 
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/sc' will be
-(Font)              scaled to size 9.0pt on input line 966.
+(Font)              scaled to size 9.0pt on input line 968.
 
-Class acmart Warning: A possible image without description on input line 967.
+Class acmart Warning: A possible image without description on input line 969.
 
 
 Underfull \vbox (badness 5985) has occurred while \output is active []
 
  [8.8]
 
-LaTeX Font Warning: Command \small invalid in math mode on input line 1018.
+LaTeX Font Warning: Command \small invalid in math mode on input line 1020.
 
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 7.3pt on input line 1018.
+(Font)              scaled to size 7.3pt on input line 1020.
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 5.5pt on input line 1018.
+(Font)              scaled to size 5.5pt on input line 1020.
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 1091.
-
-
-Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 1091.
+surrounding objects on input line 1093.
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 1092.
+surrounding objects on input line 1093.
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 1124.
+surrounding objects on input line 1094.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 1126.
 
 [9.9]
 
-Class acmart Warning: A possible image without description on input line 1234.
+Class acmart Warning: A possible image without description on input line 1236.
 
 [10.10]
 
-Class acmart Warning: A possible image without description on input line 1373.
+Class acmart Warning: A possible image without description on input line 1441.
 
+[11.11]
 
-Underfull \vbox (badness 3503) has occurred while \output is active []
+Class acmart Warning: A possible image without description on input line 1555.
 
- [11.11]
-[12.12]
+[12.12] [13.13]
+LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/scit' will be
+(Font)              scaled to size 10.0pt on input line 1761.
+ [14.14] (./tikz/ifc-mttf.tikz) (./tikz/ifc-mttf.tikz)
+(./tikz/ifc-mttf.tikz) (./tikz/ifc-mttf.tikz) (./tikz/ifc-mttf.tikz)
+(./tikz/ifc-fr.tikz
+Missing character: There is no ] in font nullfont!
+) (./tikz/ifc-fr.tikz
+Missing character: There is no ] in font nullfont!
+) (./tikz/ifc-fr.tikz
+Missing character: There is no ] in font nullfont!
+)
+(./tikz/ifc-fr.tikz
+Missing character: There is no ] in font nullfont!
+) (./tikz/ifc-fr.tikz
+Missing character: There is no ] in font nullfont!
+)
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [13.13]
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/scit' will be
-(Font)              scaled to size 10.0pt on input line 1524.
-
-[14.14] (./tikz/ifc-mttf.tikz) (./tikz/ifc-mttf.tikz) (./tikz/ifc-mttf.tikz)
-(./tikz/ifc-mttf.tikz) (./tikz/ifc-mttf.tikz) (./tikz/ifc-fr.tikz
-Missing character: There is no ] in font nullfont!
-)
-(./tikz/ifc-fr.tikz
-Missing character: There is no ] in font nullfont!
-) (./tikz/ifc-fr.tikz
-Missing character: There is no ] in font nullfont!
-) (./tikz/ifc-fr.tikz
-Missing character: There is no ] in font nullfont!
-)
-(./tikz/ifc-fr.tikz
-Missing character: There is no ] in font nullfont!
-) (./tikz/wasm-mttf.tikz
+ [15.15]
+(./tikz/wasm-mttf.tikz
 Missing character: There is no ] in font nullfont!
 
 NOTE: coordinate (1Y4.0e0],0Y0.0e0]) has been dropped because it is unbounded (
@@ -1893,7 +1893,7 @@ Missing character: There is no ] in font nullfont!
 )
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 1600.
+surrounding objects on input line 1837.
 
 (./tikz/wasm-legend.tikz
 Missing character: There is no ] in font nullfont!
@@ -1960,7 +1960,7 @@ Package pgfplots Warning: Axis range for axis y is approximately empty; enlargi
 ng it (it is [0.0:0.0]) on input line 56.
 
  [warning /pgfplots/warning/approx empty range enlarged]
-) [15.15] [16.16] (./main.bbl)
+) [16.16] (./main.bbl)
 
 Package natbib Warning: There were undefined citations.
 
@@ -1971,21 +1971,21 @@ Class acmart Warning: Some images may lack descriptions.
 Class acmart Warning: CCS concepts are mandatory for papers over two pages.
 
 [17.17]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1723.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1723.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1966.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1966.
  (./main.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1723.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1723.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1966.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1966.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 7B054EB95D23BDC074311283AC13E8B3;5055.
+(rerunfilecheck)             Checksum: 865973F224394A5019FC87BD320ADB2D;4315.
  ) 
 Here is how much of TeX's memory you used:
- 42215 strings out of 481239
- 907311 string characters out of 5920377
- 1340527 words of memory out of 5000000
- 55941 multiletter control sequences out of 15000+600000
- 750726 words of font info for 408 fonts, out of 8000000 for 9000
+ 42369 strings out of 481239
+ 910724 string characters out of 5920377
+ 1337905 words of memory out of 5000000
+ 56088 multiletter control sequences out of 15000+600000
+ 751350 words of font info for 412 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
  69i,28n,109p,814b,2488s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_jtta5h.enc}{/us
@@ -2011,10 +2011,10 @@ I.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/NewTXMI.pfb></usr
 /share/texlive/texmf-dist/fonts/type1/public/newtx/txexs.pfb></usr/share/texliv
 e/texmf-dist/fonts/type1/public/newtx/txmiaX.pfb></usr/share/texlive/texmf-dist
 /fonts/type1/public/newtx/txsys.pfb>
-Output written on main.pdf (17 pages, 603916 bytes).
+Output written on main.pdf (17 pages, 609189 bytes).
 PDF statistics:
- 401 PDF objects out of 1000 (max. 8388607)
- 341 compressed objects within 4 object streams
- 98 named destinations out of 1000 (max. 500000)
- 86269 words of extra memory for PDF output out of 89155 (max. 10000000)
+ 394 PDF objects out of 1000 (max. 8388607)
+ 334 compressed objects within 4 object streams
+ 99 named destinations out of 1000 (max. 500000)
+ 86237 words of extra memory for PDF output out of 89155 (max. 10000000)
 

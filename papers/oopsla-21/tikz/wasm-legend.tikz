@@ -1,7 +1,7 @@
 \begin{tikzpicture}
   \begin{axis}[
       height=0cm,
-      width=15cm,
+      width=16cm,
       ybar=0cm,
       % bar width=0.12cm,
       % ylabel style={yshift=-5mm},
@@ -47,11 +47,11 @@
       (0,0)
     };
 
-    % Mutagen (no inheritance)
-    \addplot[fill=lime, fill opacity=0.75] coordinates {
-      (0,0)
-    };
+    % % Mutagen (no inheritance)
+    % \addplot[fill=lime, fill opacity=0.75] coordinates {
+    %   (0,0)
+    % };
 
-    \legend{QuickCheck, Mutagen, Mutagen (no FIFO), Mutagen (no reset), Mutagen (no inheritance)}
+    \legend{QuickCheck, Mutagen, Mutagen (no FIFO), Mutagen (no reset)} % , Mutagen (no inheritance)}
   \end{axis}
 \end{tikzpicture}

@@ -85,19 +85,19 @@
       (8  , 23175.69521)
     };
 
-    % Mutagen (no inheritance)
-    \addplot[fill=lime, fill opacity=0.75] coordinates {
-      (4  , 6693.593089)
-      (5  , 1158.86101 )
-      (2  , 100.3984609)
-      (3  , 116.3318205)
-      (1  , 8.352916367)
-      (7  , 1542.087119)
-      (10 , 2532.124308)
-      (6  , 1313.308766)
-      (9  , 1191.462026)
-      (8  , 2610.395152)
-    };
+    % % Mutagen (no inheritance)
+    % \addplot[fill=lime, fill opacity=0.75] coordinates {
+    %   (4  , 6693.593089)
+    %   (5  , 1158.86101 )
+    %   (2  , 100.3984609)
+    %   (3  , 116.3318205)
+    %   (1  , 8.352916367)
+    %   (7  , 1542.087119)
+    %   (10 , 2532.124308)
+    %   (6  , 1313.308766)
+    %   (9  , 1191.462026)
+    %   (8  , 2610.395152)
+    % };
 
   \end{axis}
 
@@ -171,20 +171,20 @@
     };
 
 
-    % Mutagen (no inheritance)
-    \addplot[fill=lime, fill opacity=0.75] coordinates {
-      (14, 391821.6577)
-      (15, 227998.6841)
-      (12, 211180.2487)
-      (11, 359260.7326)
-      (13, 243089.0174)
-    };
+    % % Mutagen (no inheritance)
+    % \addplot[fill=lime, fill opacity=0.75] coordinates {
+    %   (14, 391821.6577)
+    %   (15, 227998.6841)
+    %   (12, 211180.2487)
+    %   (11, 359260.7326)
+    %   (13, 243089.0174)
+    % };
 
   \end{axis}
 \end{tikzpicture}
 
 %\begin{tikzpicture}
 %\begin{axis}
-%\legend{QuickCheck, Mutagen, Mutagen (no FIFO), Mutagen (no reset), Mutagen (no inheritance)}
+%\legend{QuickCheck, Mutagen, Mutagen (no FIFO), Mutagen (no reset)} %, Mutagen (no inheritance)}
 %\end{axis}
 %\end{tikzpicture}
