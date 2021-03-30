@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.6.18)  30 MAR 2021 17:35
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.6.18)  30 MAR 2021 22:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1653,29 +1653,19 @@ Class acmart Warning: A possible image without description on input line 1562.
 [12.12]
 
 Package natbib Warning: Citation `catalin' on page 13 undefined on input line 1
-704.
+710.
 
 [13.13]
-
-Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 1741.
-
-
-Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 1741.
-
-
-Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 1742.
-
-
-Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 1762.
-
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
-(Font)              scaled to size 8.0pt on input line 1815.
-[14.14] [15.15] (./tikz/ifc-mttf.tikz) (./tikz/ifc-mttf.tikz)
+(Font)              scaled to size 8.0pt on input line 1771.
+ [14.14] [15.15]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [16.16]
 (./tikz/ifc-mttf.tikz) (./tikz/ifc-mttf.tikz) (./tikz/ifc-mttf.tikz)
+(./tikz/ifc-mttf.tikz) (./tikz/ifc-mttf.tikz) (./tikz/ifc-fr.tikz
+Missing character: There is no ] in font nullfont!
+)
 (./tikz/ifc-fr.tikz
 Missing character: There is no ] in font nullfont!
 ) (./tikz/ifc-fr.tikz
@@ -1685,13 +1675,11 @@ Missing character: There is no ] in font nullfont!
 )
 (./tikz/ifc-fr.tikz
 Missing character: There is no ] in font nullfont!
-) (./tikz/ifc-fr.tikz
-Missing character: There is no ] in font nullfont!
 )
 
-Class acmart Warning: A possible image without description on input line 2031.
+Class acmart Warning: A possible image without description on input line 2116.
 
-[16.16] (./tikz/wasm-mttf.tikz
+(./tikz/wasm-mttf.tikz
 Missing character: There is no ] in font nullfont!
 
 NOTE: coordinate (1Y4.0e0],0Y0.0e0]) has been dropped because it is unbounded (
@@ -1994,9 +1982,9 @@ ng it (it is [0.0:0.0]) on input line 56.
  [warning /pgfplots/warning/approx empty range enlarged]
 )
 
-Class acmart Warning: A possible image without description on input line 2050.
+Class acmart Warning: A possible image without description on input line 2135.
 
-[17.17] (./main.bbl)
+[17.17] [18.18] (./main.bbl)
 
 Package natbib Warning: There were undefined citations.
 
@@ -2006,22 +1994,22 @@ Class acmart Warning: Some images may lack descriptions.
 
 Class acmart Warning: CCS concepts are mandatory for papers over two pages.
 
-[18.18]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 2192.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 2192.
+[19.19]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 2277.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 2277.
  (./main.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 2192.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 2192.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 2277.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 2277.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 1B16069A42E5301E92A083B881CD89EB;4340.
+(rerunfilecheck)             Checksum: AC694BE75260BB0DBAD6F481C7BBBDD1;3518.
  ) 
 Here is how much of TeX's memory you used:
- 42421 strings out of 481239
- 911944 string characters out of 5920377
- 1326905 words of memory out of 5000000
- 56111 multiletter control sequences out of 15000+600000
- 754903 words of font info for 429 fonts, out of 8000000 for 9000
+ 42444 strings out of 481239
+ 912352 string characters out of 5920377
+ 1339668 words of memory out of 5000000
+ 56106 multiletter control sequences out of 15000+600000
+ 761354 words of font info for 452 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
  69i,28n,109p,814b,2603s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_oexx6f.enc}{/us
@@ -2036,21 +2024,23 @@ rtine/lbtn_nh77jq.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/
 lbtn_76gpa5.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_j
 tta5h.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/inconsolata/Inconso
 lata-zi4r.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/Libertine
-MathMI.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBioli
-numT.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinu
-mTB.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinum
-TBO.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinum
-TI.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertine
-T.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineT
-B.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineT
-I.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/NewTXMI.pfb></usr
-/share/texlive/texmf-dist/fonts/type1/public/newtx/txexs.pfb></usr/share/texliv
-e/texmf-dist/fonts/type1/public/newtx/txmiaX.pfb></usr/share/texlive/texmf-dist
-/fonts/type1/public/newtx/txsys.pfb>
-Output written on main.pdf (18 pages, 607160 bytes).
+MathMI.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/LibertineMat
+hMI5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/LibertineMathM
+I7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinumT
+.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinumTB.
+pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinumTBO.
+pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinumTI.p
+fb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineT.pf
+b></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTB.pf
+b></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTI.pf
+b></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/NewTXMI.pfb></usr/sha
+re/texlive/texmf-dist/fonts/type1/public/newtx/txexs.pfb></usr/share/texlive/te
+xmf-dist/fonts/type1/public/newtx/txmiaX.pfb></usr/share/texlive/texmf-dist/fon
+ts/type1/public/newtx/txsys.pfb>
+Output written on main.pdf (19 pages, 618259 bytes).
 PDF statistics:
- 402 PDF objects out of 1000 (max. 8388607)
- 342 compressed objects within 4 object streams
+ 404 PDF objects out of 1000 (max. 8388607)
+ 339 compressed objects within 4 object streams
  103 named destinations out of 1000 (max. 500000)
- 85213 words of extra memory for PDF output out of 89155 (max. 10000000)
+ 85181 words of extra memory for PDF output out of 89155 (max. 10000000)
 

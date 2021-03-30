@@ -1638,10 +1638,6 @@ increase the random mutations parameter until that stops happening.
 
 We evaluated the performance of \mutagen using two main case studies.
 %
-In both of them, we show how the heuristics described in Section
-\ref{sec:heuristics} affect the testing performance.
-
-
 The first one is a simple abstract stack machine that enforces
 \emph{noninterference} using runtime checks.
 %
@@ -1653,7 +1649,10 @@ enforcing mechanism.
 \fuzzchick against random testing approaches using na\"ive and manually-written
 smart random generators.
 %
-In this work we replicate their results and compare them against our tool.
+In this work, we replicate their results and compare them against our tool.
+%
+Worth mentioning, since this case study was originally implemented in Coq, we
+first translated it to Haskell in order to run \mutagen on its test suite.
 
 
 The second case study aims to evaluate \mutagen in a more realistic scenario,
@@ -1662,23 +1661,26 @@ written in Haskell of industrial strength.
 %
 We manually injected 10 bugs in the validator as well as 5 bugs in the
 interpreter of this engine, and used the reference implementation to find them
-using differential testing.
+via differential testing.
 %
 During this process, we quickly discovered 3 bugs and 2 discrepancies on this
 engine with respect to the reference implementation.
 %
-All of them were reported and confirmed by the authors of \textit{haskell-wasm}.
+All of them were reported and later confirmed by the authors of
+\textit{haskell-wasm}.
+
 
 \subsection{IFC Stack Machine}
 
 The abstract stack machine used in this case study consists of four main
 elements: a program counter, a stack, and data- and instruction memories.
 %
-Moreover, every runtime value is labeled with its security level, i.e., L (for
+Moreover, every runtime value is labeled with a security level, i.e., L (for
 ``low'' or public) or H (for ``high'' or secret).
 %
 Labels form a trivial 2-lattice where information can either stay at the same
-level, or public information can flow to secret one but not the opposite.
+level, or public information can flow to secret one but not the opposite
+(represented using the familiar $\sqsubseteq$ binary operator).
 %
 Security labels are propagated throughout the execution of the program every
 time the machine executes an instruction.
@@ -1700,15 +1702,94 @@ encodes the number of elements of the stack to be treated as arguments.
 %
 Then, programs are simply modeled as sequences of instructions.
 %
+Finally, machine states can be modeled using a 4-tuple \textit{(pc, stk, m, i)}
+that represents a particular configuration of the program counter, stack and
+data- and instruction memories, respectively.
+%
 To preserve space, we encourage the reader to refer to the work of
 \citeauthor{catalin} as well as the original \fuzzchick paper for more details
 about the implementation and semantics of this case study.
 
-\subsubsection{Noninterference}
+\subsubsection{Single-Step Noninterference (SSNI)}
 
-\subsection{Single-step Noninterference}
+This abstract machine is designed to enforce noninterference, which is based on
+the notion of \emph{indistinguishability}.
+%
+Intuitively, two machine states are indistinguishable from each other if they
+only differ on secret data.
+%
+Using this notion, the particular variant of noninterference we are interested
+in this work is called \emph{single-step noninterference}.
+%
+In simple terms, this property asserts that, given two indistinguishable
+machines states, running a single instruction on both machines brings them to
+resulting states that are again indistinguishable.
 
+The tricky part about this property is, of course, satisfying its sparse
+precondition: we need to generate two valid indistinguishable machine states in
+order to even proceed to execute the next instruction.
+%
+As demonstrated by \citeauthor{lampropoulos2019coverage}, generating two
+independent machine states using \quickcheck has virtually no chances of
+producing valid indistinguishable ones.
+%
+However, having the mutation mechanism available, we can use a clever trick: we
+can obtain a pair of valid indistinguishable machine states by generating a
+single valid machine state (something still hard but much easier than before),
+and then producing a similar mutated copy.
+%
+By doing this, we have a much higher chance of producing two almost identical
+states that pass the sparse precondition.
 
+\subsubsection{IFC Rules}
+
+In this abstract machine, the enforced IFC rules are implemented using a rule
+table indexed by the operation that the machine is about to perform.
+%
+Such table contains: the dynamic check that the abstract machine needs to
+perform in order to enforce the IFC policy, along with the corresponding
+security label of the program counter and the operation result after the
+operation is executed.
+%
+For instance, to execute the \texttt{Store} operation (which stores a value in a
+memory pointer) the machine needs to check that both the label of the program
+counter and the label of the pointer together ``can flow'' to the label of the
+destination memory cell.
+%
+If this condition is not met, the machine then halts as indication of a
+violation in the IFC policy.
+%
+After this check, this operation overwrites the value at the destination cell
+and updates its label with the maximum sensibility of the involved labels.
+%
+In the rule table, this looks as follows:
+
+\begin{center}
+\footnotesize
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Operation}
+& \textbf{Precondition Check}
+& \textbf{Final PC Label}
+& \textbf{Final Result Label} \\
+\hline
+\texttt{Store}
+& $l_{pc} \vee l_{p} \sqsubseteq l_{v}$
+& $l_{pc}$
+& $l_{v'} \vee l_{pc} \vee l_{p}$ \\
+\hline
+\end{tabular}
+\end{center}
+
+Where $l_{pc}$, $l_{p}$, $l_{v}$, and $l_{v'}$ represent the labels of: the
+program counter, the memory pointer, and the old a new values stored in that
+memory cell.
+%
+The symbol $\vee$ simply denotes the join of two labels, i.e., the
+\emph{maximum} of their sensibilities.
+
+In this case study, we systematically introduce several bugs on the IFC
+enforcing mechanism by removing or weaking the checks stored in this rule table.
 
 \subsection{WebAssembly Engine}
 
@@ -1734,33 +1815,10 @@ The language is relatively simple, in esence
 %
 among others.
 %
-To give the reader a taste, Fig. \ref{fig:wasm:factorial} the WebAssembly text
-representation of module that exports a recursive implementation of the
-factorial function.
+%% To give the reader a taste, Fig. \ref{fig:wasm:factorial} the WebAssembly text
+%% representation of module that exports a recursive implementation of the
+%% factorial function.
 
-\begin{wrapfigure}{r}{0.35\textwidth}
-\vspace{-10pt}
-\begin{verbatim}
-(module
-(func $f (param f64) (result f64)
-  get_local 0
-  f64.const 1
-  f64.lt
-  if (result f64)
-    f64.const 1
-  else
-    get_local 0
-    get_local 0
-    f64.const 1
-    f64.sub
-    call $fact
-    f64.mul
-  end)
-(export "fact" (func $f)))
-\end{verbatim}
-\caption{\label{fig:wasm:factorial}Factorial in WebAssembly}
-\vspace{-10pt}
-\end{wrapfigure}
 
 Unlike most other programming languages, its behavior is fully specified, and
 WebAssembly programs are expected to be consistently interpreted across engines
@@ -1769,15 +1827,38 @@ WebAssembly programs are expected to be consistently interpreted across engines
 For this purpose, the WebAssembly standard provides a reference implementation
 with all the basic functionality expected from a compliant WebAssembly engine.
 
+%% \begin{wrapfigure}{r}{0.35\textwidth}
+%% \vspace{-10pt}
+%% \begin{verbatim}
+%% (module
+%% (func $f (param f64) (result f64)
+%%   get_local 0
+%%   f64.const 1
+%%   f64.lt
+%%   if (result f64)
+%%     f64.const 1
+%%   else
+%%     get_local 0
+%%     get_local 0
+%%     f64.const 1
+%%     f64.sub
+%%     call $fact
+%%     f64.mul
+%%   end)
+%% (export "fact" (func $f)))
+%% \end{verbatim}
+%% \caption{\label{fig:wasm:factorial}Factorial in WebAssembly}
+%% \vspace{-10pt}
+%% \end{wrapfigure}
 
 In this work, we are interested on using \mutagen to test the two most complex
 subsystems of \textit{haskell-wasm}: the \emph{validator} and the
 \emph{interpreter} --- both being previously tested using a unit test suite.
 %
 Our tool is an attractive match for testing \textit{haskell-wasm}, as the space
-of WebAssembly programs contains mostly invalid ones, and automatically derived
-random generators cannot satisfy all the invariants required to produce
-interesting test cases.
+of WebAssembly programs that can be respresented using its AST contains mostly
+invalid ones, and automatically derived random generators cannot satisfy all the
+invariants required to produce interesting test cases.
 %
 Here, we avoided spending countless hours writing an extensive property-based
 specification to mimic the reference WebAssembly specification.
@@ -1879,8 +1960,8 @@ it.
 This can be easily done by inverting the direction of the implication
 (\texttt{<==}) in the property above.
 %
-However, the resulting property is much slower, as every tested module will be
-serialized and run against the reference implementation.
+However, the resulting property is much slower, as every tested module will
+always be serialized and run against the reference implementation.
 
 
 %% \begin{verbatim}
@@ -1900,7 +1981,7 @@ serialized and run against the reference implementation.
 \subsubsection{Testing the WebAssembly Interpreter}
 
 Testing the WebAssembly interpreter is substantially more complicated than
-testing the validator, as it entails running actual programs.
+testing the validator, since it requires running actual programs.
 %
 To achieve this, we need the generated test cases to comply a with stable
 interface that can be invoked both by \textit{haskell-wasm} and the reference
@@ -1943,8 +2024,9 @@ implementation interepreters with the provided arguments.
 %
 Then, the property asserts whether their results are equivalent.
 %
-Interestingly, equivalence in this context does not imply equality,
-non-deterministic operations in WebAssembly like NaN reinterpretations can
+Interestingly, equivalence in this context does not imply equality.
+%
+Non-deterministic operations in WebAssembly like NaN reinterpretations can
 produce different equivalent results (as exposed by the discrepancy \#5 in Table
 \ref{table:wasm:bugs}), and our equivalence relation needs to take that into
 acount.
@@ -2011,6 +2093,9 @@ proportion of times each tool finds each bug within the one-hour testing bugdet.
 We found this metric crucial to be analyzed when replicating \fuzzchick's
 results, as opposed to just paying attention at the MTTF.
 
+In both case studies, we additionally show how the heuristics described in
+Section \ref{sec:heuristics} affect the testing performance by disabling them
+when using our tool.
 
 \subsection{IFC Stack Machine}
 
@@ -2089,7 +2174,7 @@ Nam euismod tellus id erat.
 \label{sec:related}
 
 
-\subsection{Grammar-based Fuzzing}
+\paragraph{Grammar-based Fuzzing}
 
 Pellentesque dapibus suscipit ligula. Donec posuere augue in quam. Etiam vel
 tortor sodales tellus ultricies commodo. Suspendisse potenti. Aenean in sem ac
@@ -2102,7 +2187,7 @@ varius et, dictum id, arcu. Mauris mollis tincidunt felis. Aliquam feugiat
 tellus ut neque. Nulla facilisis, risus a rhoncus fermentum, tellus tellus
 lacinia purus, et dictum nunc justo sit amet elit.
 
-\subsection{Random Data Generation}
+\paragraph{Random Data Generation}
 
 %% Don't forget to cite "Deriving good generators ..."
 
@@ -2117,7 +2202,7 @@ varius et, dictum id, arcu. Mauris mollis tincidunt felis. Aliquam feugiat
 tellus ut neque. Nulla facilisis, risus a rhoncus fermentum, tellus tellus
 lacinia purus, et dictum nunc justo sit amet elit.
 
-\subsection{Exhaustive Bounded Testing}
+\paragraph{Exhaustive Bounded Testing}
 
 Aliquam erat volutpat \citep{devai2013edsl}. Nunc eleifend leo vitae magna. In id
 erat non orci commodo lobortis. Proin neque massa, cursus ut, gravida ut,
