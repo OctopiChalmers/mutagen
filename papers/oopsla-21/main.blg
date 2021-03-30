@@ -8,6 +8,7 @@ Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Database file #1: references.bib
 Warning--I didn't find a database entry for "quickcheck"
 Warning--I didn't find a database entry for "feat"
+Warning--I didn't find a database entry for ""
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
 Reallocated global_strs (elt_size=200001) to 20 items from 10.
@@ -56,4 +57,4 @@ warning$ -- 2
 while$ -- 14
 width$ -- 0
 write$ -- 73
-(There were 4 warnings)
+(There were 5 warnings)

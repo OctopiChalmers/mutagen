@@ -257,7 +257,9 @@ generic programming capabilities present in the compiler, and although being
 crucial for the testing process as a whole, their role becomes irrelevant when
 it comes to \emph{finding} bugs.
 
-\begin{algorithm}[ b]
+\begin{wrapfigure}{r}{0.5\textwidth}
+\vspace{-10pt}
+\begin{algorithm}[H]
   \SetKw{KwNot}{not}
   \SetAlgoLined
   \DontPrintSemicolon
@@ -274,6 +276,8 @@ it comes to \emph{finding} bugs.
   }
 \caption{\label{algo:quickcheck}\quickcheck Testing Loop}
 \end{algorithm}
+\vspace{-10pt}
+\end{wrapfigure}
 
 Perhaps the simplest PBT technique is to repeatedly generate random inputs and
 instantiate the testing properties until they either get falsified by a
@@ -290,8 +294,8 @@ To illustrate this technique, let us focus on the same motivating example used
 by \citeauthor{lampropoulos2019coverage}, who propose a simple property defined over
 binary trees.
 %
-Such data structure can be easily defined in Haskell using a custom data type
-with two data constructors for leaves and branches respectively:
+Such data structure can be defined in Haskell using a custom data type with two
+data constructors for leaves and branches respectively:
 
 \begin{verbatim}
 data Tree a = Leaf a | Branch (Tree a) a (Tree a)
@@ -387,8 +391,8 @@ quickCheck prop_mirror
 +++ Ok ####
 \end{verbatim}
 
-\noindent Should we mistakenly implement \texttt{mirror}, e.g., by dropping the
-right subtree altogether:
+\noindent Should we mistakenly introduce a bug in \texttt{mirror}, e.g., by
+dropping the right subtree altogether:
 
 \begin{verbatim}
 mirror (Branch l x r) = Branch (mirror l) x (mirror l)
@@ -1629,95 +1633,236 @@ increase the random mutations parameter until that stops happening.
 \section{Case studies}
 \label{sec:casestudies}
 
-Aliquam erat volutpat \citep{devai2013edsl}. Nunc eleifend leo vitae magna. In id
-erat non orci commodo lobortis. Proin neque massa, cursus ut, gravida ut,
-lobortis eget, lacus. Sed diam. Praesent fermentum tempor tellus. Nullam tempus.
-Mauris ac felis vel velit tristique imperdiet. Donec at pede. Etiam vel neque
-nec dui dignissim bibendum. Vivamus id enim. Phasellus neque orci, porta a,
-aliquet quis, semper a, massa. Phasellus purus. Pellentesque tristique imperdiet
-tortor. Nam euismod tellus id erat.
+We evaluated the performance of \mutagen using two main case studies.
+%
+In both of them, we show how the heuristics described in Section
+\ref{sec:heuristics} affect the testing performance.
+
+
+The first one is a simple abstract stack machine that enforces
+\emph{noninterference} using runtime checks.
+%
+The implementation of this case study was originally proven correct by \cite{}
+in Coq, and subsequently degraded by systematically introducing 20 bugs on its
+enforcing mechanism.
+%
+\citeauthor{lampropoulos2019coverage} used this same case study to compare
+\fuzzchick against random testing approaches using na\"ive and manually-written
+smart random generators.
+%
+In this work we replicate their results and compare them against our tool.
+
+
+The second case study aims to evaluate \mutagen in a more realistic scenario,
+and focuses on testing \textit{haskell-wasm} an existing WebAssembly engine
+written in Haskell of industrial strength.
+%
+We manually injected 10 bugs in the validator as well as 5 bugs in the
+interpreter of this engine, and used the reference implementation to find them
+using differential testing.
+%
+During this process, we quickly discovered 3 bugs and 2 discrepancies on this
+engine with respect to the reference implementation.
+%
+All of them were reported and confirmed by the authors of \textit{haskell-wasm}.
 
 \subsection{IFC Stack Machine}
 
-Pellentesque dapibus suscipit ligula. Donec posuere augue in quam. Etiam vel
-tortor sodales tellus ultricies commodo. Suspendisse potenti. Aenean in sem ac
-leo mollis blandit. Donec neque quam, dignissim in, mollis nec, sagittis eu,
-wisi. Phasellus lacus. Etiam laoreet quam sed arcu. Phasellus at dui in ligula
-mollis ultricies. Integer placerat tristique nisl. Praesent augue. Fusce
-commodo. Vestibulum convallis, lorem a tempus semper, dui dui euismod elit,
-vitae placerat urna tortor vitae lacus. Nullam libero mauris, consequat quis,
-varius et, dictum id, arcu. Mauris mollis tincidunt felis. Aliquam feugiat
-tellus ut neque. Nulla facilisis, risus a rhoncus fermentum, tellus tellus
-lacinia purus, et dictum nunc justo sit amet elit.
+Nullam eu ante vel est convallis dignissim. Fusce suscipit, wisi nec facilisis
+facilisis, est dui fermentum leo, quis tempor ligula erat quis odio. Nunc porta
+vulputate tellus. Nunc rutrum turpis sed pede. Sed bibendum. Aliquam posuere.
+Nunc aliquet, augue nec adipiscing interdum, lacus tellus malesuada massa, quis
+varius mi purus non odio. Pellentesque condimentum, magna ut suscipit hendrerit,
+ipsum augue ornare nulla, non luctus diam neque sit amet urna. Curabitur
+vulputate vestibulum lorem. Fusce sagittis, libero non molestie mollis, magna
+orci ultrices dolor, at vulputate neque nulla lacinia eros. Sed id ligula quis
+est convallis tempor. Curabitur lacinia pulvinar nibh. Nam a sapien.
 
 \subsection{WebAssembly Engine}
 
-Nullam eu ante vel est convallis dignissim. Fusce suscipit, wisi nec facilisis
-facilisis, est dui fermentum leo, quis tempor ligula erat quis odio. Nunc porta
-vulputate tellus. Nunc rutrum turpis sed pede. Sed bibendum. Aliquam posuere.
-Nunc aliquet, augue nec adipiscing interdum, lacus tellus malesuada massa, quis
-varius mi purus non odio. Pellentesque condimentum, magna ut suscipit hendrerit,
-ipsum augue ornare nulla, non luctus diam neque sit amet urna. Curabitur
-vulputate vestibulum lorem. Fusce sagittis, libero non molestie mollis, magna
-orci ultrices dolor, at vulputate neque nulla lacinia eros. Sed id ligula quis
-est convallis tempor. Curabitur lacinia pulvinar nibh. Nam a sapien.
+WebAssembly is a popular assembly-like language designed to be an open standard
+for executing low-level code in web pages, although it has become increasingly
+popular in standalone, non-web contexts as well.
+%
+WebAssembly programs are first validated and later executed in a sandboxed
+environment (a virtual machine), making this language an attractive target for
+virtualization in \emph{functions-as-a-service} platforms.
+%
+The language is relatively simple, in esence
+%
+\begin{inparaenum}
+  \item it contains only four numerical types, representing both integers and
+    IEEE754 floating point numbers of either 32 or 64 bits;
+  \item values of these types are manipulated by writing functions using
+    sequences of stack instructions;
+  \item functions are organized in modules and must be explicitly imported and
+    exported;
+  \item memory blocks can be imported, exported and grown dinamically;
+\end{inparaenum}
+%
+among others.
+%
+To give the reader a taste, Fig. \ref{fig:wasm:factorial} defines a WebAssembly
+module that exports a recursive implementation of the factorial function.
+%
+This language is a perfect match for our tool, and the space of WebAssembly
+programs contains mostly invalid ones, and automatically derived random
+generators cannot satisfy all the invariants required to produce interesting
+ones.
+
+\begin{wrapfigure}{r}{0.35\textwidth}
+\vspace{-10pt}
+\begin{verbatim}
+(module
+(func $f (param f64) (result f64)
+  get_local 0
+  f64.const 1
+  f64.lt
+  if (result f64)
+    f64.const 1
+  else
+    get_local 0
+    get_local 0
+    f64.const 1
+    f64.sub
+    call $fact
+    f64.mul
+  end)
+(export "fact" (func $f)))
+\end{verbatim}
+\caption{\label{fig:wasm:factorial}Factorial in WebAssembly}
+\vspace{-10pt}
+\end{wrapfigure}
+
+Unlike most other programming languages, its behavior is fully specified, and
+WebAssembly programs are expected to be consistently interpreted across engines
+--- despite some subtle details that we will address soon.
+%
+For this purpose, the WebAssembly standard provides a reference engine
+implementation with all the basic functionality expected from a compliant
+WebAssembly engine.
+
+In this work, we are interested on using our tool to test the two most complex
+subsystems of \textit{haskell-wasm}: the \emph{validator} and the
+\emph{interpreter} --- both being previously tested using a unit test suite.
+%
+For this purpose, we avoided spending countless hours writing an extensive
+property-based specification to mimic the reference WebAssembly specification.
+%
+Instead, we take advantage of the readily available reference implementation via
+differential testing.
+%
+In this light, our testing properties assert that any result produced by
+\textit{haskell-wasm} matches that of the reference implementation.
+
+
+Unsurprisingly, this engine had several subtle latent bugs that were not caught
+by the existing unit tests and that we discovered using \mutagen while
+developing the test suite used in this work.
+%
+Moreover, \mutagen exposed two discrepancies between \textit{haskell-wasm} and
+the reference implementation.
+%
+Not severe enough to be classified as bugs, these discrepancies trigger parts of
+the WebAssembly specification that are either not yet suported by the reference
+implementation (multi-value blocks), or that produce a well-known
+non-deterministic undefined behavior allowed by the specification (NaN
+reinterpretation).
+%
+These findings are briefly outlined in Table \ref{table:wasm:bugs}.
+
+The rest of this section introduces the test suite we used to test the different
+parts of \textit{haskell-wasm}.
+
+
+\begin{table}[b]
+\footnotesize
+\begin{tabular}{|c|c|c|l|}
+\hline
+\textbf{Id}
+& \textbf{Subsystem}
+& \textbf{Category}
+& \textbf{Description} \\
+\hline
+1
+& Validator
+& Bug
+& Invalid memory alignment validation \\
+\hline
+2
+& Validator
+& Discrepancy
+& Validator accepts blocks returning multiple values  \\
+\hline
+3
+& Interpreter
+& Bug
+& Instance function invoker silently proceeds after arity mismatch \\
+\hline
+4
+& Interpreter
+& Bug
+& Allowed out-of-bounds memory access \\
+\hline
+5
+& Interpreter
+& Discrepancy
+& NaN reinterpretation does not follow reference implementation\\
+\hline
+\end{tabular}
+\caption{\label{table:wasm:bugs}Bugs and discrepancies found by \mutagen in
+  \textit{haskell-wasm}.}
+\end{table}
 
 \subsubsection{Testing the WebAssembly Validator}
 
-Nullam eu ante vel est convallis dignissim. Fusce suscipit, wisi nec facilisis
-facilisis, est dui fermentum leo, quis tempor ligula erat quis odio. Nunc porta
-vulputate tellus. Nunc rutrum turpis sed pede. Sed bibendum. Aliquam posuere.
-Nunc aliquet, augue nec adipiscing interdum, lacus tellus malesuada massa, quis
-varius mi purus non odio. Pellentesque condimentum, magna ut suscipit hendrerit,
-ipsum augue ornare nulla, non luctus diam neque sit amet urna. Curabitur
-vulputate vestibulum lorem. Fusce sagittis, libero non molestie mollis, magna
-orci ultrices dolor, at vulputate neque nulla lacinia eros. Sed id ligula quis
-est convallis tempor. Curabitur lacinia pulvinar nibh. Nam a sapien.
-
+We begin by designing a property to test the WebAssembly validator implemented
+in \textit{haskell-wasm}.
+%
+To keep things simple, we can simply assert that, whenever a randomly generated
+(or mutated for that matter) WebAssembly module is valid according to
+\textit{haskell-wasm}, then the reference implementation agrees upon it.
+%
+In other words, we are testing for false positives.
+%
+In Haskell, we write the following predicate:
 
 \begin{verbatim}
 prop_validator m =
   isValidHaskell m ==> isValidSpec m
 \end{verbatim}
 
-Aliquam erat volutpat. Nunc eleifend leo vitae magna. In id erat non orci
-commodo lobortis. Proin neque massa, cursus ut, gravida ut, lobortis eget,
-lacus. Sed diam. Praesent fermentum tempor tellus. Nullam tempus. Mauris ac
-felis vel velit tristique imperdiet. Donec at pede. Etiam vel neque nec dui
-dignissim bibendum. Vivamus id enim. Phasellus neque orci, porta a, aliquet
-quis, semper a, massa. Phasellus purus. Pellentesque tristique imperdiet tortor.
-Nam euismod tellus id erat.
+Where the precondition (\texttt{isValidHaskell m}) runs the input WebAssembly
+module \texttt{m} against the \textit{haskell-wasm} validator, whereas the
+postcondition (\texttt{isValidSpec m}) serializes \texttt{m} to a file, runs it
+against the reference implementation validator and checks that no errors are
+produced.
 
-\begin{verbatim}
-isValidHaskell m =
-  case validate m of
-    Left  validationError -> return False
-    Right validModule     -> return True
-\end{verbatim}
+We want to remark that, although here for simplicity we only focus on finding
+false positives, in a realistic test suite, one would also want to test for
+false negatives, i.e., when a module is valid and \textit{haskell-wasm} rejects
+it.
+%
+This can be easily done by inverting the direction of the implication
+(\texttt{<==}) in the property above.
+%
+However, the resulting property is much slower, as every tested module will
+first be serialized and run against the reference implementation.
 
-Aliquam erat volutpat. Nunc eleifend leo vitae magna. In id erat non orci
-commodo lobortis. Proin neque massa, cursus ut, gravida ut, lobortis eget,
-lacus. Sed diam. Praesent fermentum tempor tellus. Nullam tempus. Mauris ac
-felis vel velit tristique imperdiet. Donec at pede. Etiam vel neque nec dui
-dignissim bibendum. Vivamus id enim. Phasellus neque orci, porta a, aliquet
-quis, semper a, massa. Phasellus purus. Pellentesque tristique imperdiet tortor.
-Nam euismod tellus id erat.
 
-\begin{verbatim}
-isValidSpec m = do
-  writeFile "testcase.wasm" (dumpModule m)
-  res <- shell "./wasm" ["-d", "-i", "testcase.wasm"]
-  return (res == "")
-\end{verbatim}
+%% \begin{verbatim}
+%% isValidHaskell m =
+%%   case validate m of
+%%     Left  validationError -> return False
+%%     Right validModule     -> return True
+%% \end{verbatim}
 
-Aliquam erat volutpat. Nunc eleifend leo vitae magna. In id erat non orci
-commodo lobortis. Proin neque massa, cursus ut, gravida ut, lobortis eget,
-lacus. Sed diam. Praesent fermentum tempor tellus. Nullam tempus. Mauris ac
-felis vel velit tristique imperdiet. Donec at pede. Etiam vel neque nec dui
-dignissim bibendum. Vivamus id enim. Phasellus neque orci, porta a, aliquet
-quis, semper a, massa. Phasellus purus. Pellentesque tristique imperdiet tortor.
-Nam euismod tellus id erat.
-
+%% \begin{verbatim}
+%% isValidSpec m = do
+%%   writeFile "testcase.wasm" (dumpModule m)
+%%   res <- shell "./wasm" ["-d", "-i", "testcase.wasm"]
+%%   return (res == "")
+%% \end{verbatim}
 
 \subsubsection{Testing the WebAssembly Interpreter}
 
@@ -1743,69 +1888,48 @@ mk_module ty name fun =
 prop_interpreter ty (args, fun) =
   discardAfter 20
   (do let m = mk_module ty "f" fun;
-      resHs   <- invokeHaskell m "f" args;
-      resSpec <- invokeSpec    m "f" args;
-      return (equiv resHs resSpec))
+      resHs   <- invokeHaskell m "f" args
+      resSpec <- invokeSpec    m "f" args
+      return (equivalent resHs resSpec))
 \end{verbatim}
 
 \begin{verbatim}
 prop_interpreter_i32 (i, f, fun) =
-  prop_interpreter
-    (FuncType { params = [I32, F32], result = [I32]})
-    ([VI32 i, VF32 f], fun)
+  prop_interpreter (FuncType { params = [I32, F32], result = [I32]}) ([VI32 i, VF32 f], fun)
 \end{verbatim}
 
+%% \subsubsection{Real Bugs and Discrepancies found by \mutagen in \textit{haskell-wasm}}
 
-\subsubsection{Real Bugs and Discrepancies found by \mutagen in \textit{haskell-wasm}}
+%% \paragraph{Bug \#1: Invalid Memory Alignment Validation}
+%% \paragraph{Bug \#2: Lax invocation checks}
+%% \paragraph{Bug \#3: Allowed Out-of-bounds Memory Access}
+%% \paragraph{Discrepancy \#1: Different Reinterpretation Semantics of NaN Values}
+%% \paragraph{Discrepancy \#2: Allowed Blocks with Multiple Return Types}
 
-\paragraph{Bug \#1: Invalid Memory Alignment Validation}
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec hendrerit tempor
-tellus. Donec pretium posuere tellus. Proin quam nisl, tincidunt et, mattis
-eget, convallis nec, purus. Cum sociis natoque penatibus et magnis dis
-parturient montes, nascetur ridiculus mus. Nulla posuere. Donec vitae dolor.
-Nullam tristique diam non turpis. Cras placerat accumsan nulla. Nullam rutrum.
-Nam vestibulum accumsan nisl.
-
-\paragraph{Bug \#2: Lax invocation checks}
-Aliquam erat volutpat. Nunc eleifend leo vitae magna. In id erat non orci
-commodo lobortis. Proin neque massa, cursus ut, gravida ut, lobortis eget,
-lacus. Sed diam. Praesent fermentum tempor tellus. Nullam tempus. Mauris ac
-felis vel velit tristique imperdiet. Donec at pede. Etiam vel neque nec dui
-dignissim bibendum. Vivamus id enim. Phasellus neque orci, porta a, aliquet
-quis, semper a, massa. Phasellus purus. Pellentesque tristique imperdiet tortor.
-Nam euismod tellus id erat.
-
-
-\paragraph{Bug \#3: Allowed Out-of-bounds Memory Access}
-Pellentesque dapibus suscipit ligula. Donec posuere augue in quam. Etiam vel
-tortor sodales tellus ultricies commodo. Suspendisse potenti. Aenean in sem ac
-leo mollis blandit. Donec neque quam, dignissim in, mollis nec, sagittis eu,
-wisi. Phasellus lacus. Etiam laoreet quam sed arcu. Phasellus at dui in ligula
-mollis ultricies. Integer placerat tristique nisl. Praesent augue. Fusce
-commodo. Vestibulum convallis, lorem a tempus semper, dui dui euismod elit,
-vitae placerat urna tortor vitae lacus. Nullam libero mauris, consequat quis,
-varius et, dictum id, arcu. Mauris mollis tincidunt felis. Aliquam feugiat
-tellus ut neque. Nulla facilisis, risus a rhoncus fermentum, tellus tellus
-lacinia purus, et dictum nunc justo sit amet elit.
-
-\paragraph{Discrepancy \#1: Different Reinterpretation Semantics of NaN Values}
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec hendrerit tempor
-tellus. Donec pretium posuere tellus. Proin quam nisl, tincidunt et, mattis
-eget, convallis nec, purus. Cum sociis natoque penatibus et magnis dis
-parturient montes, nascetur ridiculus mus. Nulla posuere. Donec vitae dolor.
-Nullam tristique diam non turpis. Cras placerat accumsan nulla. Nullam rutrum.
-Nam vestibulum accumsan nisl.
-
-\paragraph{Discrepancy \#2: Allowed Blocks with Multiple Return Types}
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec hendrerit tempor
-tellus. Donec pretium posuere tellus. Proin quam nisl, tincidunt et, mattis
-eget, convallis nec, purus. Cum sociis natoque penatibus et magnis dis
-parturient montes, nascetur ridiculus mus. Nulla posuere. Donec vitae dolor.
-Nullam tristique diam non turpis. Cras placerat accumsan nulla. Nullam rutrum.
-Nam vestibulum accumsan nisl.
+% ----------------------------------------
 
 \section{Evaluation}
 \label{sec:evaluation}
+
+All the experiments were done in a dedicated workstation with an Intel Core
+i7-8700 CPU running at 3.20GHz, and equipped with 32Gb of RAM.
+%
+We ran each experiment 30 times except for the ones involving the bugs on the
+WebAssembly interpreter, which were run 10 times.
+%
+From there, we followed the same approach taken by
+\citeauthor{lampropoulos2019coverage} and collected the Mean-Time-To-Failure
+(MTTF) of each bug, i.e., how quickly a bug can be found in wall time.
+%
+In all cases, we used a one-hour timeout to stop the execution of both tools if
+they have not yet found a counterexample.
+
+Additionally, we collected the Failure Rate (FR) observed for each bug, i.e. the
+proportion of times each tool finds each bug within the one-hour testing bugdet.
+%
+We found this metric crucial to be analyzed when replicating \fuzzchick's
+results, as opposed to just paying attention at the MTTF.
+
 
 \subsection{IFC Stack Machine}
 
@@ -1822,7 +1946,7 @@ tortor. Nam euismod tellus id erat.
   \includegraphics[width=\linewidth]{tikz/ifc-fr.tikz}
 \end{center}
 
-\subsection{Webassembly Engine}
+\subsection{WebAssembly Engine}
 
 Aliquam erat volutpat. Nunc eleifend leo vitae magna. In id erat non orci
 commodo lobortis. Proin neque massa, cursus ut, gravida ut, lobortis eget,
@@ -1949,19 +2073,7 @@ tortor. Nam euismod tellus id erat.
 % ----------------------------------------
 
 %% If your work has an appendix, this is the place to put it.
-\appendix
-
-\section{Detailed Empirical Results}
-
-Fusce suscipit, wisi nec facilisis facilisis, est dui fermentum leo, quis tempor
-ligula erat quis odio. Nunc porta vulputate tellus. Nunc rutrum turpis sed pede.
-Sed bibendum. Aliquam posuere. Nunc aliquet, augue nec adipiscing interdum,
-lacus tellus malesuada massa, quis varius mi purus non odio. Pellentesque
-condimentum, magna ut suscipit hendrerit, ipsum augue ornare nulla, non luctus
-diam neque sit amet urna. Curabitur vulputate vestibulum lorem. Fusce sagittis,
-libero non molestie mollis, magna orci ultrices dolor, at vulputate neque nulla
-lacinia eros. Sed id ligula quis est convallis tempor. Curabitur lacinia
-pulvinar nibh. Nam a sapien.
+%% \appendix
 
 \end{document}
 \endinput
