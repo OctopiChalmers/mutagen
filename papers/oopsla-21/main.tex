@@ -2074,7 +2074,7 @@ variants of this property testing functions of several different types.
 \section{Evaluation}
 \label{sec:evaluation}
 
-All the experiments were done in a dedicated workstation with an Intel Core
+All the experiments were performed in a dedicated workstation with an Intel Core
 i7-8700 CPU running at 3.20GHz, and equipped with 32Gb of RAM.
 %
 We ran each experiment 30 times except for the ones involving the bugs on the
@@ -2173,8 +2173,82 @@ Nam euismod tellus id erat.
 \section{Related work}
 \label{sec:related}
 
+There exists a vast literature on fuzzing and property-based testing.
+%
+In this section we focus on three main topics:
+%
+automated random data generation using static information,
+%
+fuzzing using coverage information to guide mutations, and
+%
+exhaustive bounded testing tools, which inspired the design of \mutagen.
 
-\paragraph{Grammar-based Fuzzing}
+
+\paragraph{Automated Random Data Generation}
+
+Obtaining good random generators automatically from static information (e.g.,
+grammars or datatype definitions) has been tackled from different angles.
+
+% DRAGEN and DRAGEN2
+In Haskell, DRAGEN \cite{dragen} is a meta-programming tool that synthezises
+random generators from datatypes definitions, using stochastic models to predict
+and optimize their distribution based on a target distribution set by the user.
+%
+DRAGEN2 \cite{dragen2} extends this idea adding support for generating richer
+random data by extracting additional static information like library APIs and
+function input patterns from the codebase.
+%
+% Bolztmann-brain
+Similarly, \cite{bendkowski} developed a polinomial tuning mechanism based on
+Boltzmann samplers \cite{boltzmann} that synthesizes generators with
+approximate-size distributions for combinatorial structures like lists or trees.
+%
+
+Automatically deriving random generators is substantially more complicated when
+the generated data must satisfy by (often sparse) preconditions.
+%
+% Generating Constrained Random Data with Uniform Distribution
+%
+\cite{claessen2014} developed an algorithm for generating inputs constrained by
+boolean preconditions with almost-uniform distribution.
+%
+% Luck
+%
+Later, \cite{luck} extends this approach by adding a limited form of constraint
+solving controllable by the user in a domain-specific language called
+\emph{Luck}.
+%
+% Deriving good generators
+%
+Recently, \cite{generatinggood} proposed a derivation mechanism to obtain
+constrained random generators directly by defining their structure
+using inductively defined relations in Coq.
+
+
+We consider all these generational approaches to be orthogonal to the ideas
+behind \mutagen.
+%
+In principle, our tool is tailored to improve the performance of poor
+automatically derived generators.
+%
+However, more specialized generators can by used directly by \mutagen, and
+combining them with well-typed mutations using perhaps a hybrid technique is an
+appealing idea that we aim to address in the future.
+
+
+\paragraph{Coverage-guided Fuzzing}
+
+% AFL
+
+% AFLfast
+
+% CollAFL
+
+% Criterion
+
+% CSmith, XSmith
+
+% QuickFuzz
 
 Pellentesque dapibus suscipit ligula. Donec posuere augue in quam. Etiam vel
 tortor sodales tellus ultricies commodo. Suspendisse potenti. Aenean in sem ac
@@ -2187,30 +2261,74 @@ varius et, dictum id, arcu. Mauris mollis tincidunt felis. Aliquam feugiat
 tellus ut neque. Nulla facilisis, risus a rhoncus fermentum, tellus tellus
 lacinia purus, et dictum nunc justo sit amet elit.
 
-\paragraph{Random Data Generation}
-
-%% Don't forget to cite "Deriving good generators ..."
-
-Pellentesque dapibus suscipit ligula. Donec posuere augue in quam. Etiam vel
-tortor sodales tellus ultricies commodo. Suspendisse potenti. Aenean in sem ac
-leo mollis blandit. Donec neque quam, dignissim in, mollis nec, sagittis eu,
-wisi. Phasellus lacus. Etiam laoreet quam sed arcu. Phasellus at dui in ligula
-mollis ultricies. Integer placerat tristique nisl. Praesent augue. Fusce
-commodo. Vestibulum convallis, lorem a tempus semper, dui dui euismod elit,
-vitae placerat urna tortor vitae lacus. Nullam libero mauris, consequat quis,
-varius et, dictum id, arcu. Mauris mollis tincidunt felis. Aliquam feugiat
-tellus ut neque. Nulla facilisis, risus a rhoncus fermentum, tellus tellus
-lacinia purus, et dictum nunc justo sit amet elit.
 
 \paragraph{Exhaustive Bounded Testing}
 
-Aliquam erat volutpat \citep{devai2013edsl}. Nunc eleifend leo vitae magna. In id
-erat non orci commodo lobortis. Proin neque massa, cursus ut, gravida ut,
-lobortis eget, lacus. Sed diam. Praesent fermentum tempor tellus. Nullam tempus.
-Mauris ac felis vel velit tristique imperdiet. Donec at pede. Etiam vel neque
-nec dui dignissim bibendum. Vivamus id enim. Phasellus neque orci, porta a,
-aliquet quis, semper a, massa. Phasellus purus. Pellentesque tristique imperdiet
-tortor. Nam euismod tellus id erat.
+A popular category of property-based testing tools does not rely on randomness.
+%
+Instead, all possible inputs can be enumerated and tested from smaller to larger
+up to a certain size bound.
+
+%
+% Feat
+%
+\emph{Feat} \cite{feat} formalizes the notion of \emph{functional enumerations},
+For any algebraic type, it synthesizes a bijection between a finite prefix of
+the natural numbers and set of increasingly growing values of the input type.
+%
+Later, this bijection can be traversed exhaustively or, more interestingly,
+randomly accesed.
+%
+This allows the user to easily generate random values in a uniform basis simply
+by sampling natural numbers.
+%
+However, values are enumerated based only on their type definition, so this
+technique is not suitable for testing properties with sparse preconditions
+expressed elsewhere.
+
+
+% SmallCheck and LazySmallCheck
+\emph{SmallCheck} \cite{smallcheck} is a Haskell tool that follows this idea.
+%
+\emph{SmallCheck} is an exhaustive testing tool for Haskell that progressively
+executes the testing properties against all possible inputs values of within
+a certain size bound.
+%
+Later, \emph{LazySmallCheck} is a lazy variant of \emph{SmallCheck} that uses
+lazy evaluation to automatically prune the search space by detecting input
+subexpressions that are not evaluated by the testing properties, and hence do
+not need to be populated exhaustively with concrete values.
+
+
+
+% Korat
+On the object-oriented realm, \emph{Korat} \cite{korat} is a Java tool that uses
+method specification predicates to automatically generate all (nonisomorphic)
+test cases up to a given small size.
+%
+Similar to \emph{LazySmallCheck}, \emph{Korat} uses method preconditions to
+prune the search space.
+%
+However, in \emph{Korat}, pruning is done by analyzing the execution trace of
+the precondition predicate instead of by keeping track of unused subexpressions.
+
+
+Being exhaustive, these approaches can only be used to enumerate and test a
+relatively little space of small inputs.
+%
+In this work we use exhaustiveness as a way to reliably schedule different
+mutants.
+%
+In contrast to fully-exhaustive testing tools, \mutagen relies initially on
+randomness to find interesting mutable candidates.
+%
+Later, enumerating mutations for a given interesting candidate is much cheaper
+than enumerating \emph{all posible values}.
+%
+Hence, our tool can be used to produce much larger test cases before their size
+becomes computationally too restrictive.
+
+
 
 % ----------------------------------------
 
