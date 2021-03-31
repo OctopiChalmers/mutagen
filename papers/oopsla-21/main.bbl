@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{2}
+\begin{thebibliography}{3}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -59,6 +59,15 @@
 \newblock \bibinfo{journal}{\emph{Proceedings of the ACM on Programming
   Languages}} \bibinfo{volume}{3}, \bibinfo{number}{OOPSLA}
   (\bibinfo{year}{2019}), \bibinfo{pages}{1--29}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{{M. Zalewski}}{{M. Zalewski}}{2010}]%
+        {afl}
+\bibfield{author}{\bibinfo{person}{{M. Zalewski}}.}
+  \bibinfo{year}{2010}\natexlab{}.
+\newblock \bibinfo{title}{{American Fuzzy Lop: a security-oriented fuzzer}}.
+\newblock \bibinfo{howpublished}{\mbox{\url{http://lcamtuf.coredump.cx/afl/}}}.
 \newblock
 
 

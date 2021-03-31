@@ -2175,13 +2175,13 @@ Nam euismod tellus id erat.
 
 There exists a vast literature on fuzzing and property-based testing.
 %
-In this section we focus on three main topics:
+To preserve space, in this section we only focus on three main topics:
 %
 automated random data generation using static information,
 %
-fuzzing using coverage information to guide mutations, and
+fuzzing using coverage information, and
 %
-exhaustive bounded testing tools, which inspired the design of \mutagen.
+exhaustive bounded testing tools, all of which inspired the design of \mutagen.
 
 
 \paragraph{Automated Random Data Generation}
@@ -2192,7 +2192,7 @@ grammars or datatype definitions) has been tackled from different angles.
 % DRAGEN and DRAGEN2
 In Haskell, DRAGEN \cite{dragen} is a meta-programming tool that synthezises
 random generators from datatypes definitions, using stochastic models to predict
-and optimize their distribution based on a target distribution set by the user.
+and optimize their distribution based on a target one set by the user.
 %
 DRAGEN2 \cite{dragen2} extends this idea adding support for generating richer
 random data by extracting additional static information like library APIs and
@@ -2202,7 +2202,17 @@ function input patterns from the codebase.
 Similarly, \cite{bendkowski} developed a polinomial tuning mechanism based on
 Boltzmann samplers \cite{boltzmann} that synthesizes generators with
 approximate-size distributions for combinatorial structures like lists or trees.
+
 %
+% QuickFuzz
+%
+Exploiting some of the ideas described above, \emph{QuickFuzz} \cite{quickfuzz,
+  quickfuzzjournal} is a generational grammar-based fuzzer that leverages
+existing Haskell libraries describing common file formats to synthesize random
+data generators that are used in tandem with off-the-shelf low-level fuzzers to
+find bugs in massively used programs.
+
+
 
 Automatically deriving random generators is substantially more complicated when
 the generated data must satisfy by (often sparse) preconditions.
@@ -2225,6 +2235,7 @@ constrained random generators directly by defining their structure
 using inductively defined relations in Coq.
 
 
+
 We consider all these generational approaches to be orthogonal to the ideas
 behind \mutagen.
 %
@@ -2232,34 +2243,57 @@ In principle, our tool is tailored to improve the performance of poor
 automatically derived generators.
 %
 However, more specialized generators can by used directly by \mutagen, and
-combining them with well-typed mutations using perhaps a hybrid technique is an
+combining them with well-typed mutations using a hybrid technique is an
 appealing idea that we aim to address in the future.
 
 
 \paragraph{Coverage-guided Fuzzing}
 
 % AFL
-
+\emph{AFL} \cite{afl} is the reference tool when it comes to coverage-guided
+fuzzing.
+%
 % AFLfast
-
+\emph{AFLFast} is an extension to AFL that uses Markov chain models to tune the
+power scheduler towards testing low-frequency paths.
+%
+In \mutagen, the scheduler does not account for path frequency.
+%
+Instead, it favours a breadth-first traversal of the execution path space.
+%
 % CollAFL
+Similar to our tool, \emph{CollAFL} \cite{collAFL} is a variant of AFL that uses
+path- instead of edge-based coverage, which helps distinguishing executions more
+precisely by reducing path collisions.
 
-% Criterion
 
-% CSmith, XSmith
+%AFLGo
+When the source code history is available, \emph{AFLGo} \cite{aflgo} is a fuzzer
+that can be targeted to exercise the specific parts of the the code affected by
+recent commits in order to find potential new bugs.
+%
+Back to PBT, a related idea called \emph{targeted property-based testing} (TPBT)
+is to use fitness functions to guide the testing efforts towards user defined
+goals.
+%
+\emph{Target} \cite{targetedpbt} is a tool that implements TPBT using
+optimization techniques like hill climbing and simulated annealing.
 
-% QuickFuzz
 
-Pellentesque dapibus suscipit ligula. Donec posuere augue in quam. Etiam vel
-tortor sodales tellus ultricies commodo. Suspendisse potenti. Aenean in sem ac
-leo mollis blandit. Donec neque quam, dignissim in, mollis nec, sagittis eu,
-wisi. Phasellus lacus. Etiam laoreet quam sed arcu. Phasellus at dui in ligula
-mollis ultricies. Integer placerat tristique nisl. Praesent augue. Fusce
-commodo. Vestibulum convallis, lorem a tempus semper, dui dui euismod elit,
-vitae placerat urna tortor vitae lacus. Nullam libero mauris, consequat quis,
-varius et, dictum id, arcu. Mauris mollis tincidunt felis. Aliquam feugiat
-tellus ut neque. Nulla facilisis, risus a rhoncus fermentum, tellus tellus
-lacinia purus, et dictum nunc justo sit amet elit.
+% Coverage-guided fuzzing + symbolic execution
+%
+Moreover, a popular technique is to combine coverage-guided fuzzing with ideas
+borrowed from symbolic execution tools like \emph{KLEE} \cite{klee} to avoid
+getting stuck in superficial paths \cite{driller, qsym}.
+%
+When using off-the-shelf symbolic executors, this technique is often limited by
+the path explosion problem, altough recent tools like \emph{QSYM} \cite{qsym}
+demonstrate that using tailored concolic executors can help overcoming this
+limitation.
+
+
+Most of these ideas can potentially be incorporated in our tool, and we keep
+them as a challenge for future work.
 
 
 \paragraph{Exhaustive Bounded Testing}
@@ -2272,12 +2306,13 @@ up to a certain size bound.
 %
 % Feat
 %
-\emph{Feat} \cite{feat} formalizes the notion of \emph{functional enumerations},
+\emph{Feat} \cite{feat} formalizes the notion of \emph{functional enumerations}.
+%
 For any algebraic type, it synthesizes a bijection between a finite prefix of
 the natural numbers and set of increasingly growing values of the input type.
 %
 Later, this bijection can be traversed exhaustively or, more interestingly,
-randomly accesed.
+randomly accessed.
 %
 This allows the user to easily generate random values in a uniform basis simply
 by sampling natural numbers.
@@ -2288,16 +2323,17 @@ expressed elsewhere.
 
 
 % SmallCheck and LazySmallCheck
-\emph{SmallCheck} \cite{smallcheck} is a Haskell tool that follows this idea.
+\emph{SmallCheck} \cite{smallcheck} is a Haskell tool that also follows this
+idea.
 %
-\emph{SmallCheck} is an exhaustive testing tool for Haskell that progressively
-executes the testing properties against all possible inputs values of within
-a certain size bound.
+It progressively executes the testing properties against all possible inputs
+values up to a certain size bound.
 %
-Later, \emph{LazySmallCheck} is a lazy variant of \emph{SmallCheck} that uses
-lazy evaluation to automatically prune the search space by detecting input
-subexpressions that are not evaluated by the testing properties, and hence do
-not need to be populated exhaustively with concrete values.
+Later, \emph{LazySmallCheck} is a variant of \emph{SmallCheck} that uses lazy
+evaluation to automatically prune the search space by detecting which
+subexpressions of the generated values are not evaluated by the testing
+properties, and hence do not need to be populated exhaustively with concrete
+values.
 
 
 
@@ -2316,11 +2352,11 @@ the precondition predicate instead of by keeping track of unused subexpressions.
 Being exhaustive, these approaches can only be used to enumerate and test a
 relatively little space of small inputs.
 %
-In this work we use exhaustiveness as a way to reliably schedule different
-mutants.
+In this work we use exhaustiveness as a way to reliably enforce that all
+possible mutants of an interesting seed are executed.
 %
 In contrast to fully-exhaustive testing tools, \mutagen relies initially on
-randomness to find interesting mutable candidates.
+randomness to find initial interesting mutable candidates.
 %
 Later, enumerating mutations for a given interesting candidate is much cheaper
 than enumerating \emph{all posible values}.
