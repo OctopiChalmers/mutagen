@@ -9,6 +9,8 @@
 \usepackage{xcolor}
 \usepackage{color}
 \usepackage{multicol}
+\usepackage{multirow}
+\usepackage{caption}
 \usepackage[ruled,vlined,noend]{algorithm2e}
 \usepackage{xspace}
 \usepackage{tikz}
@@ -2093,19 +2095,118 @@ proportion of times each tool finds each bug within the one-hour testing bugdet.
 We found this metric crucial to be analyzed when replicating \fuzzchick's
 results, as opposed to just paying attention at the MTTF.
 
-In both case studies, we additionally show how the heuristics described in
-Section \ref{sec:heuristics} affect the testing performance by disabling them
-when using our tool.
+In both case studies, we additionally show how the FIFO scheduling and trace
+reset heuristics described in Section \ref{sec:heuristics} affect the testing
+performance by disabling them when using our tool.
+%
+We call these variants \textit{no-FIFO} and \textit{no-reset}, respectively.
+%
+In the case of \textit{no-reset}, the amount of random mutations is no longer
+controlled by this heuristic, so we fixed it to 25 random mutations throughout
+the execution of the tool.
 
 \subsection{IFC Stack Machine}
 
-Aliquam erat volutpat \citep{devai2013edsl}. Nunc eleifend leo vitae magna. In
-id erat non orci commodo lobortis. Proin neque massa, cursus ut, gravida ut,
-lobortis eget, lacus. Sed diam. Praesent fermentum tempor tellus. Nullam tempus.
-Mauris ac felis vel velit tristique imperdiet. Donec at pede. Etiam vel neque
-nec dui dignissim bibendum. Vivamus id enim. Phasellus neque orci, porta a,
-aliquet quis, semper a, massa. Phasellus purus. Pellentesque tristique imperdiet
-tortor. Nam euismod tellus id erat.
+The results of this case study are shown in Fig. \ref{fig:results:ifc}, ordered
+by the failure rate achieved by \fuzzchick in decreasing order --- notice the
+logarithmic scale used on the MTTF.
+%
+As introduced earlier, \fuzzchick can only find 5 out of the 20 bugs injected
+with a \%100 success rate within the one hour testing budget.
+%
+In turn, our tool manages to find every bug on all runs, and taking less than a
+minute in the worst absolute case.
+%
+These results are somewhat pesimistic towards \fuzzchick if compared to the ones
+presented originally by \citeauthor{lampropoulos2019coverage}.
+%
+However, we want to remark that our experiments encompass 30 independent runs
+instead of the 5 originally used when presenting \fuzzchick.
+%
+Moreover, since the MTTF simply aggregates all runs, regardless of if they found
+a bug or timed out, this metric is quite sensitive to the particular timeout
+used on each experiment, and will tend to inflate the results as soon as the
+failure rate goes below 1.
+%
+For this reason, additionally comparing the failure rate between tools gives us
+a better estimation of the reliability of both tools, where \mutagen shows a
+clear improvement.
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+\vspace{-10pt}
+\footnotesize
+\begin{tabular}{ccccc}
+\hline
+\multicolumn{1}{c}{
+  \multirow{2}{*}{\textbf{Bug}}} &
+  \multicolumn{1}{c}{\multirow{2}{*}{\textbf{\fuzzchick}}} &
+  \multicolumn{1}{c}{\multirow{2}{*}{\textbf{\mutagen}}} &
+  \multicolumn{2}{c}{\textbf{VD.A}} \\
+\cline{4-5}
+\multicolumn{1}{c}{} &
+\multicolumn{1}{c}{} &
+\multicolumn{1}{c}{} &
+\multicolumn{1}{c}{\textbf{Value}} &
+\multicolumn{1}{c}{\textbf{Estimate}} \\
+\hline
+1  & 13974.9 & 3632.7 & 0.89 & {\color{red} large} \\ \hline
+2  & 23962.9 & 7122.3 & 0.90 & {\color{red} large} \\ \hline
+3  & 19678.5 & 4633.9 & 0.89 & {\color{red} large} \\ \hline
+4  & 20398.4 & 16831.2 & 0.72 & {\color{red} medium} \\ \hline
+5  & 17348.1 & 2326.6 & 0.94 & {\color{red} large} \\ \hline
+6  & 10727.1 & 2312.9 & 0.92 & {\color{red} large} \\ \hline
+7  & 5070.7 & 332.9 & 0.91 & {\color{red} large} \\ \hline
+8  & 5596.4 & 298.7 & 0.90 & {\color{red} large} \\ \hline
+9  & 16402.4 & 26342.5 & 0.51 & negligible \\ \hline
+10 & 11553.0 & 25044.5 & 0.55 & negligible \\ \hline
+11 & 11304.3 & 2536.8 & 0.82 & {\color{red} large} \\ \hline
+12 & 18507.3 & 14482.7 & 0.65 & {\color{red} small} \\ \hline
+13 & 17961.5 & 13454.9 & 0.65 & {\color{red} small} \\ \hline
+14 & 10621.9 & 3928.3 & 0.78 & {\color{red} large} \\ \hline
+15 & 23866.3 & 43678.2 & 0.23 & {\color{blue} large} \\ \hline
+16 & 25321.7  & 27602.0 & 0.54 & negligible \\ \hline
+17 & 28515.6 & 52344.9 & 0.47 & negligible \\ \hline
+18 & 24218.6 & 123401.3 & 0.14 & {\color{blue} large} \\ \hline
+19 & 18638.9 & 30682.3 & 0.45 & negligible \\ \hline
+20 & 18883.1 & 15841.9 & 0.60 & {\color{red} small} \\ \hline
+& & \textbf{Mean} & 0.67 & {\color{red} medium} \\
+\hline
+\end{tabular}
+\captionof{table}{\label{table:ifc:tests} Mean tests until first failure and effect size
+  comparison between \fuzzchick and \mutagen when considering only succesfull
+  runs.
+  %
+  Estimates in {\color{blue} blue} and {\color{red} red} indicate results
+  favouring \fuzzchick and \mutagen, respectively. }
+\vspace{-15pt}
+\end{wrapfigure}
+
+If we only consider the succesfull runs where \fuzzchick does not time out, we
+observed a peculiarity.
+%
+This tool either finds bugs relatively quickly (after a few thouthands tests) or
+does not find them at all within the time budget, which suggest that its power
+scheduler assigns some mutation candidates too little energy before they become
+uniteresting and get ultimately discarded.
+%
+Under this consideration, it is fair to think that \fuzzchick might be a better
+choice if we set a shorter timeout and run it several times.
+%
+Thus, to be an improvement over \fuzzchick, our tool must be able to find bugs
+not only more reliably, but also relatively fast!
+
+
+Table \ref{table:ifc:tests} shows a comparison between the mean number of tests
+required by both tools to find the first failure when we only consider
+successful runs.
+%
+Additionally, we compute the non-parametric Vargha-Delaney A measure \cite{vda,
+  arcuri}, that encodes the probability of \mutagen to yield better results than
+\fuzzchick.
+%
+As it can be observed, using an exhaustive mutation approach can be not only
+more reliable, but also faster, where \mutagen is likely to find bugs faster
+that \fuzzchick in 14 of the 20 bugs injected into the abstract machine.
 
 \begin{figure}
   \centering
@@ -2114,6 +2215,35 @@ tortor. Nam euismod tellus id erat.
   \caption{\label{fig:results:ifc} Comparison between \fuzzchick and \mutagen
     across 20 different bugs for the IFC stack machine. }
 \end{figure}
+
+
+In terms of the \mutagen heuristics, we can also arrive to some conclusions.
+%
+In first place, this case study does not seem to be affected by using a FIFO
+scheduling.
+%
+Upon inspection, we found that the reason behind this is that the mutation
+candidate queues remain empty most of the time (generation mode), and when a new
+interesting candidate gets inserted, all its mutants (and their descendents) are
+processed before the next one is enqueued.
+
+On the other hand, disabling the trace saturation heuristic (\textit{no-reset})
+we observed two interesting effects:
+%
+havig fixed the amount of random mutations to 25 adds a seemingly constant
+overhead when finding most of the (easier) bugs, suggesting that we are spending
+worthless time mutating numeric subexpressions inside the generated machine
+states and that a smaller number of random mutations could be equally effective
+to find such bugs.
+%
+However, some of the hardest to find bugs cannot be reliably exposed using this
+amount of random mutations (\#4, \#9, \#12, \#18 and \#10), suggesting that one
+should increase this number even further to be able to discover all bugs within
+the time budget.
+%
+In consequence, we believe this heuristic is effective at automatically tunning
+this internal parameter of our tool, especially when the user is unsure about
+what the best value for it might be.
 
 \subsection{WebAssembly Engine}
 
