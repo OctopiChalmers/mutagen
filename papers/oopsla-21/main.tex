@@ -621,7 +621,7 @@ than those that were discarded.
   \SetKwProg{Fn}{Function}{:}{}
   \Fn{\FC{P, N, gen, mut}}{
     i $\gets$ 0\;
-    TLog, QSucc, QDisc $\gets$ $\varnothing$;\;
+    TLog, QSucc, QDisc $\gets$ $\varnothing$\;
     \While{i $<$ N}{
       x $\gets$ Pick(QSucc, QDisc, gen, mut)\;
       (result, trace) $\gets$ WithTrace(P(x))\;
@@ -1185,9 +1185,9 @@ precomputed one in line.
   \SetKwProg{Fn}{Function}{:}{}
   \Fn{\MG{P, N, R, gen, mut}}{
     i $\gets$ 0\;
-    TLog, QSucc, QDisc $\gets$ $\varnothing$;\;
+    TLog, QSucc, QDisc $\gets$ $\varnothing$\;
     \While{i $<$ N}{
-      x $\gets$ Pick(QSucc, QDisc, gen, mut)\;
+      x $\gets$ Pick(QSucc, QDisc, gen)\;
       (result, trace) $\gets$ WithTrace(P(x))\;
       \lIf{\KwNot result}{\KwRet Bug(x)}
       \If{Interesting(TLog, trace)}{
