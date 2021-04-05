@@ -702,7 +702,7 @@ mutate_tree :: (a -> Gen a) -> Tree a -> Gen (Tree a)
 mutate_tree mutate_a (Leaf x) =
   oneof [ do { x' <- mutate_a x; return (Leaf x')}                     -- Mutate recursively
         , do { l <- arbitrary; r <- arbitrary; return (Node l x r) } ] -- Grow constructor
-mutate_tree (Node l x r) =
+mutate_tree mutate_a (Node l x r) =
   oneof [ return l                                                     -- Return subexpression
         , return r                                                     -- Return subexpression
         , return (Leaf x)                                              -- Shrink constructor
@@ -1192,7 +1192,7 @@ precomputed one in line.
       \lIf{\KwNot result}{\KwRet Bug(x)}
       \If{Interesting(TLog, trace)}{
         \If{\KwNot Discarded(result)}{
-          muts $\gets$ Mutants(x, mut, R)\;
+          muts $\gets$ Mutate(x, mut, R)\;
           Enqueue(QSucc, muts)\;
         }
         \uElseIf{Passed(Parent(x))}{
