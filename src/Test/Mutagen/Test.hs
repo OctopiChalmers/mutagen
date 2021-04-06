@@ -35,6 +35,7 @@ data Config
   , maxSize         :: Int
   , replay          :: Maybe (QCGen, Int)
   , chatty          :: Bool
+  , stepByStep      :: Bool
   , timeout         :: Maybe Integer
   , randomMutations :: Int
   , mutationLimit   :: Maybe Int
@@ -52,6 +53,7 @@ defaultConfig =
   , maxSize         = 10
   , replay          = Nothing
   , chatty          = False
+  , stepByStep      = False
   , timeout         = Nothing
   , randomMutations = 1
   , mutationLimit   = Nothing
@@ -73,6 +75,7 @@ data State
   , stArgsGen            :: Gen Args
   , stArgsRunner         :: Args -> Result
   , stDebug              :: Bool
+  , stStepByStep         :: Bool
   , stTimeout            :: (Maybe Integer)
   , stStartTime          :: Integer
   , stRandomMutations    :: Int
@@ -175,6 +178,7 @@ mutagenWithResult cfg p
             , stNextSeed = rng
             , stUsedSeed = Nothing
             , stDebug = chatty cfg
+            , stStepByStep = stepByStep cfg
             , stTimeout = timeout cfg
             , stStartTime = now
             , stMaxTraceLength = maxTraceLength cfg
@@ -266,6 +270,7 @@ counterexample st as test = do
 -- | Generate and run a new test
 newTest :: State -> IO Report
 newTest st = do
+  when (stStepByStep st) (void getLine)
   -- void getLine
   clear >> hFlush stdout
   printGlobalStats st
@@ -379,6 +384,8 @@ runTestCase st args parentbatch = do
   let runTest = unResult (protectResult (stArgsRunner st (lazy args)))
   (test, Trace entries) <- withTrace runTest
   pos <- readPosRef
+  when (stDebug st) $ do
+    printf "\nEvaluated subexpressions:%s\n" (show pos)
   -- record the test trace and check if it was interesting
   let tr = Trace (take (stMaxTraceLength st) entries)
   -- inspect the test result
