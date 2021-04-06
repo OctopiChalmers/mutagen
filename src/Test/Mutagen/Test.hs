@@ -23,6 +23,7 @@ import Test.QuickCheck.Random (QCGen, newQCGen)
 import Tracer
 import Test.Mutagen.Property
 import Test.Mutagen.Mutation
+import Test.Mutagen.Lazy
 
 ----------------------------------------
 -- | Testing options (available to the user)
@@ -354,17 +355,17 @@ mutateFromDiscarded st = do
 
 
 -- | Inherit the mutation batch of a parent test case of it exists, otherwise create a new one.
-createOrInheritMutationBatch :: State -> Args -> Maybe (MutationBatch Args) -> Bool -> MutationBatch Args
-createOrInheritMutationBatch st args parentbatch isPassed =
+createOrInheritMutationBatch :: State -> Args -> Maybe (MutationBatch Args) -> Bool -> [Pos] -> MutationBatch Args
+createOrInheritMutationBatch st args parentbatch isPassed pos =
   case parentbatch of
     -- test case was mutated from an existing one, we can augment its parent mutation batch
     Just mb ->
       newMutationBatchFromParent mb
-        isPassed args
+        isPassed pos args
     -- test case was freshly generated, we need to initialize a new mutation batch
     Nothing ->
       newMutationBatch (stMutationOrder st) (stRandomMutations st) (stMaxSize st) (stMutationLimit st)
-        isPassed args
+        isPassed pos args
 
 
 -- | Run the test and check the result, if it passes then continue testing
@@ -373,7 +374,11 @@ runTestCase st args parentbatch = do
   -- run the test
   when (stDebug st) $ do
     printf "\nRunning test...\n"
-  (test, Trace entries) <- withTrace (unResult (protectResult (stArgsRunner st args)))
+  -- reset the evaluated position reference
+  resetPosRef
+  let runTest = unResult (protectResult (stArgsRunner st (lazy args)))
+  (test, Trace entries) <- withTrace runTest
+  pos <- readPosRef
   -- record the test trace and check if it was interesting
   let tr = Trace (take (stMaxTraceLength st) entries)
   -- inspect the test result
@@ -388,7 +393,7 @@ runTestCase st args parentbatch = do
         printMutatedTestCaseTrace tr
       when interesting $ do
         printf "\nTest case was interesting! (new trace nodes=%d, prio=%d)\n" new depth
-      let mbatch = createOrInheritMutationBatch st args parentbatch True
+      let mbatch = createOrInheritMutationBatch st args parentbatch True pos
       loop st { stNumPassed = stNumPassed st + 1
               , stPassedTraceLog = tlog'
               , stPassedQueue =
@@ -412,7 +417,7 @@ runTestCase st args parentbatch = do
         printMutatedTestCaseTrace tr
       when interesting $ do
         printf "\nTest case was interesting! (new trace nodes=%d, prio=%d)\n" new depth
-      let mbatch = createOrInheritMutationBatch st args parentbatch False
+      let mbatch = createOrInheritMutationBatch st args parentbatch False pos
       loop st { stNumDiscarded = stNumDiscarded st + 1
               , stDiscardedTraceLog = tlog'
               , stDiscardedQueue =

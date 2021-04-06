@@ -16,12 +16,13 @@ import Unsafe.Coerce
 import Test.QuickCheck (Gen, Arbitrary, arbitrary)
 
 import Test.Mutagen.Mutation
+import Test.Mutagen.Lazy
 import Test.Mutagen.Exception
 
 ----------------------------------------
 -- Test arguments hidden behind an existential
 
-type Arg a = (Show a, Arbitrary a, Mutable a)
+type Arg a = (Show a, Arbitrary a, Mutable a, Lazy a)
 
 data Args = forall a . Arg a => Args a
 
@@ -35,6 +36,10 @@ instance Mutable Args where
     fmap Args <$> inside pos mut a
 
   positions (Args a) = positions a
+
+instance Lazy Args where
+  lazy (Args a) = Args (lazy a)
+  lazy' pre (Args a) = Args (lazy' pre a)
 
 ----------------------------------------
 -- Tests

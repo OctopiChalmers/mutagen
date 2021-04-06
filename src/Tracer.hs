@@ -1,7 +1,7 @@
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE DeriveDataTypeable #-}
 
-module Tracer 
+module Tracer
   ( __tracer__
   , TraceEntry
   , Trace(..)
@@ -37,7 +37,7 @@ import OccName as Name
 -- | Tracing primitive
 
 __tracer__ :: Int -> a -> a
-__tracer__ n expr = 
+__tracer__ n expr =
   unsafePerformIO $ do
     addTraceEntry n
     return expr
@@ -53,7 +53,7 @@ type TraceEntry = Int
 newtype Trace = Trace { unTrace :: [TraceEntry] }
   deriving Show
 
--- The dynamic traces are stored into this IORef 
+-- The dynamic traces are stored into this IORef
 trace_ref :: IORef Trace
 trace_ref = unsafePerformIO (newIORef (Trace []))
 
@@ -88,7 +88,7 @@ emptyTraceLog :: TraceLog
 emptyTraceLog = TraceLog mempty
 
 -- Insert a trace into a trace log:
--- 
+--
 -- Returns a new log that incorporates this execution, along with:
 -- the number of new trace entries executed by this trace (if any)
 -- the depth where the new trace entries where inserted
@@ -113,7 +113,7 @@ registerTrace (Trace entries) = go 0 entries
 -- Pretty printing
 
 toForest :: TraceLog -> Forest Int
-toForest (TraceLog tlog) = 
+toForest (TraceLog tlog) =
   Map.elems (Map.mapWithKey (\e tlog' -> Node e (toForest tlog')) tlog)
 
 drawTraceLog :: TraceLog -> String
@@ -126,7 +126,7 @@ drawTraceLog' = putStr . drawTraceLog
 ----------------------------------------
 -- | Source plugin
 
-data TraceAnn = TRACE 
+data TraceAnn = TRACE
   deriving Data
 
 uid :: IORef Int
@@ -221,7 +221,7 @@ message str = liftIO $ putStrLn $ "[Tracer] " <> str
 instrumentedMessage :: DynFlags -> String -> Int -> SrcSpan -> Hsc ()
 instrumentedMessage flags reason n loc = do
   message $ "inoculating tracer #" <> show n <>
-            " on " <> reason <> 
+            " on " <> reason <>
             " at " <> showPpr flags loc
 
 newUID :: IORef Int -> Hsc Int

@@ -141,43 +141,51 @@ data MutationBatch a = MutationBatch
   , mb_nmuts :: Int
   }
 
-newMutationBatch :: Mutable a => MutationOrder -> Int -> Int -> Int -> Bool -> a -> MutationBatch a
-newMutationBatch order nrand size nmuts passed a =
+newMutationBatch :: Mutable a => MutationOrder -> Int -> Int -> Int -> Bool -> [Pos] -> a -> MutationBatch a
+newMutationBatch order nrand size nmuts passed pos a =
   MutationBatch
   { mb_value = a
-  , mb_order = order
-  , mb_size = size
-  , mb_test_passed = passed
-  , mb_nrand = nrand
-  , mb_past_pos = mempty
+#ifndef MUTAGEN_NO_LAZYNESS
+  , mb_next_pos = filter (`elem` pos) (order (positions a))
+#else
   , mb_next_pos = order (positions a)
+#endif
+  , mb_past_pos = mempty
+  , mb_test_passed = passed
   , mb_curr_queue = mempty
   , mb_nmuts = nmuts
+  , mb_order = order
+  , mb_size = size
+  , mb_nrand = nrand
   }
 
-newMutationBatchFromParent :: Mutable a => MutationBatch a -> Bool -> a  -> MutationBatch a
-newMutationBatchFromParent mb passed a =
-#ifdef MUTAGEN_NO_INHERITANCE
-  mb { mb_value = a
-     , mb_next_pos = mb_order mb (positions a)
-     , mb_past_pos = mempty
-     , mb_test_passed = passed
-     , mb_curr_queue = mempty
-     , mb_nmuts = mb_nmuts mb - 1
-     }
+newMutationBatchFromParent :: Mutable a => MutationBatch a -> Bool -> [Pos] -> a -> MutationBatch a
+newMutationBatchFromParent mb passed pos a =
+  mb
+  { mb_value = a
+#ifndef MUTAGEN_NO_LAZYNESS
+  , mb_next_pos = filter (`elem` pos) (mb_order mb (positions a))
 #else
-  let (prevPos, newPos) = partition (`elem` mb_past_pos mb) (mb_order mb (positions a))
-  in mb { mb_value = a
-        , mb_next_pos = newPos
-        , mb_past_pos =
-            if mb_test_passed mb
-            then reverse prevPos
-            else mempty
-        , mb_test_passed = passed
-        , mb_curr_queue = mempty
-        , mb_nmuts = mb_nmuts mb - 1
-        }
+  , mb_next_pos = mb_order mb (positions a)
 #endif
+  , mb_past_pos = mempty
+  , mb_test_passed = passed
+  , mb_curr_queue = mempty
+  , mb_nmuts = mb_nmuts mb - 1
+  }
+
+  -- -- Stuff for the inheritance heuristic
+  -- let (prevPos, newPos) = partition (`elem` mb_past_pos mb) (mb_order mb (positions a))
+  -- in mb { mb_value = a
+  --       , mb_next_pos = newPos
+  --       , mb_past_pos =
+  --           if mb_test_passed mb
+  --           then reverse prevPos
+  --           else mempty
+  --       , mb_test_passed = passed
+  --       , mb_curr_queue = mempty
+  --       , mb_nmuts = mb_nmuts mb - 1
+  --       }
 
 nextMutation :: Mutable a => MutationBatch a -> IO (Maybe (a, MutationBatch a))
 nextMutation mb | mb_nmuts mb == 0 = return Nothing -- too many mutations
