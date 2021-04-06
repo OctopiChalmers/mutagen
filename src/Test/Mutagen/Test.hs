@@ -381,7 +381,7 @@ runTestCase st args parentbatch = do
     printf "\nRunning test...\n"
   -- reset the evaluated position reference
 #ifdef MUTAGEN_NO_LAZY
-  (test, Trace entries) <- withTrace (unResult (protectResult (stArgsRunner st (lazy args))))
+  (test, Trace entries) <- withTrace (unResult (protectResult (stArgsRunner st args)))
   pos <- return []
 #else
   resetPosRef
