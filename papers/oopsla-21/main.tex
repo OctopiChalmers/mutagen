@@ -700,15 +700,15 @@ In simple terms, these operations encompass
 \begin{verbatim}
 mutate_tree :: (a -> Gen a) -> Tree a -> Gen (Tree a)
 mutate_tree mutate_a (Leaf x) =
-  oneof [ do { x' <- mutate_a x; return (Leaf x')}                     -- Mutate recursively
-        , do { l <- arbitrary; r <- arbitrary; return (Node l x r) } ] -- Grow constructor
-mutate_tree mutate_a (Node l x r) =
-  oneof [ return l                                                     -- Return subexpression
-        , return r                                                     -- Return subexpression
-        , return (Leaf x)                                              -- Shrink constructor
-        , do { l' <- mutate_tree l; return (Node l' x r) }             -- Mutate recursively
-        , do { x' <- mutate_a    x; return (Node l x' r) }             -- Mutate recursively
-        , do { r' <- mutate_tree r; return (Node l x r') } ]           -- Mutate recursively
+  oneof [ do { x' <- mutate_a x; return (Leaf x')}                       -- Mutate recursively
+        , do { l <- arbitrary; r <- arbitrary; return (Branch l x r) } ] -- Grow constructor
+mutate_tree mutate_a (Branch l x r) =
+  oneof [ return l                                                       -- Return subexpression
+        , return r                                                       -- Return subexpression
+        , return (Leaf x)                                                -- Shrink constructor
+        , do { l' <- mutate_tree l; return (Branch l' x r) }             -- Mutate recursively
+        , do { x' <- mutate_a    x; return (Branch l x' r) }             -- Mutate recursively
+        , do { r' <- mutate_tree r; return (Branch l x r') } ]           -- Mutate recursively
 \end{verbatim}
 \caption{\label{fig:fuzzchick:mutator}\fuzzchick mutator for the \texttt{Tree} data type. }
 \end{figure}
@@ -966,12 +966,12 @@ constructors.
 
 \begin{figure}
 \begin{verbatim}
-mutate (Leaf x)     = [ PURE (Node def x def) ]   -- Swap constructor
-mutate (Node l x r) = [ PURE l, PURE r            -- Return subexpression
-                      , PURE (Leaf x)             -- Swap constructor
-                      , PURE (Node l x l)         -- Rearrange subexpressions
-                      , PURE (Node r x r)         -- Rearrange subexpressions
-                      , PURE (Node r x l) ]       -- Rearrange subexpressions
+mutate (Leaf x)       = [ PURE (Branch def x def) ]   -- Swap constructor
+mutate (Branch l x r) = [ PURE l, PURE r              -- Return subexpression
+                        , PURE (Leaf x)               -- Swap constructor
+                        , PURE (Branch l x l)         -- Rearrange subexpressions
+                        , PURE (Branch r x r)         -- Rearrange subexpressions
+                        , PURE (Branch r x l) ]       -- Rearrange subexpressions
 \end{verbatim}
 \caption{\label{fig:mutagen:mutator}\mutagen mutator for the \texttt{Tree} data
   type.}
@@ -1489,7 +1489,7 @@ novel.
     $\cdots$\;
     \If{Interesting(TLog, trace)}{
       \If{\KwNot Discarded(result)}{
-        muts $\gets$ Mutants(x, mut, R)\;
+        muts $\gets$ Mutate(x, mut, R)\;
         {\color{red} prio $\gets$ BranchDepth(TLog, trace)}\; %% NEW
         {\color{red} PushFront(QSucc, prio, muts)}\;          %% NEW
       }
@@ -1939,7 +1939,7 @@ To keep things simple, we can simply assert that, whenever a randomly generated
 (or mutated for that matter) WebAssembly module is valid according to
 \textit{haskell-wasm}, then the reference implementation agrees upon it.
 %
-In other words, we are testing for false positives.
+In other words, we are testing for false negatives.
 %
 In Haskell, we write the following testing property:
 
