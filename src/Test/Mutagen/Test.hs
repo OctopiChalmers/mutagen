@@ -380,12 +380,16 @@ runTestCase st args parentbatch = do
   when (stDebug st) $ do
     printf "\nRunning test...\n"
   -- reset the evaluated position reference
+#ifdef MUTAGEN_NO_LAZY
+  (test, Trace entries) <- withTrace (unResult (protectResult (stArgsRunner st (lazy args))))
+  pos <- return []
+#else
   resetPosRef
-  let runTest = unResult (protectResult (stArgsRunner st (lazy args)))
-  (test, Trace entries) <- withTrace runTest
+  (test, Trace entries) <- withTrace (unResult (protectResult (stArgsRunner st (lazy args))))
   pos <- readPosRef
   when (stDebug st) $ do
-    printf "\nEvaluated subexpressions:%s\n" (show pos)
+    printf "\nEvaluated subexpressions:\n%s\n" (show pos)
+#endif
   -- record the test trace and check if it was interesting
   let tr = Trace (take (stMaxTraceLength st) entries)
   -- inspect the test result

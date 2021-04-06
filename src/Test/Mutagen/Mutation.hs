@@ -145,7 +145,7 @@ newMutationBatch :: Mutable a => MutationOrder -> Int -> Int -> Int -> Bool -> [
 newMutationBatch order nrand size nmuts passed pos a =
   MutationBatch
   { mb_value = a
-#ifdef MUTAGEN_NO_LAZYNESS
+#ifdef MUTAGEN_NO_LAZY
   , mb_next_pos = order (positions a)
 #else
   , mb_next_pos = filter (`elem` pos) (order (positions a))
@@ -163,7 +163,7 @@ newMutationBatchFromParent :: Mutable a => MutationBatch a -> Bool -> [Pos] -> a
 newMutationBatchFromParent mb passed pos a =
   mb
   { mb_value = a
-#ifdef MUTAGEN_NO_LAZYNESS
+#ifdef MUTAGEN_NO_LAZY
   , mb_next_pos = mb_order mb (positions a)
 #else
   , mb_next_pos = filter (`elem` pos) (mb_order mb (positions a))
