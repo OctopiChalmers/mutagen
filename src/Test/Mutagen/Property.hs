@@ -37,9 +37,9 @@ instance Mutable Args where
 
   positions (Args a) = positions a
 
-instance Lazy Args where
-  lazy (Args a) = Args (lazy a)
-  lazy' pre (Args a) = Args (lazy' pre a)
+-- instance Lazy Args where
+--   lazy (Args a) = Args (lazy a)
+--   lazy' pre (Args a) = Args (lazy' pre a)
 
 ----------------------------------------
 -- Tests
@@ -150,4 +150,8 @@ instance (Arg a, Res b) => Testable (a -> b) where
 
 forAll :: (Arg a, Res b) => Gen a -> (a -> b) -> Property
 forAll gen f =
+#ifdef MUTAGEN_NO_LAZY
   Property (Args <$> gen) (\(Args as) -> result (f (unsafeCoerce as)))
+#else
+  Property (Args <$> gen) (\(Args as) -> result (f (lazy (unsafeCoerce as))))
+#endif
