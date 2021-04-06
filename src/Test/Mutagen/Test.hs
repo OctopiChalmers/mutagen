@@ -385,7 +385,7 @@ runTestCase st args parentbatch = do
   pos <- return []
 #else
   resetPosRef
-  (test, Trace entries) <- withTrace (unResult (protectResult (stArgsRunner st args)))
+  (test, Trace entries) <- withTrace (unResult (protectResult (stArgsRunner st (lazy args))))
   pos <- readPosRef
   when (stDebug st) $ do
     printf "\nEvaluated subexpressions:\n%s\n" (show pos)
