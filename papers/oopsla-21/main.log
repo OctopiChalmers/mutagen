@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.6.18)  6 APR 2021 08:11
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.6.18)  7 APR 2021 17:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1517,45 +1517,64 @@ LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
 (Font)              scaled to size 10.0pt on input line 169.
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/b/n' will be
 (Font)              scaled to size 10.0pt on input line 169.
-LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 10.0pt on input line 185.
- [1.1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/it' will be
-(Font)              scaled to size 10.0pt on input line 214.
+(Font)              scaled to size 10.0pt on input line 178.
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
+(Font)              scaled to size 10.0pt on input line 178.
+
+
+Package natbib Warning: Citation `quickcheck' on page 1 undefined on input line
+ 178.
+
+
+Package natbib Warning: Citation `qcports' on page 1 undefined on input line 17
+9.
+
+
+Package natbib Warning: Citation `fuzzchick' on page 1 undefined on input line 
+190.
+
+[1.1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/sc' will be
-(Font)              scaled to size 10.0pt on input line 219.
+(Font)              scaled to size 10.0pt on input line 284.
+LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
+(Font)              scaled to size 8.0pt on input line 328.
+ [2.2]
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/b/it' in size <10> not av
 ailable
 (Font)              Font shape `T1/LinuxBiolinumT-TLF/b/sl' tried instead on in
-put line 224.
+put line 398.
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/b/sl' will be
-(Font)              scaled to size 10.0pt on input line 224.
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
-(Font)              scaled to size 10.0pt on input line 229.
+(Font)              scaled to size 10.0pt on input line 398.
 
 
-Package natbib Warning: Citation `quickcheck' on page 2 undefined on input line
- 229.
+Package natbib Warning: Citation `quickcheck' on page 3 undefined on input line
+ 403.
+
+LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 10.0pt on input line 418.
+LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/sc' will be
+(Font)              scaled to size 8.0pt on input line 426.
+[3.3]
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 437.
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 263.
+surrounding objects on input line 437.
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 263.
+surrounding objects on input line 438.
 
-
-Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 264.
-
-LaTeX Font Info:    Trying to load font information for T1+zi4 on input line 28
-1.
+LaTeX Font Info:    Trying to load font information for T1+zi4 on input line 45
+5.
 (/usr/share/texlive/texmf-dist/tex/latex/inconsolata/t1zi4.fd
 File: t1zi4.fd 2018/01/14 T1/zi4 (Inconsolata)
 )
 LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 10.0pt on input line 281.
+(Font)              scaled to size 10.0pt on input line 455.
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `zi4' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
@@ -1563,146 +1582,139 @@ Package microtype Info: Loading generic protrusion settings for font family
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 283.
+surrounding objects on input line 457.
 
 LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 8.0pt on input line 304.
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
-(Font)              scaled to size 8.0pt on input line 308.
-[2.2]
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/sc' will be
-(Font)              scaled to size 8.0pt on input line 422.
- [3.3]
-Underfull \vbox (badness 10000) has occurred while \output is active []
+(Font)              scaled to size 8.0pt on input line 478.
+
+Underfull \vbox (badness 1189) has occurred while \output is active []
 
  [4.4]
+Underfull \vbox (badness 3323) has occurred while \output is active []
+
+ [5.5]
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/it' will be
-(Font)              scaled to size 10.0pt on input line 564.
+(Font)              scaled to size 10.0pt on input line 738.
 
+Underfull \vbox (badness 4660) has occurred while \output is active []
 
-Class acmart Warning: A possible image without description on input line 675.
+ [6.6]
 
-LaTeX Font Info:    Trying to load font information for TS1+zi4 on input line 7
-12.
+Class acmart Warning: A possible image without description on input line 849.
+
+LaTeX Font Info:    Trying to load font information for TS1+zi4 on input line 8
+86.
 (/usr/share/texlive/texmf-dist/tex/latex/inconsolata/ts1zi4.fd
 File: ts1zi4.fd 2018/01/14 TS1/zi4 (Inconsolata)
 )
 LaTeX Font Info:    Font shape `TS1/zi4/m/n' will be
-(Font)              scaled to size 8.0pt on input line 712.
+(Font)              scaled to size 8.0pt on input line 886.
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `zi4' (encoding: TS1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
-(Font)              scaled to size 9.0pt on input line 713.
+(Font)              scaled to size 9.0pt on input line 887.
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/it' will be
-(Font)              scaled to size 9.0pt on input line 713.
+(Font)              scaled to size 9.0pt on input line 887.
 LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 9.0pt on input line 713.
+(Font)              scaled to size 9.0pt on input line 887.
 
 
-Class acmart Warning: A possible image without description on input line 714.
+Class acmart Warning: A possible image without description on input line 888.
 
-[5.5] [6.6]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [7.7]
+[7.7] [8.8]
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/b/sc' will be
-(Font)              scaled to size 10.0pt on input line 863.
+(Font)              scaled to size 10.0pt on input line 1043.
 
 
-Package natbib Warning: Citation `feat' on page 8 undefined on input line 896.
+Package natbib Warning: Citation `feat' on page 9 undefined on input line 1076.
 
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/sc' will be
-(Font)              scaled to size 9.0pt on input line 977.
-
-Class acmart Warning: A possible image without description on input line 978.
-
-
-Underfull \vbox (badness 5985) has occurred while \output is active []
-
- [8.8]
-
-LaTeX Font Warning: Command \small invalid in math mode on input line 1029.
-
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 7.3pt on input line 1029.
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 5.5pt on input line 1029.
-
-Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 1102.
-
-
-Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 1102.
-
-
-Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 1103.
-
-
-Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 1135.
 
 [9.9]
+LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/sc' will be
+(Font)              scaled to size 9.0pt on input line 1157.
 
-Class acmart Warning: A possible image without description on input line 1245.
 
+Class acmart Warning: A possible image without description on input line 1158.
+
+
+LaTeX Font Warning: Command \small invalid in math mode on input line 1209.
+
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 7.3pt on input line 1209.
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 5.5pt on input line 1209.
 [10.10]
 
-Class acmart Warning: A possible image without description on input line 1450.
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 1282.
 
-[11.11]
 
-Class acmart Warning: A possible image without description on input line 1564.
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 1282.
 
-[12.12]
 
-Package natbib Warning: Citation `catalin' on page 13 undefined on input line 1
-712.
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 1283.
 
-[13.13]
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 1315.
+
+
+Class acmart Warning: A possible image without description on input line 1425.
+
+[11.11] [12.12]
+
+Class acmart Warning: A possible image without description on input line 1630.
+
+
+Class acmart Warning: A possible image without description on input line 1744.
+
+[13.13] [14.14]
+
+Package natbib Warning: Citation `catalin' on page 15 undefined on input line 1
+892.
+
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
-(Font)              scaled to size 8.0pt on input line 1773.
- [14.14] [15.15]
+(Font)              scaled to size 8.0pt on input line 1953.
+[15.15] [16.16]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [16.16]
+ [17.17]
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 2135.
-
-
-Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 2135.
+surrounding objects on input line 2315.
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 2136.
+surrounding objects on input line 2315.
 
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/it' will be
-(Font)              scaled to size 8.0pt on input line 2142.
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/sc' will be
-(Font)              scaled to size 8.0pt on input line 2143.
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 2317.
+
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/sc' will be
+(Font)              scaled to size 8.0pt on input line 2324.
 
 Package caption Warning: The type was already set to `figure'
-(caption)                 on input line 2175.
+(caption)                 on input line 2356.
 See the caption package documentation for explanation.
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 2181.
+surrounding objects on input line 2362.
 
 
-Package natbib Warning: Citation `vda' on page 17 undefined on input line 2204.
+Package natbib Warning: Citation `arcuri' on page 18 undefined on input line 23
+84.
 
 
+Package natbib Warning: Citation `vda' on page 18 undefined on input line 2385.
 
-Package natbib Warning: Citation `arcuri' on page 17 undefined on input line 22
-04.
 
-(./tikz/ifc-mttf.tikz) (./tikz/ifc-mttf.tikz) (./tikz/ifc-mttf.tikz)
+[18.18] (./tikz/ifc-mttf.tikz) (./tikz/ifc-mttf.tikz) (./tikz/ifc-mttf.tikz)
 (./tikz/ifc-mttf.tikz) (./tikz/ifc-mttf.tikz) (./tikz/ifc-fr.tikz
 Missing character: There is no ] in font nullfont!
 )
@@ -1717,37 +1729,16 @@ Missing character: There is no ] in font nullfont!
 Missing character: There is no ] in font nullfont!
 )
 
-Class acmart Warning: A possible image without description on input line 2217.
+Class acmart Warning: A possible image without description on input line 2400.
 
-[17.17] (./tikz/wasm-mttf.tikz
+
+Underfull \vbox (badness 6428) has occurred while \output is active []
+
+ [19.19]
+(./tikz/wasm-mttf.tikz
+Missing character: There is no ] in font nullfont!
 Missing character: There is no ] in font nullfont!
 
-NOTE: coordinate (1Y4.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y5.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y2.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y3.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y7.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.0e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y6.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y9.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y8.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-
-Package pgfplots Warning: the current plot has no coordinates (or all have been
- filtered away) on input line 43.
-
- [warning /pgfplots/warning/plot without coordinates]
-Missing character: There is no ] in font nullfont!
 NOTE: coordinate (1Y1.4e1],0Y0.0e0]) has been dropped because it is unbounded (
 in y). (see also unbounded coords=jump). 
 NOTE: coordinate (1Y1.5e1],0Y0.0e0]) has been dropped because it is unbounded (
@@ -1760,38 +1751,13 @@ NOTE: coordinate (1Y1.3e1],0Y0.0e0]) has been dropped because it is unbounded (
 in y). (see also unbounded coords=jump). 
 
 Package pgfplots Warning: the current plot has no coordinates (or all have been
- filtered away) on input line 144.
+ filtered away) on input line 143.
 
  [warning /pgfplots/warning/plot without coordinates]
 ) (./tikz/wasm-mttf.tikz
 Missing character: There is no ] in font nullfont!
-
-NOTE: coordinate (1Y4.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y5.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y2.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y3.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y7.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.0e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y6.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y9.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y8.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-
-Package pgfplots Warning: the current plot has no coordinates (or all have been
- filtered away) on input line 43.
-
- [warning /pgfplots/warning/plot without coordinates]
 Missing character: There is no ] in font nullfont!
+
 NOTE: coordinate (1Y1.4e1],0Y0.0e0]) has been dropped because it is unbounded (
 in y). (see also unbounded coords=jump). 
 NOTE: coordinate (1Y1.5e1],0Y0.0e0]) has been dropped because it is unbounded (
@@ -1804,38 +1770,13 @@ NOTE: coordinate (1Y1.3e1],0Y0.0e0]) has been dropped because it is unbounded (
 in y). (see also unbounded coords=jump). 
 
 Package pgfplots Warning: the current plot has no coordinates (or all have been
- filtered away) on input line 144.
+ filtered away) on input line 143.
 
  [warning /pgfplots/warning/plot without coordinates]
 ) (./tikz/wasm-mttf.tikz
 Missing character: There is no ] in font nullfont!
-
-NOTE: coordinate (1Y4.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y5.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y2.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y3.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y7.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.0e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y6.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y9.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y8.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-
-Package pgfplots Warning: the current plot has no coordinates (or all have been
- filtered away) on input line 43.
-
- [warning /pgfplots/warning/plot without coordinates]
 Missing character: There is no ] in font nullfont!
+
 NOTE: coordinate (1Y1.4e1],0Y0.0e0]) has been dropped because it is unbounded (
 in y). (see also unbounded coords=jump). 
 NOTE: coordinate (1Y1.5e1],0Y0.0e0]) has been dropped because it is unbounded (
@@ -1848,38 +1789,13 @@ NOTE: coordinate (1Y1.3e1],0Y0.0e0]) has been dropped because it is unbounded (
 in y). (see also unbounded coords=jump). 
 
 Package pgfplots Warning: the current plot has no coordinates (or all have been
- filtered away) on input line 144.
+ filtered away) on input line 143.
 
  [warning /pgfplots/warning/plot without coordinates]
 ) (./tikz/wasm-mttf.tikz
 Missing character: There is no ] in font nullfont!
-
-NOTE: coordinate (1Y4.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y5.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y2.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y3.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y7.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.0e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y6.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y9.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y8.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-
-Package pgfplots Warning: the current plot has no coordinates (or all have been
- filtered away) on input line 43.
-
- [warning /pgfplots/warning/plot without coordinates]
 Missing character: There is no ] in font nullfont!
+
 NOTE: coordinate (1Y1.4e1],0Y0.0e0]) has been dropped because it is unbounded (
 in y). (see also unbounded coords=jump). 
 NOTE: coordinate (1Y1.5e1],0Y0.0e0]) has been dropped because it is unbounded (
@@ -1892,38 +1808,13 @@ NOTE: coordinate (1Y1.3e1],0Y0.0e0]) has been dropped because it is unbounded (
 in y). (see also unbounded coords=jump). 
 
 Package pgfplots Warning: the current plot has no coordinates (or all have been
- filtered away) on input line 144.
+ filtered away) on input line 143.
 
  [warning /pgfplots/warning/plot without coordinates]
 ) (./tikz/wasm-mttf.tikz
 Missing character: There is no ] in font nullfont!
-
-NOTE: coordinate (1Y4.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y5.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y2.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y3.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y7.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y1.0e1],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y6.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y9.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-NOTE: coordinate (1Y8.0e0],0Y0.0e0]) has been dropped because it is unbounded (
-in y). (see also unbounded coords=jump). 
-
-Package pgfplots Warning: the current plot has no coordinates (or all have been
- filtered away) on input line 43.
-
- [warning /pgfplots/warning/plot without coordinates]
 Missing character: There is no ] in font nullfont!
+
 NOTE: coordinate (1Y1.4e1],0Y0.0e0]) has been dropped because it is unbounded (
 in y). (see also unbounded coords=jump). 
 NOTE: coordinate (1Y1.5e1],0Y0.0e0]) has been dropped because it is unbounded (
@@ -1936,7 +1827,7 @@ NOTE: coordinate (1Y1.3e1],0Y0.0e0]) has been dropped because it is unbounded (
 in y). (see also unbounded coords=jump). 
 
 Package pgfplots Warning: the current plot has no coordinates (or all have been
- filtered away) on input line 144.
+ filtered away) on input line 143.
 
  [warning /pgfplots/warning/plot without coordinates]
 ) (./tikz/wasm-fr.tikz
@@ -2022,87 +1913,86 @@ ng it (it is [0.0:0.0]) on input line 56.
  [warning /pgfplots/warning/approx empty range enlarged]
 )
 
-Class acmart Warning: A possible image without description on input line 2265.
+Class acmart Warning: A possible image without description on input line 2448.
 
 
-Package natbib Warning: Citation `dragen' on page 18 undefined on input line 23
-23.
+Package natbib Warning: Citation `dragen' on page 20 undefined on input line 25
+06.
 
 
-Package natbib Warning: Citation `dragen2' on page 18 undefined on input line 2
-327.
+Package natbib Warning: Citation `dragen2' on page 20 undefined on input line 2
+510.
 
 
-Package natbib Warning: Citation `bendkowski' on page 18 undefined on input lin
-e 2332.
+Package natbib Warning: Citation `bendkowski' on page 20 undefined on input lin
+e 2515.
 
 
-Package natbib Warning: Citation `boltzmann' on page 18 undefined on input line
- 2333.
-
-[18.18]
-
-Package natbib Warning: Citation `quickfuzz' on page 19 undefined on input line
- 2340.
+Package natbib Warning: Citation `boltzmann' on page 20 undefined on input line
+ 2516.
 
 
-Package natbib Warning: Citation `quickfuzzjournal' on page 19 undefined on inp
-ut line 2340.
+Package natbib Warning: Citation `quickfuzz' on page 20 undefined on input line
+ 2523.
 
 
-Package natbib Warning: Citation `claessen2014' on page 19 undefined on input l
-ine 2352.
+Package natbib Warning: Citation `quickfuzzjournal' on page 20 undefined on inp
+ut line 2523.
 
 
-Package natbib Warning: Citation `luck' on page 19 undefined on input line 2357
+Package natbib Warning: Citation `claessen2014' on page 20 undefined on input l
+ine 2535.
+
+
+Package natbib Warning: Citation `luck' on page 20 undefined on input line 2540
 .
 
 
-Package natbib Warning: Citation `generatinggood' on page 19 undefined on input
- line 2363.
+Package natbib Warning: Citation `generatinggood' on page 20 undefined on input
+ line 2546.
+
+[20.20]
+
+Package natbib Warning: Citation `collAFL' on page 21 undefined on input line 2
+578.
 
 
-Package natbib Warning: Citation `collAFL' on page 19 undefined on input line 2
-395.
-
-[19.19]
-
-Package natbib Warning: Citation `aflgo' on page 20 undefined on input line 240
-1.
+Package natbib Warning: Citation `aflgo' on page 21 undefined on input line 258
+4.
 
 
-Package natbib Warning: Citation `targetedpbt' on page 20 undefined on input li
-ne 2409.
+Package natbib Warning: Citation `targetedpbt' on page 21 undefined on input li
+ne 2592.
 
 
-Package natbib Warning: Citation `klee' on page 20 undefined on input line 2416
+Package natbib Warning: Citation `klee' on page 21 undefined on input line 2599
 .
 
 
-Package natbib Warning: Citation `driller' on page 20 undefined on input line 2
-417.
+Package natbib Warning: Citation `driller' on page 21 undefined on input line 2
+600.
 
 
-Package natbib Warning: Citation `qsym' on page 20 undefined on input line 2417
+Package natbib Warning: Citation `qsym' on page 21 undefined on input line 2600
 .
 
 
-Package natbib Warning: Citation `qsym' on page 20 undefined on input line 2420
+Package natbib Warning: Citation `qsym' on page 21 undefined on input line 2603
 .
 
 
-Package natbib Warning: Citation `feat' on page 20 undefined on input line 2439
+Package natbib Warning: Citation `feat' on page 21 undefined on input line 2622
 .
 
 
-Package natbib Warning: Citation `smallcheck' on page 20 undefined on input lin
-e 2456.
+Package natbib Warning: Citation `smallcheck' on page 21 undefined on input lin
+e 2639.
 
 
-Package natbib Warning: Citation `korat' on page 20 undefined on input line 247
-1.
+Package natbib Warning: Citation `korat' on page 21 undefined on input line 264
+6.
 
-[20.20] (./main.bbl)
+[21.21] (./main.bbl)
 
 Package natbib Warning: There were undefined citations.
 
@@ -2112,56 +2002,53 @@ Class acmart Warning: Some images may lack descriptions.
 
 Class acmart Warning: CCS concepts are mandatory for papers over two pages.
 
-[21.21]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 2561.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 2561.
+[22.22]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 2751.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 2751.
  (./main.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 2561.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 2561.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 2751.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 2751.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 2AED2092D97D6A79E09A5C455243E244;3518.
  ) 
 Here is how much of TeX's memory you used:
- 42514 strings out of 481239
- 913565 string characters out of 5920377
- 1341343 words of memory out of 5000000
- 56160 multiletter control sequences out of 15000+600000
- 771171 words of font info for 460 fonts, out of 8000000 for 9000
+ 42534 strings out of 481239
+ 914035 string characters out of 5920377
+ 1326426 words of memory out of 5000000
+ 56162 multiletter control sequences out of 15000+600000
+ 767683 words of font info for 469 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
  69i,28n,109p,814b,2601s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_tlukpt.enc}{/us
-r/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_ki75ao.enc}{/usr/shar
-e/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_oexx6f.enc}{/usr/share/texl
-ive/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/usr/share/texlive/texmf
--dist/fonts/enc/dvips/libertine/lbtn_25tcsq.enc}{/usr/share/texlive/texmf-dist/
-fonts/enc/dvips/libertine/lbtn_omcwp2.enc}{/usr/share/texlive/texmf-dist/fonts/
-enc/dvips/inconsolata/i4-t1-4.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvip
-s/libertine/lbtn_naooyc.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libe
-rtine/lbtn_7grukw.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/
-lbtn_ncsllp.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_n
-h77jq.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_76gpa5.
-enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_jtta5h.enc}</
-usr/share/texlive/texmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pf
-b></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/LibertineMathMI.pfb><
-/usr/share/texlive/texmf-dist/fonts/type1/public/newtx/LibertineMathMI5.pfb></u
-sr/share/texlive/texmf-dist/fonts/type1/public/newtx/LibertineMathMI7.pfb></usr
-/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinumT.pfb></usr/s
-hare/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinumTB.pfb></usr/sh
-are/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinumTBO.pfb></usr/sh
-are/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinumTI.pfb></usr/sha
-re/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineT.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTB.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTBI.pfb></usr/sha
-re/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTI.pfb></usr/sha
-re/texlive/texmf-dist/fonts/type1/public/newtx/NewTXMI.pfb></usr/share/texlive/
-texmf-dist/fonts/type1/public/newtx/txexs.pfb></usr/share/texlive/texmf-dist/fo
-nts/type1/public/newtx/txmiaX.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
-blic/newtx/txsys.pfb>
-Output written on main.pdf (21 pages, 676563 bytes).
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_oexx6f.enc}{/us
+r/share/texlive/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/usr/share/t
+exlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_25tcsq.enc}{/usr/share/texlive
+/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-4.enc}{/usr/share/texlive/texmf-d
+ist/fonts/enc/dvips/libertine/lbtn_omcwp2.enc}{/usr/share/texlive/texmf-dist/fo
+nts/enc/dvips/libertine/lbtn_naooyc.enc}{/usr/share/texlive/texmf-dist/fonts/en
+c/dvips/libertine/lbtn_7grukw.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvip
+s/libertine/lbtn_ncsllp.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libe
+rtine/lbtn_nh77jq.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/
+lbtn_76gpa5.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_j
+tta5h.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/inconsolata/Inconso
+lata-zi4r.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/Libertine
+MathMI.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/LibertineMat
+hMI5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/LibertineMathM
+I7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinumT
+.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinumTB.
+pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinumTBO.
+pfb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinumTI.p
+fb></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineT.pf
+b></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTB.pf
+b></usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTI.pf
+b></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/NewTXMI.pfb></usr/sha
+re/texlive/texmf-dist/fonts/type1/public/newtx/txexs.pfb></usr/share/texlive/te
+xmf-dist/fonts/type1/public/newtx/txmiaX.pfb></usr/share/texlive/texmf-dist/fon
+ts/type1/public/newtx/txsys.pfb>
+Output written on main.pdf (22 pages, 638368 bytes).
 PDF statistics:
- 425 PDF objects out of 1000 (max. 8388607)
- 355 compressed objects within 4 object streams
- 106 named destinations out of 1000 (max. 500000)
- 86205 words of extra memory for PDF output out of 89155 (max. 10000000)
+ 429 PDF objects out of 1000 (max. 8388607)
+ 361 compressed objects within 4 object streams
+ 110 named destinations out of 1000 (max. 500000)
+ 89277 words of extra memory for PDF output out of 106986 (max. 10000000)
 
