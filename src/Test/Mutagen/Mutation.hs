@@ -167,7 +167,8 @@ newMutationBatchFromParent mb passed pos a =
 #ifdef MUTAGEN_NO_LAZY
   , mb_next_pos = mb_order mb (positions a)
 #else
-  , mb_next_pos = filter (`elem` pos) (mb_order mb (positions a))
+  -- , mb_next_pos = filter (`elem` pos) (mb_order mb (positions a))
+  , mb_next_pos = pos
 #endif
   , mb_past_pos = mempty
   , mb_test_passed = passed
