@@ -148,7 +148,8 @@ newMutationBatch order nrand size nmuts passed pos a =
 #ifdef MUTAGEN_NO_LAZY
   , mb_next_pos = order (positions a)
 #else
-  , mb_next_pos = filter (`elem` pos) (order (positions a))
+  -- , mb_next_pos = filter (`elem` pos) (order (positions a))
+  , mb_next_pos = pos
 #endif
   , mb_past_pos = mempty
   , mb_test_passed = passed
