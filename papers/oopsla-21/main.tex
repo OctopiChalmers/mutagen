@@ -947,92 +947,97 @@ main goal of this work.
 %% this work.
 %
 In no particular order:
+
+
+\paragraph{Mutators distribution:}
 %
-\begin{itemize}
-\item \emph{Mutators distribution:} if we inspect the mutator defined in Fig.
-  \ref{fig:fuzzchick:mutator}, there are two compromises that the authors of
-  \fuzzchick adopted for the sake of simplicity.
-  %
-  On one hand, deep recursive mutations are very unlikely, since their
-  probability decreases multiplicatively with each recursive call.
-  %
-  For instance, mutating a subexpression that lies on the third level of a
-  \texttt{Tree} happens with a probability smaller than $(1/6)^3 = \sim 0.0046$,
-  and this only worsens as the type of the mutated value becomes more complex.
-  %
-  Hence, \fuzzchick mutators can only be effectively used to transform to
-  shallow data structures, potentially excluding interesting applications that
-  might require producing deeper valid values, e.g., programming languages,
-  network protocols interactions, etc.
-  %
-  Ideally, mutations should be able to happen on every subexpression of the
-  input seed in a reasonable basis.
+if we inspect the mutator defined in Fig. \ref{fig:fuzzchick:mutator}, there are
+two compromises that the authors of \fuzzchick adopted for the sake of
+simplicity.
+%
+On one hand, deep recursive mutations are very unlikely, since their probability
+decreases multiplicatively with each recursive call.
+%
+For instance, mutating a subexpression that lies on the third level of a
+\texttt{Tree} happens with a probability smaller than $(1/6)^3 = \sim 0.0046$,
+and this only worsens as the type of the mutated value becomes more complex.
+%
+Hence, \fuzzchick mutators can only be effectively used to transform to shallow
+data structures, potentially excluding interesting applications that might
+require producing deeper valid values, e.g., programming languages, network
+protocols interactions, etc.
+%
+Ideally, mutations should be able to happen on every subexpression of the input
+seed in a reasonable basis.
 
-  On the other hand, using random generators to produce neeeded subexpressions
-  when growing data constructors can be dangerous, as we are introducing the
-  very same ``uncontrolled'' randomness that we wanted to mitigate in the first
-  place!
-  %
-  If the random generator produces an invalid subexpression (something quite
-  likely), this might just invalidate the whole mutated test case.
-  %
-  We believe that growing data constructors needs to be done carefully.
-  %
-  For instance, by using just a minimal piece of data to make the overall
-  mutated test case type correct.
-  %
-  If that mutated test case to be interesting, that subexpression can always be
-  mutated later.
+On the other hand, using random generators to produce neeeded subexpressions
+when growing data constructors can be dangerous, as we are introducing the very
+same ``uncontrolled'' randomness that we wanted to mitigate in the first place!
+%
+If the random generator produces an invalid subexpression (something quite
+likely), this might just invalidate the whole mutated test case.
+%
+We believe that growing data constructors needs to be done carefully.
+%
+For instance, by using just a minimal piece of data to make the overall mutated
+test case type correct.
+%
+If that mutated test case to be interesting, that subexpression can always be
+mutated later.
 
-\item \emph{Enqueuing mutation candidates:} \fuzzchick uses two single queues for
-  keeping valid and discarded mutation candidates.
-  %
-  Whenever a new test case is found interesting, it is placed \emph{at the end
-    of its corresponding queue}.
-  %
-  If this test case happens to have discovered a whole new portion of the target
-  code, it will not be further mutated until the rest of the queue ahead of it
-  gets processed.
-  %
-  This can limit the effectiveness of the testing loop if the queues tend to
-  grow more often than they tend to shrink, as interesting mutation candidates
-  can get buried at the end of a long queue that only exercises the same portion
-  of the target code.
-  %
-  In the extreme case, they might not processed at all within the testing budget.
-  %
-  Ideally, one would like a mechanism that prioritizes mutating test cases
-  that discovers new portions of the code right away, and that is capable of
-  jumping back and forth from mutation candidates whenever this happens.
-  %
-  We show in Section \ref{sec:heuristics} how this can be achieved by analyzing
-  the execution information in order to prioritize test cases with novel
-  execution traces.
+\paragraph{Enqueuing mutation candidates:}
+%
+\fuzzchick uses two single queues for keeping valid and discarded mutation
+candidates.
+%
+Whenever a new test case is found interesting, it is placed \emph{at the end of
+  its corresponding queue}.
+%
+If this test case happens to have discovered a whole new portion of the target
+code, it will not be further mutated until the rest of the queue ahead of it
+gets processed.
+%
+This can limit the effectiveness of the testing loop if the queues tend to grow
+more often than they tend to shrink, as interesting mutation candidates can get
+buried at the end of a long queue that only exercises the same portion of the
+target code.
+%
+In the extreme case, they might not processed at all within the testing budget.
+%
+Ideally, one would like a mechanism that prioritizes mutating test cases that
+discovers new portions of the code right away, and that is capable of jumping
+back and forth from mutation candidates whenever this happens.
+%
+We show in Section \ref{sec:heuristics} how this can be achieved by analyzing
+the execution information in order to prioritize test cases with novel execution
+traces.
 
 
-\item \emph{Power schedule:} It is not clear how the power schedule used to
-  assign energy to each mutable test case in \fuzzchick works in the context of
-  high-level type-preserving mutations.
-  %
-  If it assigns too much energy to certain not-so-interesting seeds, some bugs
-  might not be discovered in a timely basis.
-  %
-  Conversely, assigning too little energy to interesting test cases might cause
-  that some bugs cannot be discovered at all unless the right mutation happens
-  within the small available energy window --- randomly generating the same test
-  case later on does not help, as it becomes uninteresting based on historic
-  trace information.
+\paragraph{Power schedule:}
+%
+It is not clear how the power schedule used to assign energy to each mutable
+test case in \fuzzchick works in the context of high-level type-preserving
+mutations.
+%
+If it assigns too much energy to certain not-so-interesting seeds, some bugs
+might not be discovered in a timely basis.
+%
+Conversely, assigning too little energy to interesting test cases might cause
+that some bugs cannot be discovered at all unless the right mutation happens
+within the small available energy window --- randomly generating the same test
+case later on does not help, as it becomes uninteresting based on historic trace
+information.
 
-  To keep the comparison fair, the authors replicated the same power schedule
-  configuration used in AFL.
-  %
-  However, AFL uses a different mutation approach that works at the bit level.
-  %
-  This raises the question about what is the best power schedule configuration
-  when using a high-level mutation approach --- something quite challenging to
-  characterize in general given the expressivity of the data types used to
-  drive the mutators.
-\end{itemize}
+To keep the comparison fair, the authors replicated the same power schedule
+configuration used in AFL.
+%
+However, AFL uses a different mutation approach that works at the bit level.
+%
+This raises the question about what is the best power schedule configuration
+when using a high-level mutation approach --- something quite challenging to
+characterize in general given the expressivity of the data types used to drive
+the mutators.\\
+
 
 The next section introduces \mutagen, our CGPT tool written in Haskell that aims
 to tackle the main limitations of \fuzzchick using an exhaustive mutation
@@ -1352,7 +1357,7 @@ case from the current batch, until it becomes empty and can switch to the next
 precomputed one in line.
 
 
-\begin{figure}[b]
+\begin{figure}[t]
 \begin{multicols}{2}
 
 \begin{algorithm}[H]
@@ -1852,6 +1857,79 @@ All of them were reported and later confirmed by the authors of
 \textit{haskell-wasm}.
 
 
+\begin{table}[t]
+\footnotesize
+\begin{tabular}{|c|c|l|}
+\hline
+\textbf{Id}
+& \textbf{Subsystem}
+& \textbf{Description} \\
+\hline
+1
+& Validator
+& Wrong if-then-else type validation on else branch \\
+\hline
+2
+& Validator
+& Wrong stack type validation \\
+\hline
+3
+& Validator
+& Removed function type mismatch assertion \\
+\hline
+4
+& Validator
+& Removed max memory instances assertion \\
+\hline
+5
+& Validator
+& Removed function index out-of-range assertion \\
+\hline
+6
+& Validator
+& Wrong type validation on \texttt{i64.eqz} instruction \\
+\hline
+7
+& Validator
+& Wrong type validation on \texttt{i32} binary opertations \\
+\hline
+8
+& Validator
+& Removed memory index out-of-range assertion \\
+\hline
+9
+& Validator
+& Wrong type validation on \texttt{i64} constants \\
+\hline
+10
+& Validator
+& Removed memory alignment validation on \texttt{i32.load} instruction \\
+\hline
+11
+& Interpreter
+& Wrong intepretation of \texttt{i32.sub} instruction \\
+\hline
+12
+& Interpreter
+& Wrong intepretation of \texttt{i32.lt\_u} instruction when operands are equal \\
+\hline
+13
+& Interpreter
+& Wrong intepretation of \texttt{i32.shr\_u} instruction \\
+\hline
+14
+& Interpreter
+& Wrong local variable initialization \\
+\hline
+15
+& Interpreter
+& Wrong memory address casting on \texttt{i32.load8\_s} instruction \\
+\hline
+\end{tabular}
+\caption{\label{table:wasm:injectedbugs}Bugs injected in \textit{haskell-wasm}.}
+\end{table}
+
+
 \subsection{IFC Stack Machine}
 
 The abstract stack machine used in this case study consists of four main
@@ -2279,13 +2357,22 @@ In both case studies, we additionally show how the FIFO scheduling and trace
 reset heuristics described in Section \ref{sec:heuristics} affect the testing
 performance by disabling them when using our tool.
 %
-We call these variants \textit{no-FIFO} and \textit{no-reset}, respectively.
+We call these variants \textit{no FIFO} and \textit{no reset}, respectively.
 %
-In the case of \textit{no-reset}, the amount of random mutations is no longer
+In the case of \textit{no reset}, the amount of random mutations is no longer
 controlled by this heuristic, so we fixed it to 25 random mutations throughout
 the execution of the tool.
 
 \subsection{IFC Stack Machine}
+
+\begin{figure}[b]
+  \centering
+  \includegraphics[width=\linewidth]{tikz/ifc-mttf.tikz}
+  \includegraphics[width=\linewidth]{tikz/ifc-fr.tikz}
+  \caption{\label{fig:results:ifc} Comparison between \fuzzchick and \mutagen
+    across 20 different bugs for the IFC stack machine. }
+\end{figure}
+
 
 The results of this case study are shown in Fig. \ref{fig:results:ifc}, ordered
 by the failure rate achieved by \fuzzchick in decreasing order --- notice the
@@ -2314,7 +2401,7 @@ clear improvement.
 
 \begin{wrapfigure}{r}{0.5\textwidth}
 \centering
-\vspace{-10pt}
+\vspace{-20pt}
 \footnotesize
 \begin{tabular}{ccccc}
 \hline
@@ -2359,7 +2446,7 @@ clear improvement.
   %
   Estimates in {\color{blue} blue} and {\color{red} red} indicate results
   favouring \fuzzchick and \mutagen, respectively. }
-\vspace{-15pt}
+\vspace{-25pt}
 \end{wrapfigure}
 
 If we only consider the succesfull runs where \fuzzchick does not time out, we
@@ -2382,7 +2469,7 @@ required by both tools to find the first failure when we only consider
 successful runs.
 %
 Additionally, as adviced by \cite{arcuri} when comparing random testing tools,
-we computed the non-parametric Vargha-Delaney $A\_{12}$ measure \cite{vda}.
+we computed the non-parametric Vargha-Delaney $A_{12}$ measure \cite{vda}.
 %
 Intuitively, this measure encodes the probability of \mutagen to yield better
 results than \fuzzchick.
@@ -2390,14 +2477,6 @@ results than \fuzzchick.
 As it can be observed, using an exhaustive mutation approach can be not only
 more reliable, but also faster, where \mutagen is likely to find bugs faster
 that \fuzzchick in 14 of the 20 bugs injected into the abstract machine.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=\linewidth]{tikz/ifc-mttf.tikz}
-  \includegraphics[width=\linewidth]{tikz/ifc-fr.tikz}
-  \caption{\label{fig:results:ifc} Comparison between \fuzzchick and \mutagen
-    across 20 different bugs for the IFC stack machine. }
-\end{figure}
 
 
 In terms of the \mutagen heuristics, we can also arrive to some conclusions.
@@ -2410,7 +2489,7 @@ candidate queues remain empty most of the time (generation mode), and when a new
 interesting candidate gets inserted, all its mutants (and their descendents) are
 processed before the next one is enqueued.
 
-On the other hand, disabling the trace saturation heuristic (\textit{no-reset})
+On the other hand, disabling the trace saturation heuristic (\textit{no reset})
 we observed two interesting effects:
 %
 havig fixed the amount of random mutations to 25 adds a seemingly constant
@@ -2430,13 +2509,73 @@ what the best value for it might be.
 
 \subsection{WebAssembly Engine}
 
-Aliquam erat volutpat. Nunc eleifend leo vitae magna. In id erat non orci
-commodo lobortis. Proin neque massa, cursus ut, gravida ut, lobortis eget,
-lacus. Sed diam. Praesent fermentum tempor tellus. Nullam tempus. Mauris ac
-felis vel velit tristique imperdiet. Donec at pede. Etiam vel neque nec dui
-dignissim bibendum. Vivamus id enim. Phasellus neque orci, porta a, aliquet
-quis, semper a, massa. Phasellus purus. Pellentesque tristique imperdiet tortor.
-Nam euismod tellus id erat.
+The results of this case study are shown in Fig. \ref{fig:results:wasm}, ordered
+by the mean-time-to-failure achieved by \mutagen.
+%
+Given that we used different properties to test the WebAssembly validator and
+interpreter, we will focus on these results independently.
+
+
+Firstly, we focus on the bugs injected in the validator (Fig.
+\ref{fig:results:wasm} left).
+%
+There, we can quickly conclude that \quickcheck is well suited to find most of
+the bugs --- it merely finds a counterexample for the easier bugs \#4 and \#5 in
+just 1 out of 30 runs!
+%
+The reason behind this simple: WebAssembly modules comprise several different
+interconnected components, e.g., types and functions definitions, memory blocks,
+imports, exports, etc.
+%
+All these components need to be valid and agree with each other in order for the
+module to be correctly validated (modulo the injected bugs).
+%
+Using an automatically derived generator that generates each one of these
+components independently is virtually unable to produce valid WebAssembly
+modules.
+%
+Using the same random generator, however, \mutagen is able to consistently find
+every bug in less than 20 seconds in the absolute worst case.
+
+
+In terms of the heuristics implemented in our tool, we can observe two clear
+phenomena.
+%
+On one hand, disabling the FIFO schedulng (case \textit{no FIFO}), the
+hardest-to-find bugs (\#7, \#8 and \#1) are no longer found on every run.
+%
+Moreover, although bugs \#2, \#9, \#8 and \#6 are found with \%100 success rate
+across runs, it takes several times longer for \mutagen to find them.
+%
+On the other hand, disabling the the trace saturation heuristic (case \textit{no
+  reset}) and using a fixed number of 25 random mutation does not affect the
+effectiveness of our tool, apart from adding again a mostly constant overhead on
+the time required to find every bug --- suggesting that the value we arbitrarily
+chose for this parameter is too large and should be left to be handled
+automatically by our tool.
+
+
+If we now pay attention to the bugs injected into the interpreter (Fig.
+\ref{fig:results:wasm} right), we notice that finding bugs requires
+substantially more time (minutes instead of seconds), since both interpreters
+need to validate and run the inputs before producing a result to compare.
+%
+Perhaps more interestingly, we can observe a significant improvement on the
+performance of \quickcheck in terms of failure rate.
+%
+This is of no surprise: we deliberately reduced the search space by using a
+module stub when defining \texttt{prop\_interpreter} in our test suite.
+%
+Nonetheless, \mutagen still outperforms \quickcheck both in terms of failure
+rate and mean time to failure.
+%
+Moreover, by disabling the FIFO scheduling we observe that the performance of
+our tool gets more unstable, where the bugs \#12 and \#11 take substantially
+less time to be found, whereas the bugs \#15 and \#14 cannot be found on every
+run.
+%
+Finding where the best tradeoff lies in cases where the heuristics cause mixed
+results like this is an interesting direction to aim future work.
 
 \begin{figure}
   \centering
@@ -2446,6 +2585,61 @@ Nam euismod tellus id erat.
   \caption{\label{fig:results:wasm} Comparison between \quickcheck and \mutagen
     across 15 different bugs injected into \textit{haskell-wasm}. }
 \end{figure}
+
+
+Finally, this case study gives us the opportunity to analyze the overhead
+introduced by the code instrumentation and internal processing used in \mutagen
+versus the stateless black-box approach of \quickcheck.
+%
+Table \ref{table:wasm:overhead} compares the total number of executed and passed
+test per second that we obtained using each tool.
+%
+It is easy to conclude that \mutagen executes tests several times slower than
+\quickcheck -- roughly 16x and 70x slower when testing \textit{prop\_validator}
+and \textit{prop\_interpreter\_i32}, respectively.
+%
+Part of the reason behind this slowdown is that the code instrumentation our
+tool currently uses is built upon a superficial tranformation that logs traces
+at the user level.
+%
+We anticipate that a large portion of the overhead could be reduced considerably
+by integrating the instrumentation directly into the Haskell runtime --- a
+substantial challenge to tackle in the future.
+
+More importantly, in the same time, our tool is capable of running many more
+tests that pass the sparse preconditions than \quickcheck, and which ultimately
+lead us to finding bugs.
+
+\begin{table}[H]
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+\multicolumn{1}{|c|}{
+  \multirow{2}{*}{Property}}
+  & \multicolumn{2}{c|}{\quickcheck}
+  & \multicolumn{2}{c|}{\mutagen} \\
+  \cline{2-5}
+  \multicolumn{1}{|c|}{}
+  & \multicolumn{1}{c|}{total}
+  & passed
+  & \multicolumn{1}{c|}{total}
+  & passed \\
+\hline
+\textit{prop\_validator}
+& 42136
+& 0.00028
+& 2583
+& 539.19 \\
+\hline
+\textit{prop\_interpreter\_i32}
+& 134000
+& 23.16
+& 1890
+& 372.75 \\
+\hline
+\end{tabular}
+\caption{\label{table:wasm:overhead}Mean number of tests per second executed by
+  each tool on the WebAssembly case study.}
+\end{table}
 
 % ----------------------------------------
 
@@ -2703,8 +2897,9 @@ possible mutant for each interesting input candidate, and schedules it to be
 tested exactly once.
 %
 This is in turn inspired by exhaustive bounded testing tools that focus on
-testing every possible input value of the system under test --- a more generic
-technique of limited applicability.
+testing every possible input value of the system under test.
+
+%% --- a more generic technique of limited applicability.
 
 
 Our experimental results indicate that \mutagen outperforms the simpler approach
@@ -2714,13 +2909,20 @@ Moreover, we show how our tool can be applied in a real-world testing scenario,
 where it quickly discovers several planted and existent previously unknown bugs.
 
 
-In the future, we will investigate how to redefine our automatically synthesized
-mutators in a stateful manner.
+As already indicated throughout this work, there are several direction for
+future work we aim to investigate:
+%
+combining \mutagen with specialized generators; improving the code
+instrumentation in order to effectively target mutations towards specific parts
+of the code; and evaluating the effect of lazy prunning; among others.
+%
+In addition, we want to investigate how to redefine our automatically
+synthesized mutators in a stateful manner.
 %
 This way, it would be possible to apply mutations that preserve complex
-properties of the generated data like well-scopedness and well-typedness simply
-by construction, e.g., mutations that \emph{always} produce well-typed
-subexpressions that refer only to identifiers in the current scope.
+properties of the generated data simply by construction, e.g., mutations that
+\emph{always} produce well-typed subexpressions that refer only to identifiers
+in scope.
 %
 The main challenge will be to achieve this while keeping the testing process as
 automatable as possible.

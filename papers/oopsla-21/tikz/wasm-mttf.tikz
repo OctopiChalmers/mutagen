@@ -4,7 +4,7 @@
   }
 
   \begin{axis}[
-      height=3cm,
+      height=4cm,
       width=9.5cm,
       ybar=0cm,
       bar width=0.12cm,
@@ -14,12 +14,14 @@
       axis y line*=left,
       axis x line*=bottom,
       xmin=1, xmax=10,
-      ymin=1, ymax=4000000,
+      ymin=1, ymax=10000000,
       xtick={1, 2, ..., 10},
       xticklabels={5, 3, 4, 2, 9, 8, 6, 7, 10, 1},
       % xlabel={Injected Bug (Validator)},
+      ytick={10, 100, 1000, 10000, 100000, 1000000, 10000000},
       ylabel={MTTF (milliseconds)},
       ymajorgrids={true},
+      % yminorgrids={true},
       legend style={
         legend columns=-1,
         draw=none,
@@ -107,7 +109,7 @@
   }
 
   \begin{axis}[
-      height=3cm,
+      height=4cm,
       width=5.5cm,
       ybar=0cm,
       bar width=0.12cm,
@@ -117,14 +119,15 @@
       axis y line*=left,
       axis x line*=bottom,
       xmin=11, xmax=15,
-      ymin=1, ymax=4000000,
+      ymin=1000, ymax=10000000,
       xtick={11, 12, ..., 15},
-      y axis line style= { draw opacity=0 },
+      % y axis line style= { draw opacity=0 },
       % xlabel={Injected Bug (Interpreter)},
-      ytick style={draw=none},
-      yticklabels={,,},
+      % ytick style={draw=none},
+      % yticklabels={,,},
       xticklabels={13,12,15,14,11},
       ymajorgrids={true},
+      % yminorgrids={true},
       legend style={
         legend columns=-1,
         draw=none,
@@ -135,11 +138,11 @@
     ]
     % MTTF QuickCheck
     \addplot[fill=purple, fill opacity=0.75] coordinates {
-      (14,  0)
-      (15,  0)
-      (12,  0)
       (11,  0)
       (13,  0)
+      (14,  0)
+      (15,  0)
+      (15,  2091676.732)
     };
 
    % MTTF Mutagen (all heuristics)

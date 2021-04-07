@@ -120,12 +120,12 @@
       xmin=11, xmax=15,
       ymin=0, ymax=1.05,
       xtick={11, 12, ..., 15},
-      y axis line style= { draw opacity=0 },
+      % y axis line style= { draw opacity=0 },
       ytick={0.0, 0.5, 1.0},
       minor y tick num=1,
       xlabel={Injected Bug (\emph{prop\_interpreter\_i32})},
-      ytick style={draw=none},
-      yticklabels={,,},
+      % ytick style={draw=none},
+      % yticklabels={,,},
       xticklabels={13,12,15,14,11},
       ymajorgrids={true},
       yminorgrids={true},
@@ -139,11 +139,11 @@
     ]
     % MTTF QuickCheck
     \addplot[fill=purple, fill opacity=0.75] coordinates {
-      (14, 0)
-      (15, 0)
-      (12, 0)
       (11, 0)
+      (12, 0)
       (13, 0)
+      (14, 0)
+      (15, 0.7)
     };
 
     % MTTF Mutagen (all heuristics)
