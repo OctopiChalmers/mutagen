@@ -6,75 +6,135 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Database file #1: references.bib
+Warning--I'm ignoring DBLP:conf/haskell/MistaRH18's extra "year" field
+--line 2543 of file references.bib
 Warning--I didn't find a database entry for "quickcheck"
-Warning--I didn't find a database entry for "qcports"
-Warning--I didn't find a database entry for "fuzzchick"
 Warning--I didn't find a database entry for "feat"
-Warning--I didn't find a database entry for ""
-Warning--I didn't find a database entry for "catalin"
-Warning--I didn't find a database entry for "arcuri"
-Warning--I didn't find a database entry for "vda"
-Warning--I didn't find a database entry for "dragen"
-Warning--I didn't find a database entry for "dragen2"
-Warning--I didn't find a database entry for "bendkowski"
-Warning--I didn't find a database entry for "boltzmann"
-Warning--I didn't find a database entry for "quickfuzz"
-Warning--I didn't find a database entry for "quickfuzzjournal"
-Warning--I didn't find a database entry for "claessen2014"
-Warning--I didn't find a database entry for "luck"
-Warning--I didn't find a database entry for "generatinggood"
-Warning--I didn't find a database entry for "collAFL"
-Warning--I didn't find a database entry for "aflgo"
-Warning--I didn't find a database entry for "targetedpbt"
-Warning--I didn't find a database entry for "klee"
-Warning--I didn't find a database entry for "driller"
-Warning--I didn't find a database entry for "qsym"
-Warning--I didn't find a database entry for "smallcheck"
-Warning--I didn't find a database entry for "korat"
 Reallocated singl_function (elt_size=4) to 100 items from 50.
+Warning--no key, author in libfuzzer
+Warning--no author, editor, organization, or key in libfuzzer
+Warning--to sort, need author or key in libfuzzer
 Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
 Reallocated global_strs (elt_size=200001) to 20 items from 10.
 Reallocated glb_str_end (elt_size=4) to 20 items from 10.
+Warning--no key, author in libfuzzer
+Warning--no key, author in libfuzzer
 Reallocated singl_function (elt_size=4) to 100 items from 50.
-You've used 2 entries,
+Warning--no key, author in libfuzzer
+Warning--no author, editor, organization, or key in libfuzzer
+Warning--empty author in libfuzzer
+Warning--empty address in Bendkowski2017
+Warning--page numbers missing in both pages and numpages fields in Bendkowski2017
+Warning--empty publisher in bohme2017directed
+Warning--empty address in bohme2017directed
+Warning--empty publisher in bulwahn2012new
+Warning--empty address in bulwahn2012new
+Warning--empty publisher in cadar2008klee
+Warning--empty address in cadar2008klee
+Warning--empty publisher in ClaessenDP14
+Warning--empty address in ClaessenDP14
+Warning--page numbers missing in both pages and numpages fields in ClaessenDP14
+Warning--empty publisher in ClaessenH00
+Warning--empty address in ClaessenH00
+Warning--page numbers missing in both pages and numpages fields in ClaessenH00
+Warning--empty publisher in denes2014quickchick
+Warning--empty address in denes2014quickchick
+Warning--page numbers missing in both pages and numpages fields in denes2014quickchick
+Warning--empty publisher in dolan2017testing
+Warning--empty address in dolan2017testing
+Warning--page numbers missing in both pages and numpages fields in dolan2017testing
+Warning--page numbers missing in both pages and numpages fields in Duchon2004
+Warning--empty publisher in DuregardJW12
+Warning--empty address in DuregardJW12
+Warning--page numbers missing in both pages and numpages fields in DuregardJW12
+Warning--empty publisher in gan2018collafl
+Warning--empty address in gan2018collafl
+Warning--empty publisher in goguen1982security
+Warning--empty address in goguen1982security
+Warning--empty publisher in GriecoCB16
+Warning--empty address in GriecoCB16
+Warning--page numbers missing in both pages and numpages fields in GriecoCB16
+Warning--page numbers missing in both pages and numpages fields in grieco2017
+Warning--empty publisher in haas2017bringing
+Warning--empty address in haas2017bringing
+Warning--page numbers missing in both pages and numpages fields in hrictcu2016testing
+Warning--empty publisher in hughes2003erlang
+Warning--empty address in hughes2003erlang
+Warning--page numbers missing in both pages and numpages fields in hughes2003erlang
+Warning--empty publisher in kersten2017poster
+Warning--empty address in kersten2017poster
+Warning--empty publisher in LampropoulosGHH17
+Warning--empty address in LampropoulosGHH17
+Warning--page numbers missing in both pages and numpages fields in LampropoulosGHH17
+Warning--articleno or eid field, but no numpages field, in Lampropoulos2017
+Warning--page numbers missing in both pages and numpages fields in Lampropoulos2017
+Warning--articleno or eid, but no pages or numpages field in Lampropoulos2017
+Warning--empty publisher in loscher2017targeted
+Warning--empty address in loscher2017targeted
+Warning--empty publisher in loscher2018automating
+Warning--empty address in loscher2018automating
+Warning--empty publisher in Mista2019GeneratingRS
+Warning--empty address in Mista2019GeneratingRS
+Warning--page numbers missing in both pages and numpages fields in Mista2019GeneratingRS
+Warning--empty publisher in DBLP:conf/haskell/MistaRH18
+Warning--empty address in DBLP:conf/haskell/MistaRH18
+Warning--page numbers missing in both pages and numpages fields in DBLP:conf/haskell/MistaRH18
+Warning--empty publisher in Palka11
+Warning--empty address in Palka11
+Warning--page numbers missing in both pages and numpages fields in Palka11
+Warning--empty publisher in papadakis2011proper
+Warning--empty address in papadakis2011proper
+Warning--empty publisher in perenyi2020stack
+Warning--empty address in perenyi2020stack
+Warning--can't use both volume and number fields in runciman2008smallcheck
+Warning--empty publisher in runciman2008smallcheck
+Warning--empty address in runciman2008smallcheck
+Warning--can't use both volume and number fields in stephens2016driller
+Warning--empty publisher in stephens2016driller
+Warning--empty address in stephens2016driller
+Warning--empty publisher in yang2011finding
+Warning--empty address in yang2011finding
+Warning--empty publisher in yun2018qsym
+Warning--empty address in yun2018qsym
+You've used 43 entries,
             5897 wiz_defined-function locations,
-            1390 strings with 15950 characters,
-and the built_in function-call counts, 2067 in all, are:
-= -- 278
-> -- 61
+            1598 strings with 23809 characters,
+and the built_in function-call counts, 51340 in all, are:
+= -- 5908
+> -- 2048
 < -- 0
-+ -- 18
-- -- 20
-* -- 130
-:= -- 215
-add.period$ -- 10
-call.type$ -- 2
-change.case$ -- 12
-chr.to.int$ -- 2
-cite$ -- 2
-duplicate$ -- 170
-empty$ -- 122
-format.name$ -- 24
-if$ -- 484
-int.to.chr$ -- 2
++ -- 687
+- -- 696
+* -- 3718
+:= -- 5245
+add.period$ -- 203
+call.type$ -- 43
+change.case$ -- 319
+chr.to.int$ -- 41
+cite$ -- 128
+duplicate$ -- 4645
+empty$ -- 3248
+format.name$ -- 838
+if$ -- 12230
+int.to.chr$ -- 4
 int.to.str$ -- 1
-missing$ -- 4
-newline$ -- 56
-num.names$ -- 16
-pop$ -- 55
+missing$ -- 182
+newline$ -- 361
+num.names$ -- 334
+pop$ -- 1979
 preamble$ -- 1
-purify$ -- 30
+purify$ -- 702
 quote$ -- 0
-skip$ -- 59
+skip$ -- 1653
 stack$ -- 0
-substring$ -- 145
-swap$ -- 14
+substring$ -- 3470
+swap$ -- 423
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 46
-warning$ -- 0
-while$ -- 15
+type$ -- 1113
+warning$ -- 81
+while$ -- 299
 width$ -- 0
-write$ -- 73
-(There were 25 warnings)
+write$ -- 740
+(There were 84 warnings)

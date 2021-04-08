@@ -119,7 +119,7 @@
       axis y line*=left,
       axis x line*=bottom,
       xmin=11, xmax=15,
-      ymin=1000, ymax=10000000,
+      ymin=100, ymax=10000000,
       xtick={11, 12, ..., 15},
       % y axis line style= { draw opacity=0 },
       % xlabel={Injected Bug (Interpreter)},
@@ -138,10 +138,10 @@
     ]
     % MTTF QuickCheck
     \addplot[fill=purple, fill opacity=0.75] coordinates {
-      (11,  0)
-      (13,  0)
-      (14,  0)
-      (15,  0)
+      (11,  2060484.606)
+      (12,  2477732.363)
+      (13,  3688510.907)
+      (14,  747.2787604)
       (15,  2091676.732)
     };
 
