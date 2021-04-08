@@ -8,8 +8,6 @@ Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Database file #1: references.bib
 Warning--I'm ignoring DBLP:conf/haskell/MistaRH18's extra "year" field
 --line 2543 of file references.bib
-Warning--I didn't find a database entry for "quickcheck"
-Warning--I didn't find a database entry for "feat"
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Warning--no key, author in libfuzzer
 Warning--no author, editor, organization, or key in libfuzzer
@@ -57,10 +55,14 @@ Warning--page numbers missing in both pages and numpages fields in GriecoCB16
 Warning--page numbers missing in both pages and numpages fields in grieco2017
 Warning--empty publisher in haas2017bringing
 Warning--empty address in haas2017bringing
+Warning--empty publisher in holler2012fuzzing
+Warning--empty address in holler2012fuzzing
 Warning--page numbers missing in both pages and numpages fields in hrictcu2016testing
 Warning--empty publisher in hughes2003erlang
 Warning--empty address in hughes2003erlang
 Warning--page numbers missing in both pages and numpages fields in hughes2003erlang
+Warning--empty publisher in jones1997type
+Warning--empty address in jones1997type
 Warning--empty publisher in kersten2017poster
 Warning--empty address in kersten2017poster
 Warning--empty publisher in LampropoulosGHH17
@@ -92,49 +94,51 @@ Warning--empty address in runciman2008smallcheck
 Warning--can't use both volume and number fields in stephens2016driller
 Warning--empty publisher in stephens2016driller
 Warning--empty address in stephens2016driller
+Warning--empty publisher in wang2019superion
+Warning--empty address in wang2019superion
 Warning--empty publisher in yang2011finding
 Warning--empty address in yang2011finding
 Warning--empty publisher in yun2018qsym
 Warning--empty address in yun2018qsym
-You've used 43 entries,
+You've used 47 entries,
             5897 wiz_defined-function locations,
-            1598 strings with 23809 characters,
-and the built_in function-call counts, 51340 in all, are:
-= -- 5908
-> -- 2048
+            1615 strings with 24439 characters,
+and the built_in function-call counts, 55998 in all, are:
+= -- 6396
+> -- 2223
 < -- 0
-+ -- 687
-- -- 696
-* -- 3718
-:= -- 5245
-add.period$ -- 203
-call.type$ -- 43
-change.case$ -- 319
-chr.to.int$ -- 41
-cite$ -- 128
-duplicate$ -- 4645
-empty$ -- 3248
-format.name$ -- 838
-if$ -- 12230
++ -- 743
+- -- 748
+* -- 4054
+:= -- 5719
+add.period$ -- 223
+call.type$ -- 47
+change.case$ -- 348
+chr.to.int$ -- 45
+cite$ -- 138
+duplicate$ -- 5092
+empty$ -- 3558
+format.name$ -- 906
+if$ -- 13315
 int.to.chr$ -- 4
 int.to.str$ -- 1
-missing$ -- 182
-newline$ -- 361
-num.names$ -- 334
-pop$ -- 1979
+missing$ -- 197
+newline$ -- 390
+num.names$ -- 366
+pop$ -- 2162
 preamble$ -- 1
-purify$ -- 702
+purify$ -- 767
 quote$ -- 0
-skip$ -- 1653
+skip$ -- 1820
 stack$ -- 0
-substring$ -- 3470
-swap$ -- 423
+substring$ -- 3819
+swap$ -- 466
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 1113
-warning$ -- 81
-while$ -- 299
+type$ -- 1233
+warning$ -- 87
+while$ -- 324
 width$ -- 0
-write$ -- 740
-(There were 84 warnings)
+write$ -- 806
+(There were 88 warnings)

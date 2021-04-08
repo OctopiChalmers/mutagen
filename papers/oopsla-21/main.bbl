@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{43}
+\begin{thebibliography}{47}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -290,6 +290,30 @@
 \newblock
 
 
+\bibitem[\protect\citeauthoryear{Hatch, Darragh, and Eide}{Hatch
+  et~al\mbox{.}}{2020}]%
+        {xsmith}
+\bibfield{author}{\bibinfo{person}{William~Gallard Hatch},
+  \bibinfo{person}{Pierce Darragh}, {and} \bibinfo{person}{Eric Eide}.}
+  \bibinfo{year}{2020}\natexlab{}.
+\newblock \bibinfo{title}{{Xsmith software repository.}}
+\newblock
+  \bibinfo{howpublished}{\mbox{\url{https://gitlab.flux.utah.edu/xsmith/xsmith}}}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Holler, Herzig, and Zeller}{Holler
+  et~al\mbox{.}}{2012}]%
+        {holler2012fuzzing}
+\bibfield{author}{\bibinfo{person}{Christian Holler}, \bibinfo{person}{Kim
+  Herzig}, {and} \bibinfo{person}{Andreas Zeller}.}
+  \bibinfo{year}{2012}\natexlab{}.
+\newblock \showarticletitle{Fuzzing with code fragments}. In
+  \bibinfo{booktitle}{\emph{21st $\{$USENIX$\}$ Security Symposium
+  ($\{$USENIX$\}$ Security 12)}}. \bibinfo{pages}{445--458}.
+\newblock
+
+
 \bibitem[\protect\citeauthoryear{Hritcu, Hughes, Pierce, Spector-Zabusky,
   Vytiniotis, Azevedo~de Amorim, and Lampropoulos}{Hritcu
   et~al\mbox{.}}{2013}]%
@@ -331,14 +355,14 @@
 \newblock
 
 
-\bibitem[\protect\citeauthoryear{{Ilya Rezvov}}{{Ilya Rezvov}}{2018}]%
-        {haskellwasm}
-\bibfield{author}{\bibinfo{person}{{Ilya Rezvov}}.}
-  \bibinfo{year}{2018}\natexlab{}.
-\newblock \bibinfo{title}{{wasm: WebAssembly Language Toolkit and
-  Interpreter}}.
-\newblock
-  \bibinfo{howpublished}{\mbox{\url{https://hackage.haskell.org/package/wasm}}}.
+\bibitem[\protect\citeauthoryear{Jones, Jones, and Meijer}{Jones
+  et~al\mbox{.}}{1997}]%
+        {jones1997type}
+\bibfield{author}{\bibinfo{person}{Simon~Peyton Jones}, \bibinfo{person}{Mark
+  Jones}, {and} \bibinfo{person}{Erik Meijer}.}
+  \bibinfo{year}{1997}\natexlab{}.
+\newblock \showarticletitle{Type classes: an exploration of the design space}.
+  In \bibinfo{booktitle}{\emph{Haskell workshop}}. \bibinfo{pages}{1--16}.
 \newblock
 
 
@@ -493,6 +517,17 @@
 \newblock
 
 
+\bibitem[\protect\citeauthoryear{Rezvov}{Rezvov}{2018}]%
+        {haskellwasm}
+\bibfield{author}{\bibinfo{person}{Ilya Rezvov}.}
+  \bibinfo{year}{2018}\natexlab{}.
+\newblock \bibinfo{title}{{wasm: WebAssembly Language Toolkit and
+  Interpreter}}.
+\newblock
+  \bibinfo{howpublished}{\mbox{\url{https://hackage.haskell.org/package/wasm}}}.
+\newblock
+
+
 \bibitem[\protect\citeauthoryear{Runciman, Naylor, and Lindblad}{Runciman
   et~al\mbox{.}}{2008}]%
         {runciman2008smallcheck}
@@ -530,6 +565,18 @@
 \newblock \bibinfo{journal}{\emph{Journal of Educational and Behavioral
   Statistics}} \bibinfo{volume}{25}, \bibinfo{number}{2}
   (\bibinfo{year}{2000}), \bibinfo{pages}{101--132}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Wang, Chen, Wei, and Liu}{Wang
+  et~al\mbox{.}}{2019}]%
+        {wang2019superion}
+\bibfield{author}{\bibinfo{person}{Junjie Wang}, \bibinfo{person}{Bihuan Chen},
+  \bibinfo{person}{Lei Wei}, {and} \bibinfo{person}{Yang Liu}.}
+  \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Superion: Grammar-aware greybox fuzzing}. In
+  \bibinfo{booktitle}{\emph{2019 IEEE/ACM 41st International Conference on
+  Software Engineering (ICSE)}}. IEEE, \bibinfo{pages}{724--735}.
 \newblock
 
 

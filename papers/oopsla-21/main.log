@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.6.18)  8 APR 2021 16:55
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.6.18)  8 APR 2021 20:36
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1521,51 +1521,42 @@ LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/it' will be
 (Font)              scaled to size 10.0pt on input line 181.
  [1.1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/sc' will be
-(Font)              scaled to size 10.0pt on input line 294.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
+(Font)              scaled to size 10.0pt on input line 296.
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
-(Font)              scaled to size 8.0pt on input line 338.
+(Font)              scaled to size 8.0pt on input line 339.
  [2.2]
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/b/it' in size <10> not av
 ailable
 (Font)              Font shape `T1/LinuxBiolinumT-TLF/b/sl' tried instead on in
-put line 412.
+put line 413.
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/b/sl' will be
-(Font)              scaled to size 10.0pt on input line 412.
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
-(Font)              scaled to size 10.0pt on input line 417.
-
-
-Package natbib Warning: Citation `quickcheck' on page 3 undefined on input line
- 417.
-
-LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/sc' will be
-(Font)              scaled to size 8.0pt on input line 432.
-[3.3]
+(Font)              scaled to size 10.0pt on input line 413.
 LaTeX Font Info:    Font shape `OT1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 10.0pt on input line 432.
-
-
-Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 451.
-
+(Font)              scaled to size 10.0pt on input line 433.
+LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/sc' will be
+(Font)              scaled to size 8.0pt on input line 441.
+ [3.3]
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 451.
+surrounding objects on input line 452.
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
 surrounding objects on input line 452.
 
-LaTeX Font Info:    Trying to load font information for T1+zi4 on input line 46
-9.
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 453.
+
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
+(Font)              scaled to size 10.0pt on input line 470.
+LaTeX Font Info:    Trying to load font information for T1+zi4 on input line 47
+0.
 (/usr/share/texlive/texmf-dist/tex/latex/inconsolata/t1zi4.fd
 File: t1zi4.fd 2018/01/14 T1/zi4 (Inconsolata)
 )
 LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 10.0pt on input line 469.
+(Font)              scaled to size 10.0pt on input line 470.
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `zi4' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
@@ -1573,103 +1564,97 @@ Package microtype Info: Loading generic protrusion settings for font family
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 471.
+surrounding objects on input line 472.
 
 LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 8.0pt on input line 493.
+(Font)              scaled to size 8.0pt on input line 494.
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 1189) has occurred while \output is active []
 
  [4.4]
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 3323) has occurred while \output is active []
 
  [5.5]
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/it' will be
-(Font)              scaled to size 10.0pt on input line 754.
+(Font)              scaled to size 10.0pt on input line 756.
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+[6.6]
 
- [6.6]
-
-Class acmart Warning: A possible image without description on input line 867.
+Class acmart Warning: A possible image without description on input line 869.
 
 LaTeX Font Info:    Trying to load font information for TS1+zi4 on input line 9
-04.
+06.
 (/usr/share/texlive/texmf-dist/tex/latex/inconsolata/ts1zi4.fd
 File: ts1zi4.fd 2018/01/14 TS1/zi4 (Inconsolata)
 )
 LaTeX Font Info:    Font shape `TS1/zi4/m/n' will be
-(Font)              scaled to size 8.0pt on input line 904.
+(Font)              scaled to size 8.0pt on input line 906.
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `zi4' (encoding: TS1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
-(Font)              scaled to size 9.0pt on input line 905.
+(Font)              scaled to size 9.0pt on input line 907.
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/it' will be
-(Font)              scaled to size 9.0pt on input line 905.
+(Font)              scaled to size 9.0pt on input line 907.
 LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 9.0pt on input line 905.
+(Font)              scaled to size 9.0pt on input line 907.
 
 
-Class acmart Warning: A possible image without description on input line 906.
+Class acmart Warning: A possible image without description on input line 908.
 
 [7.7] [8.8]
-Underfull \hbox (badness 10000) in paragraph at lines 1052--1061
+Underfull \hbox (badness 10000) in paragraph at lines 1054--1063
 
  []
 
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/b/sc' will be
-(Font)              scaled to size 10.0pt on input line 1069.
-
-Package natbib Warning: Citation `feat' on page 9 undefined on input line 1106.
-
-
+(Font)              scaled to size 10.0pt on input line 1071.
 [9.9]
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/sc' will be
-(Font)              scaled to size 9.0pt on input line 1190.
+(Font)              scaled to size 9.0pt on input line 1193.
 
 
-Class acmart Warning: A possible image without description on input line 1191.
+Class acmart Warning: A possible image without description on input line 1194.
 
+
+LaTeX Font Warning: Command \small invalid in math mode on input line 1251.
+
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 7.3pt on input line 1251.
+LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
+(Font)              scaled to size 5.5pt on input line 1251.
 [10.10]
 
-LaTeX Font Warning: Command \small invalid in math mode on input line 1247.
-
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 7.3pt on input line 1247.
-LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
-(Font)              scaled to size 5.5pt on input line 1247.
-
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 1320.
+surrounding objects on input line 1324.
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 1320.
+surrounding objects on input line 1324.
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 1321.
+surrounding objects on input line 1325.
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 1353.
+surrounding objects on input line 1357.
 
 
-Class acmart Warning: A possible image without description on input line 1463.
+Class acmart Warning: A possible image without description on input line 1468.
 
 [11.11] [12.12]
 
-Class acmart Warning: A possible image without description on input line 1669.
+Class acmart Warning: A possible image without description on input line 1673.
 
 
-Class acmart Warning: A possible image without description on input line 1783.
+Class acmart Warning: A possible image without description on input line 1787.
 
-[13.13] [14.14]
+[13.13]
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/b/n' will be
-(Font)              scaled to size 8.0pt on input line 1899.
- [15.15] [16.16] [17.17] [18.18] (./tikz/ifc-mttf.tikz)
+(Font)              scaled to size 8.0pt on input line 1903.
+ [14.14] [15.15] [16.16] [17.17] (./tikz/ifc-mttf.tikz)
 (./tikz/ifc-mttf.tikz) (./tikz/ifc-mttf.tikz) (./tikz/ifc-mttf.tikz)
 (./tikz/ifc-mttf.tikz) (./tikz/ifc-fr.tikz
 Missing character: There is no ] in font nullfont!
@@ -1684,35 +1669,36 @@ Missing character: There is no ] in font nullfont!
 Missing character: There is no ] in font nullfont!
 )
 
-Class acmart Warning: A possible image without description on input line 2413.
+Class acmart Warning: A possible image without description on input line 2420.
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 2468.
+surrounding objects on input line 2422.
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 2468.
+surrounding objects on input line 2422.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below 
+surrounding objects on input line 2424.
 
 LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/sc' will be
-(Font)              scaled to size 8.0pt on input line 2477.
+(Font)              scaled to size 8.0pt on input line 2431.
 
 Package caption Warning: The type was already set to `figure'
-(caption)                 on input line 2509.
+(caption)                 on input line 2463.
 See the caption package documentation for explanation.
 
 
 Class acmart Warning: \vspace should only be used to provide space above/below 
-surrounding objects on input line 2515.
+surrounding objects on input line 2469.
 
-[19.19]
-Underfull \vbox (badness 6396) has occurred while \output is active []
 
- [20.20]
-(./tikz/wasm-mttf.tikz
-Missing character: There is no ] in font nullfont!
-Missing character: There is no ] in font nullfont!
-) (./tikz/wasm-mttf.tikz
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [18.18]
+[19.19] [20.20] (./tikz/wasm-mttf.tikz
 Missing character: There is no ] in font nullfont!
 Missing character: There is no ] in font nullfont!
 ) (./tikz/wasm-mttf.tikz
@@ -1725,7 +1711,7 @@ Missing character: There is no ] in font nullfont!
 ) (./tikz/wasm-mttf.tikz
 Missing character: There is no ] in font nullfont!
 Missing character: There is no ] in font nullfont!
-) (./tikz/wasm-fr.tikz
+) (./tikz/wasm-mttf.tikz
 Missing character: There is no ] in font nullfont!
 Missing character: There is no ] in font nullfont!
 )
@@ -1742,6 +1728,9 @@ Missing character: There is no ] in font nullfont!
 (./tikz/wasm-fr.tikz
 Missing character: There is no ] in font nullfont!
 Missing character: There is no ] in font nullfont!
+) (./tikz/wasm-fr.tikz
+Missing character: There is no ] in font nullfont!
+Missing character: There is no ] in font nullfont!
 ) (./tikz/wasm-legend.tikz
 Missing character: There is no ] in font nullfont!
 
@@ -1809,21 +1798,28 @@ ng it (it is [0.0:0.0]) on input line 56.
  [warning /pgfplots/warning/approx empty range enlarged]
 )
 
-Class acmart Warning: A possible image without description on input line 2644.
+Class acmart Warning: A possible image without description on input line 2656.
 
-[21.21] [22.22] [23.23] (./main.bbl [24.24]
+[21.21] [22.22]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [23.23]
+(./main.bbl [24.24]
 Underfull \hbox (badness 10000) in paragraph at lines 249--254
 []\T1/LinuxLibertineT-TLF/m/n/8 (+20) Google. 2010.  hong-g-fuzz: a general-pur
 pose, easy-to-use fuzzer with in-ter-est-ing anal-y-sis op-tions.
  []
 
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \hbox (badness 10000) in paragraph at lines 297--303
+[]\T1/LinuxLibertineT-TLF/m/n/8 (+20) William Gal-lard Hatch, Pierce Dar-ragh, 
+and Eric Eide. 2020.  Xsmith soft-ware repos-i-tory.
+ []
+
+
+Underfull \vbox (badness 6396) has occurred while \output is active []
 
  [25.25])
-
-Package natbib Warning: There were undefined citations.
-
 
 Class acmart Warning: Some images may lack descriptions.
 
@@ -1831,21 +1827,21 @@ Class acmart Warning: Some images may lack descriptions.
 Class acmart Warning: CCS concepts are mandatory for papers over two pages.
 
 [26.26]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 3008.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 3008.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 3019.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 3019.
  (./main.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 3008.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 3008.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 3019.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 3019.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: EA57198EA544C46ED55DFFBE4FB89F17;3571.
  ) 
 Here is how much of TeX's memory you used:
- 42805 strings out of 481239
- 920287 string characters out of 5920377
- 1329426 words of memory out of 5000000
- 56306 multiletter control sequences out of 15000+600000
- 775701 words of font info for 521 fonts, out of 8000000 for 9000
+ 42812 strings out of 481239
+ 920359 string characters out of 5920377
+ 1333426 words of memory out of 5000000
+ 56318 multiletter control sequences out of 15000+600000
+ 774849 words of font info for 515 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
  69i,28n,109p,814b,2605s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_oexx6f.enc}{/us
@@ -1873,10 +1869,10 @@ b></usr/share/texlive/texmf-dist/fonts/type1/public/newtx/NewTXMI.pfb></usr/sha
 re/texlive/texmf-dist/fonts/type1/public/newtx/txexs.pfb></usr/share/texlive/te
 xmf-dist/fonts/type1/public/newtx/txmiaX.pfb></usr/share/texlive/texmf-dist/fon
 ts/type1/public/newtx/txsys.pfb>
-Output written on main.pdf (26 pages, 667685 bytes).
+Output written on main.pdf (26 pages, 668596 bytes).
 PDF statistics:
- 618 PDF objects out of 1000 (max. 8388607)
- 544 compressed objects within 6 object streams
- 160 named destinations out of 1000 (max. 500000)
+ 635 PDF objects out of 1000 (max. 8388607)
+ 561 compressed objects within 6 object streams
+ 164 named destinations out of 1000 (max. 500000)
  89277 words of extra memory for PDF output out of 106986 (max. 10000000)
 
