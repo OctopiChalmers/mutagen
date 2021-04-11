@@ -17,6 +17,7 @@
 \usepackage{tikzscale}
 \usepackage{pgfplots}
 \usepackage{paralist}
+
 \pgfplotsset{compat=1.3}
 
 \usetikzlibrary{trees}
@@ -143,11 +144,12 @@ generators producing random values satisfying complex invariants, which in turn
 complicates testing properties with sparse preconditions.
 
 
-\fuzzchick is a recent tool that borrows ideas from the fuzzing community to
-alleviate this limitation.
+%% \fuzzchick is a recent tool that borrows ideas from the fuzzing community to
+%% alleviate this limitation.
 %
-It enhances automatically synthesized generators with type-preserving mutations
-guided by execution traces.
+\fuzzchick is a tool coverage-guided, property-based testing (CGPBT) tool that
+alleviates this limitation by enhancing automatically synthesized generators
+with type-preserving mutations guided by execution traces.
 %
 Despite being enlighthening, we observed several limitations in the
 implementation of \fuzzchick that reduce its applicability.
@@ -156,8 +158,8 @@ These limitations include a large reliance on randomness when mutating test
 cases, as well as poor scheduling in certain situations, among others.
 
 
-In this work we present \mutagen, a coverage-guided, property-based testing
-framework that builds upon the ideas behind \fuzzchick.
+In this work we present \mutagen, a CGPBT framework that builds upon the ideas
+behind \fuzzchick.
 %
 Instead of relying heavily on randomness, \mutagen uses an exhaustive approach
 to generate new mutants.
@@ -229,7 +231,7 @@ etc. \cite{GriecoCB16, DBLP:conf/haskell/MistaRH18, Mista2019GeneratingRS,
 %
 These techniques, however, are unable to synthesize random generators capable of
 producing data satisfying complex invariants not easily derivable from the
-codebase.
+codebase, e.g., a data type definition.
 %
 Randomly generating valid programs is a common example of this problem, where
 developers are forced to put substantial efforts in writing specialized random
@@ -238,7 +240,7 @@ generators by hand \cite{Palka11, perenyi2020stack, yang2011finding}.
 Moreover, automatically synthesized random generators offer particularly poor
 results when the testing properties are constrained by sparse preconditions.
 %
-In this scenario, most of the generated tests are simply discarded before they
+In this scenario, most of the generated tests are simply thrown away before they
 can be used to test the main components of our system.
 
 
@@ -265,7 +267,7 @@ mutated data, as mutations are applied directly at the data type level, e.g.,
 the program's AST in case of generating code.
 
 
-This tool relies on execution traces to distinguish which test cases resulted
+\fuzzchick relies on execution traces to distinguish which test cases resulted
 interesting and are therefore worth mutating --- a prolific technique known as
 \emph{coverage-guided fuzzing} and popularized by tools like \emph{AFL}
 \cite{afl}.
@@ -273,22 +275,21 @@ interesting and are therefore worth mutating --- a prolific technique known as
 Mutated test cases are considered interesting for mutation only when they
 produce new execution traces --- any other test case is simply thrown away.
 
-Of course, this hybrid technique is not meant to replace smart manually-written
+Of course, this technique is not meant to replace smart manually-written
 generators.
 %
 In turn, it provides an acceptable solution that can be used in the early stages
 of development, and while a better test suite using manually-written generators
 is still under construction.
-
-
+%
 %% Problems of FuzzChick: mutations are superficial, long queues, power
 %% scheduler
 %
-In this work, we take a close look at \fuzzchick for opportunities to improve.
+%% In this work, we take a close look at \fuzzchick for opportunities to improve.
 %
-Notably, we establish several aspects of its implementation that can be revised
---- some of these already being identified by the authors of \fuzzchick in their
-original work.
+Notably, we establish several aspects of its implementation that can be
+revised. \footnote{Some of these aspects were already identified by the authors
+  of \fuzzchick in their original work.}
 %
 In particular:
 %
@@ -301,8 +302,7 @@ In particular:
   interesting test case requires fine tuning and can be hard to generalize to
   work well under different testing scenarios.}
 \end{inparaenum}
-
-
+%
 Moreover, we replicated the IFC stack machine case study bundled with \fuzzchick
 and observed a noticeable limitation:
 %
@@ -322,9 +322,9 @@ important metric when comparing PBT tools.
 %% Our solution
 In this work we introduce \mutagen, a PBT tool implemented in Haskell that
 builds upon the basic ideas behind \fuzzchick, i.e., code instrumentation and
-type-preserving mutations.
+type-preserving mutations (see Section \ref{sec:mutagen}).
 %
-\mutagen is introduced in detail in Section \ref{sec:mutagen}.
+%% \mutagen is introduced in detail in Section \ref{sec:mutagen}.
 
 %% Exhaustive mutations
 Unlike \fuzzchick, mutations in \mutagen are applied \emph{exhaustively}.
@@ -345,8 +345,8 @@ On the other hand, scheduling mutations exhaustively eliminates the need of a
 heuristic that assigns a given mutation energy to each input test case.
 
 
-Notably, \emph{scheduling mutations exhaustively within an input test case does
-  not mean that mutations are exhaustive by themselves.}
+Notably, \emph{scheduling mutations exhaustively does not mean that mutations
+  are always exhaustive.}
 %
 Our tool distinguishes two kinds of mutations, those that can be computed
 purely, yielding a single deterministic mutated value; and those that can be
@@ -358,8 +358,9 @@ around, as well as return or rearrange subexpressions.
 Non-deterministic (random) mutations, on the other hand, are useful to represent
 transformations over large enumeration types, e.g., numbers, characters, etc.
 %
-This mechanism let us selectively escape the exhaustiveness of our tool by
-randomly sampling a small random generator a reduced number of times.
+This mechanism let us selectively escape the scalability issues of
+exhaustiveness by randomly sampling a small random generator a reduced number of
+times.
 %
 This way, our tool avoids, for instance, mutating a given number into every
 other number in the 32 or 64 bits range.
@@ -434,8 +435,9 @@ In this section, we briefly introduce the concept of Property-Based Testing
 along with \quickcheck, one of the most popular tools of this sort and often
 used as the baseline when comparing PBT algorithms.
 %
-Moreover, we describe in detail the ideas and limitations behind \fuzzchick,
-which served as the foundation while designing \mutagen.
+We also describe in detail the ideas and limitations behind \fuzzchick.
+
+%% which served as the foundation while designing \mutagen.
 
 \subsection{Property-Based Testing and \quickcheck}
 
@@ -584,16 +586,15 @@ Moreover, \quickcheck internally keeps track of the \emph{maximum generation
   size}, a parameter that can be tuned by the user to limit the size of the
 randomly generated values.
 %
-Our definition exposes this internal parameter via \quickcheck's \texttt{sized}
-combinator, allowing us to parameterize the maximum size of the randomly
-generated trees.
+Our definition exposes this size via \quickcheck's \texttt{sized} combinator,
+allowing us to parameterize the maximum size of the randomly generated trees.
 %
 If the generation size is zero (\texttt{gen 0}), our generator is limited to
 produce just leaves with randomly generated payloads.
 %
 In turn, when the generation size is strictly positive (\texttt{gen n}), the
-generator can perform a random uniform choice between generating either a single
-leaf or a branch.
+generator can perform a random uniform choice (\texttt{oneof}) between
+generating either a single leaf or a branch.
 %
 When generating branches, the generator calls itself recursively in order to
 produce random subtrees (\texttt{gen (n-1)}).
@@ -687,8 +688,8 @@ quickCheck prop_bst_insert
 *** Gave up! Passed only 44 tests; 1000 discarded tests.
 \end{verbatim}
 
-\noindent \quickcheck discards random inputs as soon as it finds they do not
-pass the precondition (\texttt{isBST t}).
+\noindent \quickcheck \emph{discards} random inputs as soon as it finds they do
+not pass the precondition (\texttt{isBST t}).
 %
 Sadly, most of the inputs generated by our na\"ive generator suffer from this
 problem, and the interesting part of the property (\texttt{isBST (insert a t)})
@@ -758,8 +759,9 @@ higher priority than those that were discarded.
 
 In addition, high-level mutators are better suited for producing syntactically
 valid mutants, avoiding the time wasted by using generic low-level mutators that
-act at the ``serialized'' level and know very little about the structure of the
-generated data, thus producing syntactically broken mutants most of the time.
+act over the ``serialized'' of the test cases and know very little about the
+structure of the generated data, thus producing syntactically broken mutants
+most of the time.
 %
 This grammar-aware mutation technique has shown to be quite useful when fuzzing
 systems accepting structurally complex inputs.
@@ -802,8 +804,8 @@ This selection process is illustrated in detail in Algorithm
 
 
 Having selected the next test case, the main loop proceeds to execute it,
-capturing both the result (passed, discarded, or failed) and its execution trace
-over the system under test.
+capturing both the result (passed, discarded due to preconditions, or failed)
+and its execution trace over the system under test.
 %
 If the test case fails, it is immediately reported as a bug.
 %
@@ -1104,8 +1106,8 @@ approach that requires very little randomness and no power schedule.
 In this section we describe the base ideas behind \mutagen, our CGPT tool
 written in Haskell.
 %
-Despite the choice of implementation language, the ideas presented in this work
-extend beyond Haskell and functional programming languages in general.
+Notably, the ideas presented in this work extend beyond Haskell and functional
+programming languages in general.
 %
 %% Later, Section \ref{sec:heuristics} introduces heuristics that help finding bugs
 %% faster in certain testing scenarios.
@@ -1259,7 +1261,7 @@ definition.
 
 
 In first place, a function \texttt{positions} traverses the input and builds a
-rose tree of mutable positions.
+Rose tree of mutable positions.
 %
 These positions are essentially a list of indices encoding the path from the
 root to every mutable subexpression.
@@ -1272,7 +1274,7 @@ positions (Branch l x r) = node [ (0, positions l), (1, positions x), (2, positi
 \end{verbatim}
 
 \noindent where the function \texttt{node} simply builds a node of the positions
-rose tree and propagates the accumulated prefix (the path from the root) to its
+Rose tree and propagates the accumulated prefix (the path from the root) to its
 children.
 %
 In this light, the mutable positions of the value \texttt{Branch (Leaf 1) 2
@@ -1398,7 +1400,7 @@ These mutations are put together into lists that we call \emph{mutation batches}
 %
 To initialize a mutation batch (outlined in Algorithm \ref{algo:mutagen:init}),
 we first flatten all the mutable positions of the input value in level order
-(recall that positions are stored as a rose tree).
+(recall that positions are stored as a Rose tree).
 %
 Then, we iterate over all of them and retrieve all the mutants defined for each
 subexpression.
@@ -1899,8 +1901,9 @@ continuously increase the random mutations parameter until that stops happening.
 
 We evaluated the performance of \mutagen using two main case studies.
 %
-The first one is a simple abstract stack machine that enforces
-\emph{noninterference} \cite{goguen1982security} using runtime checks.
+The first one is a simple abstract stack machine that enforces the
+hyper-property \emph{noninterference} \cite{goguen1982security} using runtime
+checks.
 %
 The implementation of this case study was originally proven correct by
 \citeauthor{10.1145/2578855.2535839} \citeyearpar{10.1145/2578855.2535839} in
@@ -2331,31 +2334,35 @@ interface that can be invoked both by \textit{haskell-wasm} and the reference
 WebAssembly implementation.
 
 
-To keep things simple here as well, we use a stub definition that provides a
-module that initializes a memory block and exports a single function.
+To keep things simple here as well, we use a function \texttt{mk\_module} to
+creates a stub module which initializes one memory block and exports a single
+function.
 %
-This module can be instantiated by providing the definition of the single
-function, along with a name and a type signature.
+This function is parameterized by the definition of the single function, its
+name and type signature.
 %
-In Haskell:
+%% In Haskell:
+%
+%% \begin{verbatim}
+%% mk_module ty name fun =
+%%   emptyModule { types     = [ ty ]
+%%               , functions = [ fun ]
+%%               , exports   = [ Export name (ExportFunc 0) ]
+%%               , mems      = [ Memory (Limit 1 Nothing) ] }
+%% \end{verbatim}
+%
+This way, we can define a testing property that can be instantiated with
+randomly generated combinations of function types, function definitions and
+lists of invocation arguments:
 
-\begin{verbatim}
-mk_module ty name fun =
-  emptyModule { types     = [ ty ]
-              , functions = [ fun ]
-              , exports   = [ Export name (ExportFunc 0) ]
-              , mems      = [ Memory (Limit 1 Nothing) ] }
-\end{verbatim}
-
-Using this stub module, we can define a testing property parameterized by the
-function type signature, the function implementation, and a list of invocation
-arguments:
+%% function type signature, the function implementation, and a list of invocation
+%% arguments:
 
 \begin{verbatim}
 prop_interpreter ty fun args =
   do let m = mk_module ty "f" fun;
-     resHs   <- invokeHaskell m "f" args
-     resSpec <- invokeSpec    m "f" args
+     resHs   <- invokeHaskellWasm m "f" args
+     resSpec <- invokeRefImpl     m "f" args
      return (equivalent resHs resSpec)
 \end{verbatim}
 
@@ -2365,6 +2372,9 @@ implementation interpreter with the provided arguments.
 %
 Then, the property asserts whether their results are equivalent.
 %
+\footnote{In our implementation, we additionally set a 20ms timeout to discard
+  potentially diverging programs with infinite loops.}
+%
 Interestingly, equivalence in this context does not imply equality.
 %
 Non-deterministic operations in WebAssembly like NaN reinterpretations can
@@ -2372,8 +2382,6 @@ produce different equivalent results (as exposed by the discrepancy \#5 in Table
 \ref{table:wasm:bugs}), and our equivalence relation needs to take that into
 account.
 %
-Moreover, we additionally set a 20ms timeout to discard potentially diverging
-programs with infinite loops.
 
 
 Using this testing property directly might not sound like a great idea, as
@@ -2468,9 +2476,25 @@ with a \%100 success rate within the one hour testing budget.
 In turn, our tool manages to find every bug on all runs, and taking less than a
 minute in the worst absolute case.
 
+
+These results are somewhat pessimistic towards \fuzzchick if compared to the
+ones presented originally by \citeauthor{lampropoulos2019coverage}.
+%
+However, we want to remark that our experiments encompass 30 independent runs
+instead of the 5 originally used when presenting \fuzzchick.
+%
+Moreover, since the MTTF simply aggregates all runs, regardless of if they found
+a bug or timed out, this metric is quite sensitive to the particular timeout
+used on each experiment, and will tend to inflate the results as soon as the
+failure rate goes below 1.
+%
+For this reason, additionally comparing the failure rate between tools give us a
+better estimation of the reliability of both tools, where \mutagen shows a clear
+improvement.
+
 \begin{wrapfigure}{r}{0.5\textwidth}
 \centering
-\vspace{-5pt}
+\vspace{-10pt}
 \footnotesize
 \begin{tabular}{ccccc}
 \hline
@@ -2517,22 +2541,6 @@ minute in the worst absolute case.
   favoring \fuzzchick and \mutagen, respectively. }
 \vspace{-20pt}
 \end{wrapfigure}
-
-These results are somewhat pessimistic towards \fuzzchick if compared to the
-ones presented originally by \citeauthor{lampropoulos2019coverage}.
-%
-However, we want to remark that our experiments encompass 30 independent runs
-instead of the 5 originally used when presenting \fuzzchick.
-%
-Moreover, since the MTTF simply aggregates all runs, regardless of if they found
-a bug or timed out, this metric is quite sensitive to the particular timeout
-used on each experiment, and will tend to inflate the results as soon as the
-failure rate goes below 1.
-%
-For this reason, additionally comparing the failure rate between tools give us a
-better estimation of the reliability of both tools, where \mutagen shows a clear
-improvement.
-
 
 %% If we only consider the succesfull runs where \fuzzchick does not time out, we
 After analyzing the results obtained using \fuzzchick, we observed a
@@ -2721,6 +2729,7 @@ pass the sparse preconditions than \quickcheck in the same amount of time, and
 which ultimately leads us to find bugs.
 
 \begin{table}[H]
+\vspace{-10pt}
 \begin{tabular}{|l|c|c|c|c|}
 \hline
 \multicolumn{1}{|c|}{
@@ -2978,8 +2987,8 @@ This could, in principle, improve the overall performance when testing
 properties that tend to short-circuit, leaving parts of the input unevaluated.
 %
 In our case studies, however, we observed that their preconditions tend to be
-quite strict when mutating from passed test cases, fully evaluating their input
-before executing the postcondition.
+quite strict when executing test cases obtained by mutating passed existing
+ones, fully evaluating their input before executing the postcondition.
 %
 Thus, we do not expect to see considerable improvements by applying this idea in
 this particular scenario.
