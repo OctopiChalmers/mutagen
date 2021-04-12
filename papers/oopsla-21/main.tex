@@ -226,8 +226,7 @@ generators needed to instantiate the testing properties.
 In some extreme cases, writing highly-tuned random generators capable of
 exercising every part of a complex system on a reasonable basis can take several
 thousand person-hours of trial and error \cite{lampropoulos2019coverage}.
-
-
+%
 To alleviate this, there exist several techniques to automatically synthesize
 random data generators by reifying the static information present in the
 codebase, e.g., data type definitions, application public interfaces (APIs),
@@ -236,7 +235,7 @@ etc. \cite{GriecoCB16, DBLP:conf/haskell/MistaRH18, Mista2019GeneratingRS,
 %
 These techniques, however, are unable to synthesize random generators capable of
 producing data satisfying complex invariants not easily derivable from the
-codebase, e.g., a data type definition.
+codebase.
 %
 Randomly generating valid programs is a common example of this problem, where
 developers are forced to put substantial efforts in writing specialized random
@@ -261,7 +260,8 @@ Notably, this tool is implemented as an extension of \quickchick
 
 Instead of continuously generating random invalid test cases from scratch,
 \fuzzchick keeps a queue of interesting previously executed test cases that can
-be mutated using type-preserving transformations to produce new ones.
+be mutated using high-level, type-preserving transformations to produce new
+ones.
 %
 Intuitively, mutating an interesting test case in a small way (at the data
 constructor level) has a much higher probability of producing a new interesting
@@ -292,9 +292,10 @@ is still under construction.
 %
 %% In this work, we take a close look at \fuzzchick for opportunities to improve.
 %
-Notably, we establish several aspects of its implementation that can be
-revised. \footnote{Some of these aspects were already identified by the authors
-  of \fuzzchick in their original work.}
+Notably, we establish several aspects of \fuzzchick that can be
+revised.%
+\footnote{Some of these aspects were already identified by the authors of
+  \fuzzchick in their original work.}
 %
 In particular:
 %
@@ -303,13 +304,13 @@ In particular:
   and rely heavily on randomness to produce diverse mutants},
 \item \emph{using normal queues can cause large delays when interesting values
   are enqueued frequently}, and
-\item \emph{the mechanism used to assign a certain mutation energy to each
-  interesting test case requires fine tuning and can be hard to generalize to
-  work well under different testing scenarios.}
+\item \emph{the power schedule (i.e., the heuristic used to assign a certain
+  mutation energy to each interesting test case) requires fine tuning and can be
+  hard to generalize to work well under different testing scenarios.}
 \end{inparaenum}
 %
-Moreover, we replicated the IFC stack machine case study bundled with \fuzzchick
-and observed a noticeable limitation:
+Moreover, we replicated the Information-Flow Control (IFC) stack machine case
+study bundled with \fuzzchick and observed a noticeable limitation:
 %
 \emph{after repeating each experiment 30 times, \fuzzchick was only able to find
   5 out of the 20 injected bugs with a 100\% efficacy, the hardest one being
@@ -330,7 +331,7 @@ builds upon the basic ideas behind \fuzzchick, i.e., code instrumentation and
 type-preserving mutations (see Section \ref{sec:mutagen}).
 %
 %% \mutagen is introduced in detail in Section \ref{sec:mutagen}.
-
+%
 %% Exhaustive mutations
 Unlike \fuzzchick, mutations in \mutagen are applied \emph{exhaustively}.
 %
@@ -347,7 +348,7 @@ basis, which guarantees that no interesting mutation is left behind due to
 randomness.
 %
 On the other hand, scheduling mutations exhaustively eliminates the need of a
-heuristic that assigns a given mutation energy to each input test case.
+power schedule to assign a given mutation energy to each input test case.
 
 
 %% Notably, \emph{scheduling mutations exhaustively does not mean that mutations
@@ -402,9 +403,9 @@ fly.
 
 %% Validation
 To validate our ideas, we use two main case studies (described in detail in
-Section \ref{sec:casestudies}): the Information-Flow Control (IFC) stack machine
-used by \citeauthor{lampropoulos2019coverage} on their original work, and a
-WebAssembly engine written in Haskell.
+Section \ref{sec:casestudies}): the IFC stack machine used by
+\citeauthor{lampropoulos2019coverage} on their original work, and a WebAssembly
+engine written in Haskell.
 %
 In both case studies, we additionally compare the effect of the heuristics
 implemented on top of the base testing loop of \mutagen.
@@ -436,6 +437,7 @@ on Section \ref{sec:conclusions}.
 
 
 % ----------------------------------------
+\vspace{-10pt}
 
 \section{Background}
 \label{sec:background}
@@ -743,11 +745,12 @@ the testing process with two key characteristics:
 Using code instrumentation in tandem with mutations is a well-known technique in
 the fuzzing community.
 %
-Generic fuzzing tools like \emph{AFL}, \emph{libFuzzer} \citeyearpar{libfuzzer}
-or \emph{HonggFuzz} \cite{honggfuzz}, as well as language-specific ones like
-Crowbar \cite{dolan2017testing} or \emph{Kelinci} \cite{kersten2017poster} use
-execution traces to recognize interesting test cases, e.g, those that exercise
-previously undiscovered parts of the target code.
+Generic fuzzing tools like \emph{AFL} \cite{afl}, \emph{HonggFuzz}
+\cite{honggfuzz}, or \emph{libFuzzer} \citeyearpar{libfuzzer} as well as
+language-specific ones like Crowbar \cite{dolan2017testing} or \emph{Kelinci}
+\cite{kersten2017poster} use execution traces to recognize interesting test
+cases, e.g, those that exercise previously undiscovered parts of the target
+code.
 %
 Later, such tools use generic mutators to combine and produce new test cases
 from previously executed interesting ones.
@@ -823,8 +826,9 @@ new path) based on its trace information and the one from previously executed
 test cases (represented by \textit{TLog}).
 %
 If the test case does in fact discover a new path, it is enqueued at the end of
-its corresponding queue, depending on whether it passed or was discarded (i.e.,
-it failed the precondition).
+its corresponding queue, depending on whether it passed or was discarded.
+%
+%% (i.e., it failed the precondition).
 %
 This process alternates between generation and mutation until a bug is found or
 we reach the test limit.
@@ -1025,7 +1029,7 @@ consecutive times.
 %
 This only worsens as the type of the mutated value becomes more complex.
 %
-Hence, \fuzzchick mutators can only be effectively used to transform to shallow
+Hence, \fuzzchick mutators can only be effectively used to transform shallow
 data structures, potentially excluding interesting applications that might
 require producing deeper valid values, e.g., programs, network protocol
 interactions, etc.
@@ -1045,8 +1049,8 @@ We believe that growing data constructors needs to be done carefully.
 For instance, by using just a minimal piece of data to make the overall mutated
 test case type correct.
 %
-If that mutated test case turns to be interesting, that subexpression can always
-be mutated later.
+If that mutated test case turns to be interesting, that new subexpression can
+always be mutated later.
 
 \item \emph{Enqueuing mutation candidates:}
 %
@@ -1132,7 +1136,7 @@ In turn, it resorts to mutate them on an exhaustive and precise manner, where
   \item each subexpression of a mutation candidate is associated with a set of
     type-preserving mutations, and
   \item for every mutable subexpression, each one of these mutations is
-    evaluated \emph{exactly once}.
+    scheduled \emph{exactly once}.
 \end{inparaenum}
 %
 %% There is a small exception to this rules that we will introduce soon.
@@ -1250,9 +1254,9 @@ Random mutants, on the other hand, serve as a way to break exhaustiveness when
 mutating values of large enumeration types --- or any other type the user might
 want to use random mutations with.
 %
-Instead of mutating into every other possible number or character, we resolve in
-using a random generator and sample a small number of values from it --- the
-precise amount is a tunable parameter of \mutagen.
+Instead of mutating every numerical or character subexpression exhaustively, we
+resolve in using a random generator and sample a small number of values from it
+--- the precise amount is a tunable parameter of \mutagen.
 %
 This way, a mutator for integers simply becomes:
 
@@ -1938,8 +1942,9 @@ and focuses on testing \textit{haskell-wasm} \cite{haskellwasm}, an existing
 WebAssembly engine of industrial strength written in Haskell.
 %
 We manually injected 10 bugs in the validator as well as 5 bugs in the
-interpreter of this engine, and used the reference WebAssembly implementation to
-find them via differential testing \cite{mckeeman1998differential}.
+interpreter of this engine (see Table \ref{table:wasm:injectedbugs}), and used
+the reference WebAssembly implementation to find them via differential testing
+\cite{mckeeman1998differential}.
 %
 During this process, we quickly discovered 3 bugs and 2 discrepancies on this
 engine with respect to the reference implementation.
@@ -2110,22 +2115,22 @@ states that pass the sparse precondition.
 \subsubsection{IFC Rules}
 
 In this abstract machine, the enforced IFC rules are implemented using a rule
-table indexed by the operation that the machine is about to perform.
+table indexed by the instruction that the machine is about to perform.
 %
 This table contains: the dynamic check that the abstract machine needs to
 perform in order to enforce the IFC policy, along with the corresponding
-security label of the program counter and the operation result after the
+security label of the program counter and the instruction result after the
 operation is executed.
 %
-For instance, to execute the \texttt{Store} operation (which stores a value in a
-memory pointer) the machine needs to check that both the label of the program
+For instance, to execute the \texttt{Store} instruction (which stores a value in
+a memory pointer) the machine needs to check that both the label of the program
 counter and the label of the pointer together can flow to the label of the
 destination memory cell.
 %
 If this condition is not met, the machine then halts as indication of a
 violation in the IFC policy.
 %
-After this check, this operation overwrites the value at the destination cell
+After this check, this instruction overwrites the value at the destination cell
 and updates its label with the maximum sensibility of the involved labels.
 %
 In the rule table, this looks as follows:
@@ -2134,7 +2139,7 @@ In the rule table, this looks as follows:
 \footnotesize
 \begin{tabular}{|c|c|c|c|}
 \hline
-\textbf{Operation}
+\textbf{Instruction}
 & \textbf{Precondition Check}
 & \textbf{Final PC Label}
 & \textbf{Final Result Label} \\
@@ -2239,7 +2244,7 @@ In this light, our testing properties assert that any result produced by
 \textit{haskell-wasm} matches that of the reference implementation.
 
 
-\begin{table}[t]
+\begin{table}[b]
 \footnotesize
 \begin{tabular}{|c|c|c|l|}
 \hline
@@ -2358,12 +2363,12 @@ interface that can be invoked both by \textit{haskell-wasm} and the reference
 WebAssembly implementation.
 
 
-To keep things simple here as well, we use a function \texttt{mk\_module} to
-create a stub module which initializes one memory block and exports a single
+To keep things simple here as well, we write a function \texttt{mk\_module} to
+build a stub module which initializes one memory block and exports a single
 WebAssembly function.
 %
-This function is parameterized by the definition of the single function, its
-name and type signature.
+\texttt{mk\_module} is parameterized by the definition of the single WebAssembly
+function, along with its name and type signature.
 %
 %% In Haskell:
 %
@@ -2384,7 +2389,7 @@ lists of invocation arguments:
 
 \begin{verbatim}
 prop_interpreter ty fun args =
-  do let m = mk_module ty "foo" fun;
+  do let m = mk_module ty "foo" fun
      resHs   <- invokeHaskellWasm m "foo" args
      resSpec <- invokeRefImpl     m "foo" args
      return (equivalent resHs resSpec)
@@ -2410,16 +2415,17 @@ account.
 
 
 Using this testing property directly might not sound like a great idea, as
-randomly generated lists of inputs will be very unlikely to match the type
-signature of randomly generated functions.
+randomly generated lists of input arguments will be very unlikely to match the
+type signature of randomly generated functions.
 %
 However, it lets us test what happens when programs are not properly invoked,
-and it quickly discovered the bug \#3 in \textit{haskell-wasm} mentioned above.
+and it quickly discovered the previously unknown bug \#3 in
+\textit{haskell-wasm} mentioned above.
 %
 Having solved this issue in \textit{haskell-wasm}, we proceed to define a more
 useful specialized version of \texttt{prop\_interpreter} that fixes the type of
-the generated function to take two arguments (of type \texttt{I32} and {F32})
-and return an \texttt{I32} as a result:
+the generated function to take two arguments (of type \texttt{I32} and
+\texttt{F32}) and return an \texttt{I32} as a result:
 
 \begin{verbatim}
 prop_interpreter_i32 fun i f =
@@ -2456,13 +2462,13 @@ We ran each experiment 30 times except for the ones involving the bugs on the
 WebAssembly interpreter, which were run 10 times due to time constraints.
 %
 From there, we followed the same approach taken by
-\citeauthor{lampropoulos2019coverage} and collected the Mean-Time-To-Failure
+\citeauthor{lampropoulos2019coverage} and collected the mean-time-to-failure
 (MTTF) of each bug, i.e., how quickly a bug can be found in wall clock time.
 %
 In all cases, we used a one-hour timeout to stop the execution of both tools if
 they have not yet found a counterexample.
 
-Additionally, we collected the Failure Rate observed for each bug, i.e. the
+Additionally, we collected the failure rate observed for each bug, i.e. the
 proportion of times each tool finds each bug within the one-hour testing budget.
 %
 We found this metric crucial to be analyzed when replicating \fuzzchick's
@@ -2492,7 +2498,7 @@ throughout the execution of the tool.
 
 
 The results of this case study are shown in Fig. \ref{fig:results:ifc} --- we
-encourage the reader to obtain a color-printed version of this paper.
+encourage the reader to obtain a color copy of this work.
 %
 The injected bugs are ordered by the failure rate achieved by \fuzzchick in
 decreasing order.
@@ -2649,7 +2655,7 @@ Given that we used different properties to test the WebAssembly validator and
 interpreter, we will focus on these results independently.
 
 
-Firstly, we focus on the bugs injected in the validator (Fig.
+We first focus on the bugs injected in the validator (Fig.
 \ref{fig:results:wasm} left).
 %
 There, we can quickly conclude that \quickcheck is not well suited to find most
@@ -2873,7 +2879,7 @@ massively used programs.
 
 
 Automatically deriving random generators is substantially more complicated when
-the generated data must satisfy by (often sparse) preconditions.
+the generated data must satisfy (often sparse) preconditions.
 %
 % Generating Constrained Random Data with Uniform Distribution
 %
@@ -2957,7 +2963,7 @@ A popular category of property-based testing tools does not rely on randomness.
 %
 Instead, all possible inputs can be enumerated and tested from smaller to larger
 up to a certain size bound.
-
+%
 %
 % Feat
 %
@@ -3034,9 +3040,7 @@ is an effort that we keep as future work.
 \label{sec:conclusions}
 
 We presented \mutagen, a coverage-guided, property-based testing framework
-written in Haskell.%
-\footnote{As meantioned earlier, we foresee no problems into translating our
-  tool in other programming languages beyond Haskell.}
+written in Haskell.
 %
 Inspired by \fuzzchick, our tool uses coverage information to guide
 automatically derived mutators producing high-level, type-preserving mutations.
@@ -3050,6 +3054,8 @@ This is in turn inspired by exhaustive bounded testing tools that focus on
 testing every possible input value of the system under test up to a certain size
 bound.
 %
+Moreover, we foresee no problems into translating our tool in other programming
+languages beyond Haskell.
 
 %% --- a more generic technique of limited applicability.
 
