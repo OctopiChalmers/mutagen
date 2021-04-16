@@ -42,6 +42,8 @@
 \widowpenalty=10000
 \clubpenalty=10000
 
+\setlength{\skip\footins}{5pt}
+
 % ----------------------------------------
 
 %% Rights management information. This information is sent to you when you
@@ -49,8 +51,8 @@
 %% your responsibility as an author to replace the commands and values with
 %% those provided to you when you complete the rights form.
 \setcopyright{acmcopyright}
-\copyrightyear{2021}
-\acmYear{2021}
+%% \copyrightyear{2021}
+%% \acmYear{2021}
 %% \acmDOI{10.1145/1122445.1122456}
 
 %% These commands are for a JOURNAL article.
@@ -150,11 +152,11 @@ complicates testing properties with sparse preconditions.
 %% \fuzzchick is a recent tool that borrows ideas from the fuzzing community to
 %% alleviate this limitation.
 %
-\fuzzchick is a tool coverage-guided, property-based testing (CGPT) tool that
+\fuzzchick is a coverage-guided, property-based testing (CGPT) tool that
 alleviates this limitation by enhancing automatically synthesized generators
 with type-preserving mutations guided by execution traces.
 %
-Despite being enlighthening, we observed several limitations in the
+Despite being enlightening, we observed several limitations in the
 implementation of \fuzzchick that reduce its applicability.
 %
 These limitations include a large reliance on randomness when mutating test
@@ -272,57 +274,113 @@ mutated data, as mutations are applied directly at the data type level, e.g.,
 the program's AST in case of generating code.
 
 
-\fuzzchick relies on execution traces to distinguish which test cases resulted
-interesting and are therefore worth mutating --- a prolific technique known as
-\emph{coverage-guided fuzzing} and popularized by tools like \emph{AFL}
+\fuzzchick relies on execution traces to distinguish which executed test cases
+were interesting and are therefore worth mutating --- a popular technique known
+as \emph{coverage-guided fuzzing} and popularized by tools like \emph{AFL}
 \cite{afl}.
 %
 Mutated test cases are considered interesting for mutation only when they
 produce new execution traces --- any other test case is simply thrown away.
 
+%% Of course, this technique is not meant to replace smart manually-written
+%% generators.
+%% %
+%% In turn, it provides an acceptable solution that can be used in the early stages
+%% of development, and while a better test suite using manually-written generators
+%% is still under construction.
+%% %
+%% %% Problems of FuzzChick: mutations are superficial, long queues, power
+%% %% scheduler
+%% %
+%% %% In this work, we take a close look at \fuzzchick for opportunities to improve.
+%% %
+%% %% Notably, we establish several aspects of \fuzzchick that can be
+%% %% revised.%
+%% %
+%% But \fuzzchick suffers several disadvantages.%
+%% \footnote{Some of these were already identified by the authors of \fuzzchick in
+%%   their original work.}
+%% %
+%% In particular:
+%% %
+%% \begin{inparaenum}
+%% \item the type-preserving mutations produced by this tool are superficial
+%%   and rely heavily on randomness to produce diverse mutants,
+%% \item the queueing mechanism can cause large delays when interesting
+%%   values are enqueued frequently, and
+%% \item the heuristic used to assign a certain ``mutation energy'' to each
+%%   interesting test case (often referred to as the \emph{power schedule})
+%%   requires fine tuning and can be hard to generalize to work well under
+%%   different testing scenarios.
+%% \end{inparaenum}
+%% %
+%% Moreover, we replicated the Information-Flow Control (IFC) stack machine case
+%% study bundled with \fuzzchick and observed a surprising limitation:
+%% %
+%% \emph{after repeating each experiment 30 times, \fuzzchick was only able to find
+%%   5 out of the 20 injected bugs with a 100\% efficacy, the hardest one being
+%%   found only around 13\% of the time after an hour of testing.}
+%% %
+%% Despite this limitation, \citeauthor{lampropoulos2019coverage} show that
+%% \fuzzchick is far better than using normal random testing coupled with na\"ive
+%% random generators by comparing the mean-time-to-failure (MTTF) against
+%% \emph{QuickChick}.
+%% %
+%% However, we believe that a proper evaluation ought to
+%% %
+%% take failure to find a counterexample as an
+%% %
+%% important metric when comparing PBT tools, not just mean time to failure ---
+%% when one is found.
+
 Of course, this technique is not meant to replace smart manually-written
 generators.
 %
-In turn, it provides an acceptable solution that can be used in the early stages
-of development, and while a better test suite using manually-written generators
-is still under construction.
+In turn, it provides an adequate solution to be used in early stages of
+development, and while a better test suite using manually-written generators is
+still under construction.
 %
 %% Problems of FuzzChick: mutations are superficial, long queues, power
 %% scheduler
 %
 %% In this work, we take a close look at \fuzzchick for opportunities to improve.
 %
-Notably, we establish several aspects of \fuzzchick that can be
-revised.%
-\footnote{Some of these aspects were already identified by the authors of
-  \fuzzchick in their original work.}
+%% Notably, we establish several aspects of \fuzzchick that can be
+%% revised.%
+%
+But \fuzzchick suffers several disadvantages.%
+\footnote{Some of these were already identified by the authors of \fuzzchick in
+  their original work.}
 %
 In particular:
 %
 \begin{inparaenum}
-\item \emph{the type-preserving mutations produced by this tool are superficial
-  and rely heavily on randomness to produce diverse mutants},
-\item \emph{using normal queues can cause large delays when interesting values
-  are enqueued frequently}, and
-\item \emph{the power schedule (i.e., the heuristic used to assign a certain
-  mutation energy to each interesting test case) requires fine tuning and can be
-  hard to generalize to work well under different testing scenarios.}
+\item type-preserving mutations, if not done carefully, can become superficial
+  and rely heavily on randomness to produce diverse mutants,
+\item the queuing mechanism can cause large delays if interesting values are
+  enqueued frequently and there is no way to prioritize them, and
+\item using an heuristic to assign a certain ``mutation energy'' to each
+  interesting test case (often referred to as a \emph{power schedule}) requires
+  fine tuning and can be hard to generalize to work well under different testing
+  scenarios.
 \end{inparaenum}
 %
 Moreover, we replicated the Information-Flow Control (IFC) stack machine case
-study bundled with \fuzzchick and observed a noticeable limitation:
+study bundled with \fuzzchick and observed a surprising limitation:
 %
-\emph{after repeating each experiment 30 times, \fuzzchick was only able to find
-  5 out of the 20 injected bugs with a 100\% efficacy, the hardest one being
-  found only around 13\% of the time after an hour of testing.}
+after repeating each experiment 30 times, \fuzzchick could only find 5 out of
+the 20 injected bugs with a 100\% efficacy.
 %
-Despite this limitation, \citeauthor{lampropoulos2019coverage} show that
-\fuzzchick is far better than using normal random testing coupled with na\"ive
-random generators by comparing the mean-time-to-failure (MTTF) against
-\emph{QuickChick}.
+%% the hardest one being found only around 13\% of the time after an hour of
+%% testing.
 %
-However, we believe that a proper evaluation ought to use the failure rate as an
-important metric when comparing PBT tools.
+Despite this, \citeauthor{lampropoulos2019coverage} show that \fuzzchick is far
+better than using normal random testing coupled with na\"ive random generators
+by comparing the mean-time-to-failure (MTTF) against \emph{QuickChick}.
+%
+However, we believe that a more meticulous evaluation ought to take failure to
+find a counterexample as an important metric when comparing PBT tools, not just
+mean time to failure --- when one is found.
 
 
 %% Our solution
@@ -335,7 +393,7 @@ type-preserving mutations (see Section \ref{sec:mutagen}).
 %% Exhaustive mutations
 Unlike \fuzzchick, mutations in \mutagen are applied \emph{exhaustively}.
 %
-This is, given an interesting, previously executed test case, our tool
+That is, given an interesting, previously executed test case, our tool
 precomputes and schedules every type-preserving mutation that can be applied to
 it.
 %
@@ -344,10 +402,13 @@ This approach has two inherent advantages when compared to \fuzzchick.
 On one hand, mutations do not rely on randomness to be generated.
 %
 Instead, every subexpression of the input test case is mutated on the same
-basis, which guarantees that no interesting mutation is left behind due to
+basis, which guarantees that no interesting mutation is omitted due to
 randomness.
 %
-On the other hand, scheduling mutations exhaustively eliminates the need of a
+%% On the other hand, scheduling mutations exhaustively eliminates the need for a
+%% power schedule to assign a given mutation energy to each input test case.
+%
+On the other hand, scheduling mutations exhaustively eliminates the need for a
 power schedule to assign a given mutation energy to each input test case.
 
 
@@ -368,7 +429,7 @@ This mechanism let us selectively escape the scalability issues of
 exhaustiveness by randomly sampling a small random generator a reduced number of
 times.
 %
-This way, our tool avoids, for instance, mutating a given number into every
+In this way, our tool avoids, for instance, mutating a given number into every
 other number in the 32 or 64 bits range.
 
 
@@ -376,8 +437,8 @@ other number in the 32 or 64 bits range.
 Additionally, the testing loop of our tool incorporates two heuristics that help
 finding bugs faster and more reliably (Section \ref{sec:heuristics}).
 %
-In first place, \mutagen uses first-in first-out (FIFO) scheduling with priority
-to enqueue interesting test cases for mutation.
+In the first place, \mutagen uses first-in first-out (FIFO) scheduling with
+priority to enqueue interesting test cases for mutation.
 %
 This scheduling algorithm is indexed by the novelty of each new test case with
 respect to the ones already seen.
@@ -404,7 +465,7 @@ fly.
 %% Validation
 To validate our ideas, we use two main case studies (described in detail in
 Section \ref{sec:casestudies}): the IFC stack machine used by
-\citeauthor{lampropoulos2019coverage} on their original work, and a WebAssembly
+\citeauthor{lampropoulos2019coverage} in their original work, and a WebAssembly
 engine written in Haskell.
 %
 In both case studies, we additionally compare the effect of the heuristics
@@ -422,22 +483,22 @@ There, \mutagen is capable of reliably finding 15 planted bugs in the validator
 and interpreter, as well as 3 previously unknown bugs that flew under the radar
 of the existing unit test suite of this engine.
 %
-This case study also help us comparing the performance our tool against a more
-traditional PBT approach that does not rely on code instrumentation.
+This case study also help us to compare the performance of our tool against a
+more traditional PBT approach that does not rely on code instrumentation.
 %
-All in all, our evaluation encompass more than 600 hours of computing time and
-suggest that testing mutants exhaustively can be an appealing technique for
+All in all, our evaluation encompasses more than 600 hours of computing time and
+suggests that testing mutants exhaustively can be an appealing technique for
 finding bugs reliably without sacrificing speed.
 
 
 %% Last two sections
-Finally, we discuss related work on Section \ref{sec:related} and conclude
-on Section \ref{sec:conclusions}.
+Finally, we discuss related work in Section \ref{sec:related} and conclude
+in Section \ref{sec:conclusions}.
 
 
 
 % ----------------------------------------
-\vspace{-10pt}
+\vspace{-5pt}
 
 \section{Background}
 \label{sec:background}
@@ -450,6 +511,7 @@ We also describe in detail the ideas and limitations behind \fuzzchick.
 
 %% which served as the foundation while designing \mutagen.
 
+\vspace{-5pt}
 \subsection{Property-Based Testing and \quickcheck}
 
 Property-based testing is a powerful technique for finding bugs without having
@@ -1090,7 +1152,7 @@ mutations.
 If it assigns too much energy to certain not-so-interesting seeds, some bugs
 might not be discovered on a timely basis.
 %
-Conversely, assigning too little energy to interesting test cases might cause
+Conversely, assigning too little energy to interesting test cases might mean
 that some bugs cannot be discovered at all unless the right mutation happens
 within the small available energy window --- randomly generating the same test
 case again later does not help, as it becomes uninteresting based on historic
@@ -1156,8 +1218,8 @@ can be evaluated until we exhausted all the immediately smaller ones
 \cite{DuregardJW12}.
 %
 To alleviate this problem, such tools often rely on heuristics to prune the
-search space based on detecting unevaluated subexpressions --- this is discussed
-in Section \ref{sec:related}.
+search space based on detecting unused subexpressions --- this is discussed in
+Section \ref{sec:related}.
 
 %% In consequence, such tools can only be applied to relatively simple systems,
 %% where the space of inputs does not grow extremely fast.
@@ -1169,7 +1231,7 @@ test cases exhaustively.
 Our tool uses random generators to find interesting initial seeds, and when it
 finds them, only then proceeds to schedule all possible mutations.
 %
-Moreover, like in \fuzzchick, the testing loop of our tool automatically filters
+Moreover, as in \fuzzchick, the testing loop of our tool automatically filters
 the test cases that are worth mutating by keeping only those that discover new
 execution paths in the code under test.
 
@@ -1998,7 +2060,7 @@ used in our tool.
 \hline
 7
 & Validator
-& Wrong type validation on \texttt{i32} binary opertations \\
+& Wrong type validation on \texttt{i32} binary operations \\
 \hline
 8
 & Validator
@@ -2014,15 +2076,15 @@ used in our tool.
 \hline
 11
 & Interpreter
-& Wrong intepretation of \texttt{i32.sub} instruction \\
+& Wrong interpretation of \texttt{i32.sub} instruction \\
 \hline
 12
 & Interpreter
-& Wrong intepretation of \texttt{i32.lt\_u} instruction when operands are equal \\
+& Wrong interpretation of \texttt{i32.lt\_u} instruction when operands are equal \\
 \hline
 13
 & Interpreter
-& Wrong intepretation of \texttt{i32.shr\_u} instruction \\
+& Wrong interpretation of \texttt{i32.shr\_u} instruction \\
 \hline
 14
 & Interpreter
@@ -2175,7 +2237,7 @@ and later executed in a sandboxed environment (a virtual machine).
 %% , making this language an attractive target for virtualization in
 %% \emph{functions-as-a-service} platforms.
 %
-The language is relatively simple, in esence
+The language is relatively simple, in essence
 %
 \begin{inparaenum}
   \item it contains only four numerical types, representing both integers and
@@ -2585,7 +2647,7 @@ not only more reliably, but also relatively fast!
 \hline
 \end{tabular}
 \captionof{table}{\label{table:ifc:tests} Mean tests until first failure and effect size
-  comparison between \fuzzchick and \mutagen when considering only succesfull
+  comparison between \fuzzchick and \mutagen when considering only successful
   runs.
   %
   Estimates in {\color{blue} blue} and {\color{red} red} indicate results
@@ -2641,7 +2703,7 @@ fixed amount of random mutations (\#4, \#9, \#12, \#18, and \#10), suggesting
 that one should increase this number even further to be able to discover all
 bugs within the time budget.
 %
-In consequence, we believe this heuristic is effective at automatically tunning
+In consequence, we believe this heuristic is effective at automatically tuning
 this internal parameter of our tool, especially when the user is unsure about
 what the best value for it might be.
 
@@ -2725,7 +2787,7 @@ our tool gets more unstable, where the bugs \#12 and \#11 take substantially
 less time to be found, whereas the bugs \#15 and \#14 cannot be found on every
 run.
 %
-Finding where the best tradeoff lies in cases where the heuristics cause mixed
+Finding where the best trade-off lies in cases where the heuristics cause mixed
 results like this is another interesting direction to aim our future work.
 
 \begin{figure}
@@ -2736,7 +2798,7 @@ results like this is another interesting direction to aim our future work.
   \vspace{-20pt}
   \caption{\label{fig:results:wasm} Comparison between \quickcheck and \mutagen
     across 15 different bugs injected into \textit{haskell-wasm}. }
-\vspace{-10pt}
+\vspace{-5pt}
 \end{figure}
 
 
@@ -2748,8 +2810,8 @@ Table \ref{table:wasm:overhead} compares the total number of executed and passed
 tests per second that we observed using each tool.
 %
 It is easy to conclude that \mutagen executes tests several times slower than
-\quickcheck --- roughly 20x and 75x slower when testing \textit{prop\_validator}
-and \textit{prop\_interpreter\_i32}, respectively.
+\quickcheck --- roughly 20x and 75x slower when testing \texttt{prop\_validator}
+and \texttt{prop\_interpreter\_i32}, respectively.
 %
 This slowdown is partly caused because the code instrumentation our tool
 currently uses is built upon a superficial transformation that logs traces at
@@ -2874,7 +2936,7 @@ Exploiting some of the ideas described above, \emph{QuickFuzz} \cite{GriecoCB16,
   grieco2017} is a generational fuzzer that leverages existing Haskell libraries
 describing common file formats to synthesize random data generators that are
 used in tandem with existing off-the-shelf low-level fuzzers to find bugs in
-massively used programs.
+heavily used programs.
 
 
 
@@ -2993,7 +3055,7 @@ values up to a certain size bound.
 % Korat
 On the object-oriented realm, \emph{Korat} \cite{boyapati2002korat} is a Java
 tool that uses method specification predicates to automatically generate all
-nonisomorphic test cases up to a given small size.
+non-isomorphic test cases up to a given small size.
 
 
 Being exhaustive, these approaches rely on pruning mechanisms to avoid
@@ -3064,7 +3126,7 @@ Our experimental results indicate that \mutagen outperforms the simpler approach
 taken by \fuzzchick in terms of both failure rate and tests until first failure.
 %
 Moreover, we show how our tool can be applied in a real-world testing scenario,
-where it quickly discovers several planted and existent previously unknown bugs.
+where it quickly discovers several planted and some previously unknown bugs.
 
 
 As already indicated throughout this work, there are several directions for

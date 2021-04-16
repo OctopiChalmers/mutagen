@@ -150,7 +150,7 @@
     %   (20, 1)
     % };
 
-    \legend{FuzzChick, Mutagen, Mutagen (no FIFO), Mutagen (no reset)} %, Mutagen (no inheritance) }
+    \legend{\fuzzchick, \mutagen, \mutagen (\textit{no FIFO}), \mutagen (\textit{no reset})}
   \end{axis}
 
 \end{tikzpicture}
