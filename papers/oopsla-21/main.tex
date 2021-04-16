@@ -260,7 +260,7 @@ Notably, this tool is implemented as an extension of \quickchick
 \cite{denes2014quickchick}, Coq's own reimplementation of \quickcheck.
 
 
-Instead of continuously generating random invalid test cases from scratch,
+%Instead of continuously generating random invalid test cases from scratch,
 \fuzzchick keeps a queue of interesting previously executed test cases that can
 be mutated using high-level, type-preserving transformations to produce new
 ones.
@@ -271,16 +271,21 @@ test case than generating a new one from scratch using a na\"ive generator.
 %
 In this light, \fuzzchick is likely to preserve the semantic structure of the
 mutated data, as mutations are applied directly at the data type level, e.g.,
-the program's AST in case of generating code.
-
-
-\fuzzchick relies on execution traces to distinguish which executed test cases
-were interesting and are therefore worth mutating --- a popular technique known
-as \emph{coverage-guided fuzzing} and popularized by tools like \emph{AFL}
+the program's AST in case of generating code. Internally, \fuzzchick relies on
+execution traces to distinguish which executed test cases were interesting and
+are therefore worth mutating --- a popular technique known as
+\emph{coverage-guided fuzzing} and popularized by tools like \emph{AFL}
 \cite{afl}.
 %
 Mutated test cases are considered interesting for mutation only when they
 produce new execution traces --- any other test case is simply thrown away.
+%
+The techniques behind \fuzzchick are not meant to replace sophisticated,
+manually written random generators, but rather providing an adequate testing
+solution for early stages of development.
+%, and while a better test suite using manually-written generators is
+%still under construction.
+
 
 %% Of course, this technique is not meant to replace smart manually-written
 %% generators.
@@ -333,12 +338,6 @@ produce new execution traces --- any other test case is simply thrown away.
 %% important metric when comparing PBT tools, not just mean time to failure ---
 %% when one is found.
 
-Of course, this technique is not meant to replace smart manually-written
-generators.
-%
-In turn, it provides an adequate solution to be used in early stages of
-development, and while a better test suite using manually-written generators is
-still under construction.
 %
 %% Problems of FuzzChick: mutations are superficial, long queues, power
 %% scheduler
@@ -348,9 +347,10 @@ still under construction.
 %% Notably, we establish several aspects of \fuzzchick that can be
 %% revised.%
 %
-But \fuzzchick suffers several disadvantages.%
-\footnote{Some of these were already identified by the authors of \fuzzchick in
-  their original work.}
+The approach taken by \fuzzchick leaves considerable room for improvements in
+many aspects\footnote{Some of these were already identified by the authors of
+  \fuzzchick in their original work.}:
+%But \fuzzchick suffers several disadvantages.%
 %
 In particular:
 %
@@ -384,9 +384,11 @@ mean time to failure --- when one is found.
 
 
 %% Our solution
-In this work we introduce \mutagen, a PBT tool implemented in Haskell that
-builds upon the basic ideas behind \fuzzchick, i.e., code instrumentation and
-type-preserving mutations (see Section \ref{sec:mutagen}).
+In this work, we introduce \mutagen, a PBT tool implemented %in Haskell
+that also builds upon code instrumentation and type-preserving mutations (see
+Section \ref{sec:mutagen}).
+%
+% the basic ideas behind \fuzzchick, i.e.,
 %
 %% \mutagen is introduced in detail in Section \ref{sec:mutagen}.
 %
@@ -397,7 +399,7 @@ That is, given an interesting, previously executed test case, our tool
 precomputes and schedules every type-preserving mutation that can be applied to
 it.
 %
-This approach has two inherent advantages when compared to \fuzzchick.
+This approach has two inherent advantages. %when compared to \fuzzchick.
 %
 On one hand, mutations do not rely on randomness to be generated.
 %
@@ -465,7 +467,7 @@ fly.
 %% Validation
 To validate our ideas, we use two main case studies (described in detail in
 Section \ref{sec:casestudies}): the IFC stack machine used by
-\citeauthor{lampropoulos2019coverage} in their original work, and a WebAssembly
+\citeauthor{lampropoulos2019coverage} in their original work of \fuzzchick, and a WebAssembly
 engine written in Haskell.
 %
 In both case studies, we additionally compare the effect of the heuristics
