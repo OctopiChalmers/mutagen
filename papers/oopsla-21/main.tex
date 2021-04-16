@@ -271,17 +271,18 @@ test case than generating a new one from scratch using a na\"ive generator.
 %
 In this light, \fuzzchick is likely to preserve the semantic structure of the
 mutated data, as mutations are applied directly at the data type level, e.g.,
-the program's AST in case of generating code. Internally, \fuzzchick relies on
-execution traces to distinguish which executed test cases were interesting and
-are therefore worth mutating --- a popular technique known as
-\emph{coverage-guided fuzzing} and popularized by tools like \emph{AFL}
-\cite{afl}.
+the program's AST in case of generating code.
+%
+Internally, \fuzzchick relies on execution traces to distinguish which executed
+test cases were interesting and are therefore worth mutating --- a popular
+technique known as \emph{coverage-guided fuzzing} and popularized by tools like
+\emph{AFL} \cite{afl}.
 %
 Mutated test cases are considered interesting for mutation only when they
 produce new execution traces --- any other test case is simply thrown away.
 %
 The techniques behind \fuzzchick are not meant to replace sophisticated,
-manually written random generators, but rather providing an adequate testing
+manually written random generators, but rather to provide an adequate testing
 solution for early stages of development.
 %, and while a better test suite using manually-written generators is
 %still under construction.
@@ -347,9 +348,10 @@ solution for early stages of development.
 %% Notably, we establish several aspects of \fuzzchick that can be
 %% revised.%
 %
-The approach taken by \fuzzchick leaves considerable room for improvements in
-many aspects\footnote{Some of these were already identified by the authors of
-  \fuzzchick in their original work.}:
+The approach taken by \fuzzchick leaves considerable room for
+improvements in several aspects.%
+\footnote{Some of these were already identified by the authors of \fuzzchick in
+  their original work.}
 %But \fuzzchick suffers several disadvantages.%
 %
 In particular:
@@ -384,7 +386,7 @@ mean time to failure --- when one is found.
 
 
 %% Our solution
-In this work, we introduce \mutagen, a PBT tool implemented %in Haskell
+In this work, we introduce \mutagen, a PBT tool %implemented in Haskell
 that also builds upon code instrumentation and type-preserving mutations (see
 Section \ref{sec:mutagen}).
 %
