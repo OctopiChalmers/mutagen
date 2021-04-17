@@ -1000,6 +1000,7 @@ In simple terms, these operations encompass
 
 
 \begin{figure}
+\vspace{-5pt}
 \begin{verbatim}
 mutate_tree :: (a -> Gen a) -> Tree a -> Gen (Tree a)
 mutate_tree mutate_a (Leaf x) =
@@ -1323,7 +1324,7 @@ mutate (Branch l x r) = [ PURE l, PURE r              -- Return subexpression
 \vspace{-5pt}
 \caption{\label{fig:mutagen:mutator}\mutagen mutator for the \texttt{Tree} data
   type.}
-\vspace{-25pt}
+\vspace{-10pt}
 \end{figure}
 
 %% At this point, the reader might consider:
