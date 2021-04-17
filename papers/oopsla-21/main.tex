@@ -468,9 +468,9 @@ fly.
 
 %% Validation
 To validate our ideas, we use two main case studies (described in detail in
-Section \ref{sec:casestudies}): the IFC stack machine used by
-\citeauthor{lampropoulos2019coverage} in their original work of \fuzzchick, and a WebAssembly
-engine written in Haskell.
+Section \ref{sec:casestudies}): the Information-Flow Control (IFC) stack machine
+used by \citeauthor{lampropoulos2019coverage} in their original work of
+\fuzzchick, and a WebAssembly engine written in Haskell.
 %
 In both case studies, we additionally compare the effect of the heuristics
 implemented on top of the base testing loop of \mutagen.
@@ -1057,8 +1057,9 @@ still using a mostly automated workflow.
 However, the authors acknowledge that certain parts of its implementation have
 room for improvement, especially when it comes to the mutator's design.
 %
-Moreover, we replicated the Information-Flow Control (IFC) stack machine case
-study bundled with \fuzzchick and observed a surprising limitation:
+%% Moreover, we replicated the Information-Flow Control (IFC) stack machine case
+Moreover, we replicated the IFC stack machine case study bundled with \fuzzchick
+and observed a surprising limitation:
 %
 \emph{after repeating each experiment 30 times, \fuzzchick could only find 5 out
   of the 20 injected bugs with a 100\% efficacy, the hardest one being found
