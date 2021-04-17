@@ -367,22 +367,22 @@ In particular:
   scenarios.
 \end{inparaenum}
 %
-Moreover, we replicated the Information-Flow Control (IFC) stack machine case
-study bundled with \fuzzchick and observed a surprising limitation:
-%
-after repeating each experiment 30 times, \fuzzchick could only find 5 out of
-the 20 injected bugs with a 100\% efficacy.
-%
-%% the hardest one being found only around 13\% of the time after an hour of
-%% testing.
-%
-Despite this, \citeauthor{lampropoulos2019coverage} show that \fuzzchick is far
-better than using normal random testing coupled with na\"ive random generators
-by comparing the mean-time-to-failure (MTTF) against \emph{QuickChick}.
-%
-However, we believe that a more meticulous evaluation ought to take failure to
-find a counterexample as an important metric when comparing PBT tools, not just
-mean time to failure --- when one is found.
+%% Moreover, we replicated the Information-Flow Control (IFC) stack machine case
+%% study bundled with \fuzzchick and observed a surprising limitation:
+%% %
+%% after repeating each experiment 30 times, \fuzzchick could only find 5 out of
+%% the 20 injected bugs with a 100\% efficacy.
+%% %
+%% %% the hardest one being found only around 13\% of the time after an hour of
+%% %% testing.
+%% %
+%% Despite this, \citeauthor{lampropoulos2019coverage} show that \fuzzchick is far
+%% better than using normal random testing coupled with na\"ive random generators
+%% by comparing the mean-time-to-failure (MTTF) against \emph{QuickChick}.
+%% %
+%% However, we believe that a more meticulous evaluation ought to take failure to
+%% find a counterexample as an important metric when comparing PBT tools, not just
+%% mean time to failure --- when one is found.
 
 
 %% Our solution
@@ -1053,15 +1053,31 @@ ones.
 %
 Their results suggest that CGPT is an appealing technique for finding bugs while
 still using a mostly automated workflow.
-
-
+%
 However, the authors acknowledge that certain parts of its implementation have
 room for improvement, especially when it comes to the mutator's design.
 %
-In tandem with the lack of efficacy observed when replicating the evaluation of
-the IFC stack machine case study, these observations led us to consider three
-main aspects of \fuzzchick that can be improved upon --- and that constitute the
-main goal of this work.
+Moreover, we replicated the Information-Flow Control (IFC) stack machine case
+study bundled with \fuzzchick and observed a surprising limitation:
+%
+\emph{after repeating each experiment 30 times, \fuzzchick could only find 5 out
+  of the 20 injected bugs with a 100\% efficacy, the hardest one being found
+  only around 13\% of the time after an hour of testing.}
+%
+Despite this, the authors show that \fuzzchick outperforms normal random testing
+coupled with na\"ive random generators by comparing the mean-time-to-failure
+(MTTF) against \emph{QuickChick}.
+%
+In turn, we believe that a more meticulous evaluation ought to take failure to find a
+counterexample as an important metric when comparing PBT tools, not just mean
+time to failure --- when one is found.
+%
+%% In tandem with the lack of efficacy observed when replicating the evaluation of
+%% the IFC stack machine case study,
+
+
+All these observations led us to consider three main aspects of \fuzzchick that
+can be improved upon --- and that constitute the main goal of this work.
 %
 %% As mentioned earlier, when we recreated the evaluation of the IFC stack machine
 %% case study (described in detail in Section \ref{sec:casestudies}), we found that
@@ -1581,7 +1597,7 @@ precomputed one in line.
 \vspace{1pt}
 \end{algorithm}
 \end{multicols}
-\vspace{-20pt}
+\vspace{-10pt}
 \end{figure}
 
 Another small difference between \mutagen and \fuzzchick is the criterion for
@@ -1668,7 +1684,7 @@ The second insertion (with trace $1 \rightarrow 2 \rightarrow 6 \rightarrow 7$)
 branches at a shallower depth than the first one (2 vs. 3), hence its
 corresponding test case should be given a higher priority.
 
-\begin{figure}[b]
+\begin{figure}[t]
 \vspace{-15pt}
 \newcommand\stacked[2]{\underset{\textstyle #2\mathstrut}{#1}}
 \begin{equation}
@@ -1812,7 +1828,7 @@ candidates as soon as they are found (even at the same priority), and to jump
 back to previous candidates as soon as their mutants become progressively less
 novel.
 
-\begin{figure}[t]
+\begin{figure}[b]
 \vspace{-15pt}
 \begin{multicols}{2}
 
@@ -2101,7 +2117,7 @@ used in our tool.
 \end{tabular}
 \caption{\label{table:wasm:injectedbugs}Bugs injected into
   \textit{haskell-wasm}.}
-\vspace{-25pt}
+\vspace{-15pt}
 \end{table}
 
 
@@ -2310,7 +2326,7 @@ In this light, our testing properties assert that any result produced by
 \textit{haskell-wasm} matches that of the reference implementation.
 
 
-\begin{table}[b]
+\begin{table}[t]
 \footnotesize
 \begin{tabular}{|c|c|c|l|}
 \hline
@@ -2802,7 +2818,7 @@ results like this is another interesting direction to aim our future work.
   \vspace{-20pt}
   \caption{\label{fig:results:wasm} Comparison between \quickcheck and \mutagen
     across 15 different bugs injected into \textit{haskell-wasm}. }
-\vspace{-5pt}
+%% \vspace{-5pt}
 \end{figure}
 
 
@@ -2831,7 +2847,7 @@ which ultimately leads us to find bugs.
 
 \begin{table}[H]
 \footnotesize
-\vspace{-5pt}
+%% \vspace{-5pt}
 \begin{tabular}{|l|c|c|c|c|}
 \hline
 \multicolumn{1}{|c|}{
@@ -2860,7 +2876,7 @@ which ultimately leads us to find bugs.
 \end{tabular}
 \caption{\label{table:wasm:overhead}Mean number of tests per second executed by
   each tool on the WebAssembly case study.}
-\vspace{-20pt}
+\vspace{-10pt}
 \end{table}
 
 % ----------------------------------------
