@@ -16,13 +16,17 @@ import Unsafe.Coerce
 import Test.QuickCheck (Gen, Arbitrary, arbitrary)
 
 import Test.Mutagen.Mutation
-import Test.Mutagen.Lazy
 import Test.Mutagen.Exception
+import Test.Mutagen.Lazy
 
 ----------------------------------------
 -- Test arguments hidden behind an existential
 
+#ifdef MUTAGEN_NO_LAZY
+type Arg a = (Show a, Arbitrary a, Mutable a)
+#else
 type Arg a = (Show a, Arbitrary a, Mutable a, Lazy a)
+#endif
 
 data Args = forall a . Arg a => Args a
 
@@ -37,9 +41,11 @@ instance Mutable Args where
 
   positions (Args a) = positions a
 
+#ifndef MUTAGEN_NO_LAZY
 instance Lazy Args where
   lazy (Args a) = Args (lazy a)
   lazy' pre (Args a) = Args (lazy' pre a)
+#endif
 
 ----------------------------------------
 -- Tests
