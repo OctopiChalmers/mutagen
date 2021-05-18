@@ -1,5 +1,5 @@
 module Test.Mutagen.Lazy
-  ( __lazy__
+  ( __evaluated__
   , addEvaluatedPos
   , resetPosRef
   , readPosRef
@@ -15,13 +15,13 @@ import Data.Word
 ----------------------------------------
 -- Collecting evaluated positions
 
-__lazy__ :: [Int] -> a -> a
-__lazy__ pos expr =
+__evaluated__ :: [Int] -> a -> a
+__evaluated__ pos expr =
   unsafePerformIO $ do
     addEvaluatedPos pos
     return expr
 
-{-# INLINE __lazy__ #-}
+{-# INLINE __evaluated__ #-}
 
 ----------------------------------------
 -- IORef too keep track of the evaluated positions
@@ -54,151 +54,151 @@ readPosRef = readIORef pos_ref
 
 class Lazy a where
   lazy :: a -> a
-  lazy = lazy' []
+  lazy = lazyNode []
 
-  lazy' :: [Int] -> a -> a
+  lazyNode :: [Int] -> a -> a
 
 instance Lazy Int where
-  lazy' = __lazy__
+  lazyNode = __evaluated__
 
 instance Lazy Double where
-  lazy' = __lazy__
+  lazyNode = __evaluated__
 
 instance Lazy Float where
-  lazy' = __lazy__
+  lazyNode = __evaluated__
 
 instance Lazy Word8 where
-  lazy' = __lazy__
+  lazyNode = __evaluated__
 
 instance Lazy Word16 where
-  lazy' = __lazy__
+  lazyNode = __evaluated__
 
 instance Lazy Word32 where
-  lazy' = __lazy__
+  lazyNode = __evaluated__
 
 instance Lazy Word64 where
-  lazy' = __lazy__
+  lazyNode = __evaluated__
 
 instance Lazy Char where
-  lazy' = __lazy__
+  lazyNode = __evaluated__
 
 instance Lazy Bool where
-  lazy' = __lazy__
+  lazyNode = __evaluated__
 
 instance Lazy a => Lazy (Maybe a) where
-  lazy' pre Nothing =
-    __lazy__ pre $
+  lazyNode pre Nothing =
+    __evaluated__ pre $
     Nothing
-  lazy' pre (Just a) =
-    __lazy__ pre $
-    Just (lazy' (0:pre) a)
+  lazyNode pre (Just a) =
+    __evaluated__ pre $
+    Just (lazyNode (0:pre) a)
 
 instance Lazy a => Lazy [a] where
-  lazy' pre [] =
-    __lazy__ pre $
+  lazyNode pre [] =
+    __evaluated__ pre $
     []
-  lazy' pre (x:xs) =
-    __lazy__ pre $
-    ((lazy' (0:pre) x) : (lazy' (1:pre) xs))
+  lazyNode pre (x:xs) =
+    __evaluated__ pre $
+    ((lazyNode (0:pre) x) : (lazyNode (1:pre) xs))
 
 
 -- Tuple instances
 
 instance (Lazy a, Lazy b) => Lazy (a, b) where
-  lazy' pre (a, b) =
-    __lazy__ pre $
-    ( lazy' (0:pre) a
-    , lazy' (1:pre) b
+  lazyNode pre (a, b) =
+    __evaluated__ pre $
+    ( lazyNode (0:pre) a
+    , lazyNode (1:pre) b
     )
 
 instance (Lazy a, Lazy b, Lazy c) => Lazy (a, b, c) where
-  lazy' pre (a, b, c) =
-    __lazy__ pre $
-    ( lazy' (0:pre) a
-    , lazy' (1:pre) b
-    , lazy' (2:pre) c
+  lazyNode pre (a, b, c) =
+    __evaluated__ pre $
+    ( lazyNode (0:pre) a
+    , lazyNode (1:pre) b
+    , lazyNode (2:pre) c
     )
 
 instance (Lazy a, Lazy b, Lazy c, Lazy d) => Lazy (a, b, c, d) where
-  lazy' pre (a, b, c, d) =
-    __lazy__ pre $
-    ( lazy' (0:pre) a
-    , lazy' (1:pre) b
-    , lazy' (2:pre) c
-    , lazy' (3:pre) d
+  lazyNode pre (a, b, c, d) =
+    __evaluated__ pre $
+    ( lazyNode (0:pre) a
+    , lazyNode (1:pre) b
+    , lazyNode (2:pre) c
+    , lazyNode (3:pre) d
     )
 
 instance (Lazy a, Lazy b, Lazy c, Lazy d, Lazy e) => Lazy (a, b, c, d, e) where
-  lazy' pre (a, b, c, d, e) =
-    __lazy__ pre $
-    ( lazy' (0:pre) a
-    , lazy' (1:pre) b
-    , lazy' (2:pre) c
-    , lazy' (3:pre) d
-    , lazy' (4:pre) e
+  lazyNode pre (a, b, c, d, e) =
+    __evaluated__ pre $
+    ( lazyNode (0:pre) a
+    , lazyNode (1:pre) b
+    , lazyNode (2:pre) c
+    , lazyNode (3:pre) d
+    , lazyNode (4:pre) e
     )
 
 instance (Lazy a, Lazy b, Lazy c, Lazy d, Lazy e, Lazy f) => Lazy (a, b, c, d, e, f) where
-  lazy' pre (a, b, c, d, e, f) =
-    __lazy__ pre $
-    ( lazy' (0:pre) a
-    , lazy' (1:pre) b
-    , lazy' (2:pre) c
-    , lazy' (3:pre) d
-    , lazy' (4:pre) e
-    , lazy' (5:pre) f
+  lazyNode pre (a, b, c, d, e, f) =
+    __evaluated__ pre $
+    ( lazyNode (0:pre) a
+    , lazyNode (1:pre) b
+    , lazyNode (2:pre) c
+    , lazyNode (3:pre) d
+    , lazyNode (4:pre) e
+    , lazyNode (5:pre) f
     )
 
 instance (Lazy a, Lazy b, Lazy c, Lazy d, Lazy e, Lazy f, Lazy g) => Lazy (a, b, c, d, e, f, g) where
-  lazy' pre (a, b, c, d, e, f, g) =
-    __lazy__ pre $
-    ( lazy' (0:pre) a
-    , lazy' (1:pre) b
-    , lazy' (2:pre) c
-    , lazy' (3:pre) d
-    , lazy' (4:pre) e
-    , lazy' (5:pre) f
-    , lazy' (6:pre) g
+  lazyNode pre (a, b, c, d, e, f, g) =
+    __evaluated__ pre $
+    ( lazyNode (0:pre) a
+    , lazyNode (1:pre) b
+    , lazyNode (2:pre) c
+    , lazyNode (3:pre) d
+    , lazyNode (4:pre) e
+    , lazyNode (5:pre) f
+    , lazyNode (6:pre) g
     )
 
 instance (Lazy a, Lazy b, Lazy c, Lazy d, Lazy e, Lazy f, Lazy g, Lazy h) => Lazy (a, b, c, d, e, f, g, h) where
-  lazy' pre (a, b, c, d, e, f, g, h) =
-    __lazy__ pre $
-    ( lazy' (0:pre) a
-    , lazy' (1:pre) b
-    , lazy' (2:pre) c
-    , lazy' (3:pre) d
-    , lazy' (4:pre) e
-    , lazy' (5:pre) f
-    , lazy' (6:pre) g
-    , lazy' (7:pre) h
+  lazyNode pre (a, b, c, d, e, f, g, h) =
+    __evaluated__ pre $
+    ( lazyNode (0:pre) a
+    , lazyNode (1:pre) b
+    , lazyNode (2:pre) c
+    , lazyNode (3:pre) d
+    , lazyNode (4:pre) e
+    , lazyNode (5:pre) f
+    , lazyNode (6:pre) g
+    , lazyNode (7:pre) h
     )
 
 instance (Lazy a, Lazy b, Lazy c, Lazy d, Lazy e, Lazy f, Lazy g, Lazy h, Lazy i) => Lazy (a, b, c, d, e, f, g, h, i) where
-  lazy' pre (a, b, c, d, e, f, g, h, i) =
-    __lazy__ pre $
-    ( lazy' (0:pre) a
-    , lazy' (1:pre) b
-    , lazy' (2:pre) c
-    , lazy' (3:pre) d
-    , lazy' (4:pre) e
-    , lazy' (5:pre) f
-    , lazy' (6:pre) g
-    , lazy' (7:pre) h
-    , lazy' (8:pre) i
+  lazyNode pre (a, b, c, d, e, f, g, h, i) =
+    __evaluated__ pre $
+    ( lazyNode (0:pre) a
+    , lazyNode (1:pre) b
+    , lazyNode (2:pre) c
+    , lazyNode (3:pre) d
+    , lazyNode (4:pre) e
+    , lazyNode (5:pre) f
+    , lazyNode (6:pre) g
+    , lazyNode (7:pre) h
+    , lazyNode (8:pre) i
     )
 
 instance (Lazy a, Lazy b, Lazy c, Lazy d, Lazy e, Lazy f, Lazy g, Lazy h, Lazy i, Lazy j) => Lazy (a, b, c, d, e, f, g, h, i, j) where
-  lazy' pre (a, b, c, d, e, f, g, h, i, j) =
-    __lazy__ pre $
-    ( lazy' (0:pre) a
-    , lazy' (1:pre) b
-    , lazy' (2:pre) c
-    , lazy' (3:pre) d
-    , lazy' (4:pre) e
-    , lazy' (5:pre) f
-    , lazy' (6:pre) g
-    , lazy' (7:pre) h
-    , lazy' (8:pre) i
-    , lazy' (9:pre) j
+  lazyNode pre (a, b, c, d, e, f, g, h, i, j) =
+    __evaluated__ pre $
+    ( lazyNode (0:pre) a
+    , lazyNode (1:pre) b
+    , lazyNode (2:pre) c
+    , lazyNode (3:pre) d
+    , lazyNode (4:pre) e
+    , lazyNode (5:pre) f
+    , lazyNode (6:pre) g
+    , lazyNode (7:pre) h
+    , lazyNode (8:pre) i
+    , lazyNode (9:pre) j
     )

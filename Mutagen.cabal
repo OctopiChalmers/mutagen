@@ -25,6 +25,8 @@ flag MUTAGEN_NO_LAZY
   default: False
 flag MUTAGEN_NO_FIFO
   default: False
+flag MUTAGEN_TH_DEBUG
+  default: False
 
 library
   exposed-modules:
@@ -36,6 +38,12 @@ library
     Test.Mutagen.Mutation
     Test.Mutagen.Shell
     Test.Mutagen.Lazy
+    Test.Mutagen.TH
+  other-modules:
+    Test.Mutagen.TH.Arbitrary
+    Test.Mutagen.TH.Mutable
+    Test.Mutagen.TH.Lazy
+    Test.Mutagen.TH.Util
   hs-source-dirs:
     src
   build-depends:
@@ -52,6 +60,9 @@ library
     , process
     , ghc
     , syb
+    , template-haskell
+    , th-desugar
+    , ansi-terminal
   ghc-options:
     -Wall
   default-extensions:
@@ -62,3 +73,22 @@ library
     cpp-options: -DMUTAGEN_NO_LAZY
   if flag(MUTAGEN_NO_FIFO)
     cpp-options: -DMUTAGEN_NO_FIFO
+  if flag(MUTAGEN_TH_DEBUG)
+    cpp-options: -DMUTAGEN_TH_DEBUG
+
+executable test-re
+  main-is:
+    Main.hs
+  hs-source-dirs:
+    test/re
+  other-modules:
+    RE.Types
+    RE.Match
+    RE.Spec
+  default-language:
+    Haskell2010
+  ghc-options:
+    -Wall -O2 -threaded
+  build-depends:
+      base >=4.7 && <5
+    , Mutagen

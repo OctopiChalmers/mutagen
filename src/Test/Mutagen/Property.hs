@@ -44,7 +44,7 @@ instance Mutable Args where
 #ifndef MUTAGEN_NO_LAZY
 instance Lazy Args where
   lazy (Args a) = Args (lazy a)
-  lazy' pre (Args a) = Args (lazy' pre a)
+  lazyNode pre (Args a) = Args (lazyNode pre a)
 #endif
 
 ----------------------------------------

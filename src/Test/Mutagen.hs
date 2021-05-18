@@ -6,6 +6,7 @@ module Test.Mutagen
   , module Test.Mutagen.Test
   , module Test.Mutagen.Exception
   , module Test.Mutagen.Mutation
+  , module Test.Mutagen.Lazy
   , module Test.Mutagen.Shell
   ) where
 
@@ -18,4 +19,5 @@ import Test.Mutagen.Property
 import Test.Mutagen.Test
 import Test.Mutagen.Exception
 import Test.Mutagen.Mutation
+import Test.Mutagen.Lazy
 import Test.Mutagen.Shell
