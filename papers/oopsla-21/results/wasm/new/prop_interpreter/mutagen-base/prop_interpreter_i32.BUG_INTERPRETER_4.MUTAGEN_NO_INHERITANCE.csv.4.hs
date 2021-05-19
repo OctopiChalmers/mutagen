@@ -1,0 +1,1 @@
+(1,2.727358,Function {funcType = 0, localTypes = [F32,I32], body = [GetLocal 3]})

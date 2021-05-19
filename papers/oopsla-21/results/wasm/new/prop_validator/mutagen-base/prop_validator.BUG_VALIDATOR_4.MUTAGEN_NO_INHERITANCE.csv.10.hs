@@ -1,0 +1,1 @@
+Module {types = [], functions = [], tables = [], mems = [Memory (Limit 4 (Just 5)),Memory (Limit 1 Nothing),Memory (Limit 0 (Just 8)),Memory (Limit 2 (Just 7)),Memory (Limit 8 (Just 9))], globals = [], elems = [], datas = [], start = Nothing, imports = [], exports = []}

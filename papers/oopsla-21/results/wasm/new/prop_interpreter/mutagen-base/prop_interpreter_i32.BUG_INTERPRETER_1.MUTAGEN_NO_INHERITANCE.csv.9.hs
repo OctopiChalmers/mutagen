@@ -1,0 +1,1 @@
+(2,2.2265399,Function {funcType = 0, localTypes = [], body = [I32Const 2,I32Const 2,IBinOp BS32 ISub]})

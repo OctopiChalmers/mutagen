@@ -1,0 +1,1 @@
+(2,-2.920985,Function {funcType = 0, localTypes = [], body = [Nop,I64Const 0,CurrentMemory,F64Load (MemArg {offset = 2, align = 2}),Loop {resultType = [F64,I32,I32], body = [F32Const (-2.9583645),I32Const 0,Return]},GetLocal 0,I64ExtendUI32,I32Const 2,Br 0]})

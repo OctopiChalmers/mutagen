@@ -1,0 +1,1 @@
+Module {types = [FuncType {params = [], results = [I32]}], functions = [Function {funcType = 0, localTypes = [], body = [Call 0,IBinOp BS32 IAdd]}], tables = [], mems = [], globals = [], elems = [], datas = [], start = Nothing, imports = [], exports = []}
