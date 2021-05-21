@@ -30,16 +30,29 @@ flag MUTAGEN_TH_DEBUG
 
 library
   exposed-modules:
+    -- Tracer
     Tracer
+    Tracer.Plugin
+    Tracer.Trace
+    Tracer.Tree
+    Tracer.Bitmap
+    -- Mutagen
     Test.Mutagen
-    Test.Mutagen.Test
     Test.Mutagen.Property
-    Test.Mutagen.Exception
     Test.Mutagen.Mutation
-    Test.Mutagen.Shell
+    Test.Mutagen.Exception
     Test.Mutagen.Lazy
+    Test.Mutagen.Shell
     Test.Mutagen.TH
   other-modules:
+    Test.Mutagen.Test
+    Test.Mutagen.Test.Config
+    Test.Mutagen.Test.State
+    Test.Mutagen.Test.Loop
+    Test.Mutagen.Test.Batch
+    Test.Mutagen.Test.Report
+    Test.Mutagen.Test.Driver
+    Test.Mutagen.Test.Terminal
     Test.Mutagen.TH.Arbitrary
     Test.Mutagen.TH.Mutable
     Test.Mutagen.TH.Lazy
@@ -60,6 +73,7 @@ library
     , process
     , ghc
     , syb
+    , array
     , template-haskell
     , th-desugar
     , ansi-terminal

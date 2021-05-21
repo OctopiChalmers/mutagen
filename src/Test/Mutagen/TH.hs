@@ -5,6 +5,7 @@ import Language.Haskell.TH
 import Language.Haskell.TH.Desugar
 
 import Test.Mutagen
+
 import Test.Mutagen.TH.Arbitrary
 import Test.Mutagen.TH.Mutable
 import Test.Mutagen.TH.Lazy

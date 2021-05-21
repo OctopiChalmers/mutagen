@@ -7,7 +7,6 @@
 module Test.Mutagen.Mutation where
 
 import Control.Monad
-import Control.Monad.Extra
 
 import Data.List
 import Data.Tree
@@ -108,7 +107,6 @@ invalidPosition pos = error ("inside: invalid position: " <> show pos)
 invalidPositionShow :: Show a => Pos -> a -> b
 invalidPositionShow pos a = error ("inside: invalid position: " <> show pos <> "\nvalue: " <> show a)
 
-
 ----------------------------------------
 -- | Mutation order
 
@@ -125,101 +123,6 @@ postorder t = squish [] t
 
 levelorder :: MutationOrder
 levelorder = concat . levels
-
-----------------------------------------
--- | Mutation batches
-
-data MutationBatch a = MutationBatch
-  { mb_value :: a
-  , mb_order :: MutationOrder
-  , mb_size :: Int
-  , mb_test_passed :: Bool
-  , mb_past_pos :: [Pos]
-  , mb_next_pos :: [Pos]
-  , mb_nrand :: Int
-  , mb_curr_queue :: [a]
-  , mb_nmuts :: Int
-  }
-
-newMutationBatch :: Mutable a => MutationOrder -> Int -> Int -> Int -> Bool -> [Pos] -> a -> MutationBatch a
-newMutationBatch order nrand size nmuts passed pos a =
-  MutationBatch
-  { mb_value = a
-#ifdef MUTAGEN_NO_LAZY
-  , mb_next_pos = order (positions a)
-#else
-  -- , mb_next_pos = filter (`elem` pos) (order (positions a))
-  , mb_next_pos = pos
-#endif
-  , mb_past_pos = mempty
-  , mb_test_passed = passed
-  , mb_curr_queue = mempty
-  , mb_nmuts = nmuts
-  , mb_order = order
-  , mb_size = size
-  , mb_nrand = nrand
-  }
-
-newMutationBatchFromParent :: Mutable a => MutationBatch a -> Bool -> [Pos] -> a -> MutationBatch a
-newMutationBatchFromParent mb passed pos a =
-  mb
-  { mb_value = a
-#ifdef MUTAGEN_NO_LAZY
-  , mb_next_pos = mb_order mb (positions a)
-#else
-  -- , mb_next_pos = filter (`elem` pos) (mb_order mb (positions a))
-  , mb_next_pos = pos
-#endif
-  , mb_past_pos = mempty
-  , mb_test_passed = passed
-  , mb_curr_queue = mempty
-  , mb_nmuts = mb_nmuts mb - 1
-  }
-
-  -- -- Stuff for the inheritance heuristic
-  -- let (prevPos, newPos) = partition (`elem` mb_past_pos mb) (mb_order mb (positions a))
-  -- in mb { mb_value = a
-  --       , mb_next_pos = newPos
-  --       , mb_past_pos =
-  --           if mb_test_passed mb
-  --           then reverse prevPos
-  --           else mempty
-  --       , mb_test_passed = passed
-  --       , mb_curr_queue = mempty
-  --       , mb_nmuts = mb_nmuts mb - 1
-  --       }
-
-nextMutation :: Mutable a => MutationBatch a -> IO (Maybe (a, MutationBatch a))
-nextMutation mb | mb_nmuts mb == 0 = return Nothing -- too many mutations
-nextMutation mb = do
-  case mb_curr_queue mb of
-    -- queue is empty, advance to next position
-    [] -> do
-      case mb_next_pos mb of
-        -- no more positions to mutate
-        [] -> return Nothing
-        -- next position available
-        (pos:ps) -> do
-          let mutants = inside pos mutate (mb_value mb)
-          queue <- concatMapM (concretize (mb_nrand mb) (mb_size mb)) mutants
-          case queue of
-            -- current position admits no mutations: advance to next position
-            [] -> do
-              let mb' = mb { mb_next_pos = ps
-                           , mb_past_pos = pos : mb_past_pos mb
-                           }
-              nextMutation mb'
-            -- current position admits some mutations: update the batch queue
-            -- and lock the current position
-            (a:as) -> do
-              let mb' = mb { mb_next_pos = ps
-                           , mb_past_pos = pos : mb_past_pos mb
-                           , mb_curr_queue = as
-                           }
-              return (Just (a, mb'))
-    -- there are some mutants still in the queue for the current position
-    (a:as) -> do
-      return (Just (a, mb { mb_curr_queue = as }))
 
 ----------------------------------------
 -- | Mutable Instances
