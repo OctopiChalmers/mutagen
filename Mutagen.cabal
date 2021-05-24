@@ -34,6 +34,7 @@ library
     Tracer
     Tracer.Plugin
     Tracer.Trace
+    Tracer.TraceLogger
     Tracer.Tree
     Tracer.Bitmap
     -- Mutagen

@@ -164,7 +164,6 @@ runTestCase_tree st parent args = do
     -- boom!
     Failed -> do
       return (Left test)
-      -- counterexample st args test
     -- test passed, lotta work to do now
     Passed -> do
       when (stDebug st) (printf "\nTest result: PASSED\n")

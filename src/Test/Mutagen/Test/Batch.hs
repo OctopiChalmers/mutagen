@@ -45,7 +45,6 @@ newMutationBatchFromParent mb pos passed args =
   , mb_nmuts = mb_nmuts mb - 1
   }
 
-
 nextMutation :: Mutable a => MutationBatch a -> IO (Maybe (a, MutationBatch a))
 nextMutation mb | mb_nmuts mb == 0 = return Nothing -- too many mutations
 nextMutation mb = do
