@@ -143,21 +143,20 @@ newTest runner st = do
 -- | Run the test and check the result, if it passes then continue testing
 runTestCase_tree :: TestCaseRunner TraceTreeLog
 runTestCase_tree st parent args = do
-  -- run the test
   when (stDebug st) $ do
     printf "\nRunning test...\n"
-  -- reset the evaluated position reference
+  -- record the test trace and check if it was interesting
 #ifdef MUTAGEN_NO_LAZY
   (test, Trace entries) <- withTrace (unResult (protectResult (stArgsRunner st args)))
   evalPos <- return Nothing
 #else
+  -- reset the evaluated position reference
   resetPosRef
   (test, Trace entries) <- withTrace (unResult (protectResult (stArgsRunner st (lazy args))))
   evalPos <- Just <$> readPosRef
   when (stDebug st) $ do
     printf "\nEvaluated subexpressions:\n%s\n" (show evalPos)
 #endif
-  -- record the test trace and check if it was interesting
   let tr = Trace (take (stMaxTraceLength st) entries)
   -- inspect the test result
   case test of
@@ -169,10 +168,11 @@ runTestCase_tree st parent args = do
       when (stDebug st) (printf "\nTest result: PASSED\n")
       (new, depth) <- registerTrace tr (stPassedTraceLog st)
       let interesting = new > 0
+      let prio = depth
       when (stDebug st) $ do
         printMutatedTestCaseTrace tr
       when interesting $ do
-        printf "\nTest case was interesting! (new trace nodes=%d, prio=%d)\n" new depth
+        printf "\nTest case was interesting! (new trace nodes=%d, prio=%d)\n" new prio
       let mbatch = createOrInheritMutationBatch st args parent evalPos True
       let st' = st { stNumPassed = stNumPassed st + 1
                    , stPassedQueue =
@@ -180,9 +180,13 @@ runTestCase_tree st parent args = do
 #ifdef MUTAGEN_NO_FIFO
                        then PQueue.insertBehind 1 (args, tr, mbatch) (stPassedQueue st)
 #else
-                       then PQueue.insert depth (args, tr, mbatch) (stPassedQueue st)
+                       then PQueue.insert prio (args, tr, mbatch) (stPassedQueue st)
 #endif
                        else stPassedQueue st
+                   , stNumInteresting =
+                       if interesting
+                       then stNumInteresting st + 1
+                       else stNumInteresting st
                    , stLastInteresting =
                        if interesting
                        then 0
@@ -194,10 +198,11 @@ runTestCase_tree st parent args = do
       when (stDebug st) (printf "\nTest result: DISCARDED\n")
       (new, depth) <- registerTrace tr (stDiscardedTraceLog st)
       let interesting = new > 0 && maybe False mb_test_passed parent
+      let prio = depth
       when (stDebug st) $ do
         printMutatedTestCaseTrace tr
       when interesting $ do
-        printf "\nTest case was interesting! (new trace nodes=%d, prio=%d)\n" new depth
+        printf "\nTest case was interesting! (new trace nodes=%d, prio=%d)\n" new prio
       let mbatch = createOrInheritMutationBatch st args parent evalPos False
       let st' = st { stNumDiscarded = stNumDiscarded st + 1
                    , stDiscardedQueue =
@@ -205,9 +210,13 @@ runTestCase_tree st parent args = do
 #ifdef MUTAGEN_NO_FIFO
                        then PQueue.insertBehind 1 (args, tr, mbatch) (stDiscardedQueue st)
 #else
-                       then PQueue.insert depth (args, tr, mbatch) (stDiscardedQueue st)
+                       then PQueue.insert prio (args, tr, mbatch) (stDiscardedQueue st)
 #endif
                        else stDiscardedQueue st
+                   , stNumInteresting =
+                       if interesting
+                       then stNumInteresting st + 1
+                       else stNumInteresting st
                    , stLastInteresting =
                        if interesting
                        then 0
@@ -218,7 +227,86 @@ runTestCase_tree st parent args = do
 -- | Run the test and check the result, if it passes then continue testing
 runTestCase_bitmap :: TestCaseRunner TraceBitmapLog
 runTestCase_bitmap st parent args = do
-  undefined
+  when (stDebug st) $ do
+    printf "\nRunning test...\n"
+  -- record the test trace and check if it was interesting
+#ifdef MUTAGEN_NO_LAZY
+  (test, tr) <- withTrace (unResult (protectResult (stArgsRunner st args)))
+  evalPos <- return Nothing
+#else
+  -- reset the evaluated position reference
+  resetPosRef
+  (test, tr) <- withTrace (unResult (protectResult (stArgsRunner st (lazy args))))
+  evalPos <- Just <$> readPosRef
+  when (stDebug st) $ do
+    printf "\nEvaluated subexpressions:\n%s\n" (show evalPos)
+#endif
+  -- dumpTraceLog (stPassedTraceLog st)
+  -- inspect the test result
+  case test of
+    -- boom!
+    Failed -> do
+      return (Left test)
+    -- test passed, lotta work to do now
+    Passed -> do
+      when (stDebug st) (printf "\nTest result: PASSED\n")
+      new <- registerTrace tr (stPassedTraceLog st)
+      let interesting = new > 0
+      let prio = stNumTraceNodes st - new
+      when (stDebug st) $ do
+        printMutatedTestCaseTrace tr
+      when interesting $ do
+        printf "\nTest case was interesting! (new trace nodes=%d, prio=%d)\n" new prio
+      let mbatch = createOrInheritMutationBatch st args parent evalPos True
+      let st' = st { stNumPassed = stNumPassed st + 1
+                   , stPassedQueue =
+                       if interesting
+#ifdef MUTAGEN_NO_FIFO
+                       then PQueue.insertBehind 1 (args, tr, mbatch) (stPassedQueue st)
+#else
+                       then PQueue.insert prio (args, tr, mbatch) (stPassedQueue st)
+#endif
+                       else stPassedQueue st
+                   , stNumInteresting =
+                       if interesting
+                       then stNumInteresting st + 1
+                       else stNumInteresting st
+                   , stLastInteresting =
+                       if interesting
+                       then 0
+                       else stLastInteresting st + 1
+                   }
+      return (Right st')
+    -- test discarded, lotta work to do here too
+    Discarded -> do
+      when (stDebug st) (printf "\nTest result: DISCARDED\n")
+      new <- registerTrace tr (stDiscardedTraceLog st)
+      let interesting = new > 0 && maybe False mb_test_passed parent
+      let prio = stNumTraceNodes st - new
+      when (stDebug st) $ do
+        printMutatedTestCaseTrace tr
+      when interesting $ do
+        printf "\nTest case was interesting! (new trace nodes=%d, prio=%d)\n" new prio
+      let mbatch = createOrInheritMutationBatch st args parent evalPos False
+      let st' = st { stNumDiscarded = stNumDiscarded st + 1
+                   , stDiscardedQueue =
+                       if interesting
+#ifdef MUTAGEN_NO_FIFO
+                       then PQueue.insertBehind 1 (args, tr, mbatch) (stDiscardedQueue st)
+#else
+                       then PQueue.insert prio (args, tr, mbatch) (stDiscardedQueue st)
+#endif
+                       else stDiscardedQueue st
+                   , stNumInteresting =
+                       if interesting
+                       then stNumInteresting st + 1
+                       else stNumInteresting st
+                   , stLastInteresting =
+                       if interesting
+                       then 0
+                       else stLastInteresting st + 1
+                   }
+      return (Right st')
 
 ----------------------------------------
 -- Selecting the next test case

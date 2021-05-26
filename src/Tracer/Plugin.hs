@@ -67,7 +67,7 @@ tracePlugin _cli summary source = do
                       >=> everywhereM (mkM (annotateIfs  flags))
       hsMod' <- transform hsMod
       n <- liftIO $ readIORef uid
-      liftIO $ writeTraceNodesCount n
+      liftIO $ writeFile ".tracer" (show n)
       message $ "generated " <> show n <> " trace nodes"
       message $ "done"
       return (source { hpm_module = L loc hsMod' })
@@ -77,7 +77,7 @@ tracePlugin _cli summary source = do
                       >=> everywhereM (mkM (annotateTopLevel flags anns))
       hsMod' <- transform hsMod
       n <- liftIO $ readIORef uid
-      liftIO $ writeTraceNodesCount n
+      liftIO $ writeFile ".tracer" (show n)
       message $ "generated " <> show n <> " trace nodes"
       message $ "done"
       return (source { hpm_module = L loc hsMod' })

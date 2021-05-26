@@ -39,15 +39,7 @@ resetPosRef = modifyIORef' pos_ref (const [])
 
 -- Read traces
 readPosRef :: IO [[Int]]
-readPosRef = readIORef pos_ref
-
--- -- Run a computation and obtain its trace
--- withEvaluatedPos :: a -> IO (a, [[Int]])
--- withEvaluatedPos a = do
---   resetPosRef
---   a' <- return a
---   pos <- readPosRef
---   return (a', pos)
+readPosRef = reverse <$> readIORef pos_ref
 
 ----------------------------------------
 -- Lazy class

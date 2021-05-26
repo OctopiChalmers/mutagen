@@ -37,13 +37,3 @@ withTrace io = do
   a <- io
   tr <- readTraceRef
   return (a, tr)
-
--- Another IORef that keeps the number of annotated nodes
-trace_nodes_count_ref :: IORef Int
-trace_nodes_count_ref = unsafePerformIO (newIORef 0)
-
-readTraceNodesCount :: IO Int
-readTraceNodesCount = readIORef trace_nodes_count_ref
-
-writeTraceNodesCount :: Int -> IO ()
-writeTraceNodesCount = writeIORef trace_nodes_count_ref

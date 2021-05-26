@@ -74,6 +74,8 @@ printGlobalStats st = do
     ne ngen nmp nmd
   printf "* Enqueued tests for mutation: %d passed, %d discarded\n"
     (PQueue.size (stPassedQueue st)) (PQueue.size (stDiscardedQueue st))
+  printf "* Total interesting test cases: %d\n"
+    (stNumInteresting st)
   printf "* Tests since last interesting: %d \t(trace log was reset %d times)\n"
     (stLastInteresting st) (stTraceLogResets st)
 

@@ -39,6 +39,7 @@ data State log
   , stUsedSeed          :: !(Maybe (QCGen, Int))
   , stNextSeed          :: !QCGen
   , stNumExGenMut       :: !(Int, Int, Int, Int)
+  , stNumInteresting    :: !Int
   , stLastInteresting   :: !Int
   , stTraceLogResets    :: !Int
   , stNumPassed         :: !Int
@@ -47,6 +48,7 @@ data State log
   , stNumDiscarded      :: !Int
   , stDiscardedTraceLog :: !log
   , stDiscardedQueue    :: !MutationQueue
+  , stNumTraceNodes     :: !Int
   }
 
 createInitialState :: forall log. TraceLogger log => Config -> Property -> IO (State log)
@@ -56,7 +58,8 @@ createInitialState cfg (Property gen argsRunner) = do
   -- start timestamp
   now <- round <$> getPOSIXTime
   -- the initial internal state
-  traceNodes <- readTraceNodesCount
+  traceNodes <- read <$> readFile ".tracer"
+  putStrLn ("traceNodesCount: " <> show traceNodes)
   passedTraceLog <- emptyTraceLog traceNodes
   discardedTraceLog <- emptyTraceLog traceNodes
   return State
@@ -78,6 +81,7 @@ createInitialState cfg (Property gen argsRunner) = do
     , stResetAfter = resetAfter cfg
     , stMutationOrder = mutationOrder cfg
     , stNumExGenMut = (0,0,0,0)
+    , stNumInteresting = 0
     , stLastInteresting = 0
     , stTraceLogResets = 0
     , stNumPassed = 0
@@ -86,6 +90,7 @@ createInitialState cfg (Property gen argsRunner) = do
     , stNumDiscarded = 0
     , stDiscardedTraceLog = discardedTraceLog
     , stDiscardedQueue = mempty
+    , stNumTraceNodes = traceNodes
     }
 
 ----------------------------------------
