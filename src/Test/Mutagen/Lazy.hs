@@ -12,10 +12,12 @@ import System.IO.Unsafe
 -- For providing some default Lazy instances
 import Data.Word
 
+import Test.Mutagen.Mutation (Pos)
+
 ----------------------------------------
 -- Collecting evaluated positions
 
-__evaluated__ :: [Int] -> a -> a
+__evaluated__ :: Pos -> a -> a
 __evaluated__ pos expr =
   unsafePerformIO $ do
     addEvaluatedPos pos
@@ -26,11 +28,11 @@ __evaluated__ pos expr =
 ----------------------------------------
 -- IORef too keep track of the evaluated positions
 
-pos_ref :: IORef [[Int]]
+pos_ref :: IORef [Pos]
 pos_ref = unsafePerformIO (newIORef [])
 
 -- Add a new position to the ref
-addEvaluatedPos :: [Int] -> IO ()
+addEvaluatedPos :: Pos -> IO ()
 addEvaluatedPos pos = modifyIORef' pos_ref (reverse pos:)
 
 -- Reset traces
@@ -38,7 +40,7 @@ resetPosRef :: IO ()
 resetPosRef = modifyIORef' pos_ref (const [])
 
 -- Read traces
-readPosRef :: IO [[Int]]
+readPosRef :: IO [Pos]
 readPosRef = reverse <$> readIORef pos_ref
 
 ----------------------------------------
@@ -48,7 +50,11 @@ class Lazy a where
   lazy :: a -> a
   lazy = lazyNode []
 
-  lazyNode :: [Int] -> a -> a
+  lazyNode :: Pos -> a -> a
+
+----------------------------------------
+-- | Lazy instances
+----------------------------------------
 
 instance Lazy Int where
   lazyNode = __evaluated__
@@ -85,6 +91,14 @@ instance Lazy a => Lazy (Maybe a) where
     __evaluated__ pre $
     Just (lazyNode (0:pre) a)
 
+instance (Lazy a, Lazy b) => Lazy (Either a b) where
+  lazyNode pre (Left x) =
+    __evaluated__ pre $
+    Left (lazyNode (0:pre) x)
+  lazyNode pre (Right x) =
+    __evaluated__ pre $
+    Right (lazyNode (0:pre) x)
+
 instance Lazy a => Lazy [a] where
   lazyNode pre [] =
     __evaluated__ pre $
@@ -92,7 +106,6 @@ instance Lazy a => Lazy [a] where
   lazyNode pre (x:xs) =
     __evaluated__ pre $
     ((lazyNode (0:pre) x) : (lazyNode (1:pre) xs))
-
 
 -- Tuple instances
 

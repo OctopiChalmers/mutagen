@@ -41,6 +41,7 @@ library
     Test.Mutagen
     Test.Mutagen.Property
     Test.Mutagen.Mutation
+    Test.Mutagen.Fragment
     Test.Mutagen.Exception
     Test.Mutagen.Lazy
     Test.Mutagen.Shell

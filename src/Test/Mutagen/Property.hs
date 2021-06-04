@@ -1,11 +1,8 @@
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE TypeApplications #-}
-{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE PatternSynonyms #-}
 
 module Test.Mutagen.Property where
@@ -23,12 +20,12 @@ import Test.Mutagen.Lazy
 -- Test arguments hidden behind an existential
 
 #ifdef MUTAGEN_NO_LAZY
-type Arg a = (Show a, Arbitrary a, Mutable a)
+type IsArgs a = (Show a, Arbitrary a, Mutable a)
 #else
-type Arg a = (Show a, Arbitrary a, Mutable a, Lazy a)
+type IsArgs a = (Show a, Arbitrary a, Mutable a, Lazy a)
 #endif
 
-data Args = forall a . Arg a => Args a
+data Args = forall a . IsArgs a => Args a
 
 instance Show Args where
   show (Args arg) = show arg
@@ -151,9 +148,9 @@ instance Testable Property where
   property p = p
 
 -- | Testable properties with one argument
-instance (Arg a, Res b) => Testable (a -> b) where
+instance (IsArgs a, Res b) => Testable (a -> b) where
   property f = forAll arbitrary f
 
-forAll :: (Arg a, Res b) => Gen a -> (a -> b) -> Property
+forAll :: (IsArgs a, Res b) => Gen a -> (a -> b) -> Property
 forAll gen f =
   Property (Args <$> gen) (\(Args as) -> result (f (unsafeCoerce as)))
