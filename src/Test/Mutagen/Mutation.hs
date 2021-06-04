@@ -9,6 +9,7 @@ module Test.Mutagen.Mutation where
 
 import Control.Monad
 
+import Data.Typeable
 import Data.List
 import Data.Tree
 
@@ -50,7 +51,7 @@ type GenericMutation = forall a. Mutable a => Mutation a
 ----------------------------------------
 -- | Mutable types
 
-class Mutable a where
+class Typeable a => Mutable a where
   -- | Mutable positions
   -- List all the possible positions where we could mutate the value
   positions :: a -> Tree Pos
@@ -151,7 +152,7 @@ unRigid (Rigid a) = a
 instance Arbitrary a => Arbitrary (Rigid a) where
   arbitrary = Rigid <$> arbitrary
 
-instance Arbitrary a => Mutable (Rigid a)
+instance (Typeable a, Arbitrary a) => Mutable (Rigid a)
 
 ----------------------------------------
 -- | Base types instances

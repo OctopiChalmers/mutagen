@@ -13,7 +13,8 @@ import qualified Data.Map as Map
 import Data.Set (Set)
 import qualified Data.Set as Set
 
--- import Test.Mutagen.Mutation (Pos)
+import Test.QuickCheck
+import Test.Mutagen.Mutation
 
 -- For providing some default Fragmentable instances
 import Data.Word
@@ -65,14 +66,22 @@ insertFragment :: TypeRep -> Fragment -> FragmentStore -> FragmentStore
 insertFragment tr fr (FragmentStore fs) =
   FragmentStore (Map.insertWith Set.union tr (Set.singleton fr) fs)
 
-storeFragments :: Fragmentable a => a -> FragmentStore -> FragmentStore
-storeFragments a fs = fs <> fs'
+collectFragments :: Fragmentable a => a -> FragmentStore
+collectFragments a = foldr (uncurry insertFragment) emptyFragmentStore fts
   where
-    fs' = foldr (uncurry insertFragment) emptyFragmentStore fts
     fts = Set.map (\(Fragment x) -> (typeOf x, Fragment x)) (fragmentize a)
 
+storeFragments :: Fragmentable a => a -> FragmentStore -> FragmentStore
+storeFragments a fs = fs <> collectFragments a
+
+sampleFragment :: TypeRep -> FragmentStore -> IO (Maybe Fragment)
+sampleFragment tr (FragmentStore fs) = do
+  case Map.lookup tr fs of
+    Nothing -> return Nothing
+    Just frags -> Just <$> generate (elements (Set.toList frags))
+
 ----------------------------------------
--- Fragmentizing values up to a certain depth
+-- Fragmentizing values
 
 class IsFragment a => Fragmentable a where
   fragmentize :: a -> Set Fragment
@@ -82,6 +91,20 @@ class IsFragment a => Fragmentable a where
 
 singleton :: Fragmentable a => a -> Set Fragment
 singleton = Set.singleton . Fragment
+
+----------------------------------------
+-- Replacing a subexpression within a value with a random fragmentize
+
+replacePosWithFragment :: (Mutable a, Fragmentable a) => FragmentStore -> Pos -> Mutation a
+replacePosWithFragment (FragmentStore fs) pos = inside pos $ \a ->
+  case Map.lookup (typeOf a) fs of
+    Nothing -> []
+    Just frags ->
+      [ Random $ do
+          Fragment a' <- elements (Set.toList frags)
+          return (maybe a id (cast a'))
+      ]
+
 
 ----------------------------------------
 -- | Fragmentable instances
