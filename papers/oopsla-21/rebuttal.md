@@ -3,8 +3,8 @@ reviewers' questions below -- reviewer #1, please refer to the answer given to
 reviewer #2.
 
 For the final version, we propose to use the extra available space to clarify
-the questions and concerns of the reviewers to the furthest extent. Moreover, we
-will expand on implementation details and usage examples of MUTAGEN.
+the questions and concerns of the reviewers to the furthest extent. We will also
+expand on implementation details and usage examples of MUTAGEN.
 
 Reviewer #2
 -----------
@@ -16,7 +16,6 @@ We clarify that IFC stack machine case study shows a direct comparison between
 FuzzChick and MUTAGEN, where our tool shows a noticeable improvement in terms of
 mean-time-to-failure, failure rate. We will update the introduction to reflect
 that explicitly.
-
 
 > on a related note, Table 3 suggests that Mutagen needs to generate more tests
 > until failure than FuzzChick in at least 7 of the 20 cases. Based on these
@@ -46,8 +45,8 @@ FuzzChick to be fair, our tool needs to be reliable (always find the bug)
 without being (possibly orders of magnitude) slower on individual runs. Table 3
 shows that this in the case, where the *A12* measure indicates that MUTAGEN is
 not prone to need many more tests to find a bug that FuzzChick in most of the
-cases (except only for bugs #15 and #18, which FuzzChick is not capable of
-finding with a 100% success rate).
+cases (except only for bugs #15 and #18, where FuzzChick finds it more quickly
+but not in all runs).
 
 - We included mean-tests-to-failure in Table 3 merely as an indication of the
 order of magnitude. This metric, however, is quite sensitive to outliers. For
@@ -63,23 +62,22 @@ In the FuzzChick article, the IFC stack machine case study uses a systematic
 approach for introducing bugs. We simply translate (implement) this *full case
 study* directly into Haskell along with the mechanism introducing the bugs.
 
-The WebAssembly case study uses manually inserted bugs. Such bugs are of two 
+The WebAssembly case study uses manually inserted bugs. Such bugs are of two
 different kinds:
 
- * Removing an existing integrity check (to weaken the WebAssembly 
+ * Removing an existing integrity check (to weaken the WebAssembly
    type-system/validator)
  * Replacing the implementation of an operation with a similar compatible one,
    e.g., (+) -> (-) (to simulate copy-and-paste induced bugs, inspired by one
    of the real bugs we found on `haskell-wasm` while developing this case study)
 
-
 > how much time do the techniques require to generate tests?
 
 We expect MUTAGEN to be not substantially slower than FuzzChick at generating
 (or mutating) test cases. In both cases, the complexity is at most linear in the
-size of the generated (or mutated) test case. 
+size of the generated (or mutated) test case.
 
-However, test cases will not be fully generated/mutated unless the testing 
+However, test cases will not be fully generated/mutated unless the testing
 property actually fully evaluates them --- test cases are constructed "on the fly"
 in tandem with the evaluation of the testing property. This is the case with most
 random testing tools in Haskell, including QuickCheck. This lazy behavior greatly
@@ -116,7 +114,7 @@ structure that is expected to grow continuously as new executions are discovered
 In our experiments, we never observed this to be a problem, and multi-day executions
 never exhausted the 32GB of memory available in our workstation. 
 
-If memory consumption becomes a problem, MUTAGEN can be used with to edge-based
+If memory consumption becomes a problem, MUTAGEN can be used with edge-based
 tracing, i.e., using a constant bitmap like AFL/FuzzChick, at the cost of less
 trace granularity and a less precise FIFO prioritization of test cases (the only
 metric available to prioritize them becomes the number of discovered edges.)
@@ -127,21 +125,19 @@ metric available to prioritize them becomes the number of discovered edges.)
 To the best of our knowledge, there are two situations when retesting can occur:
 
 - Randomly generating the same test case twice while on generation mode. This
-depends on the quality of the random generator used.
+depends on the quality of the used random generators.
 
 - Mutating a test case back to its immediate ancestor. This can happen when a
 mutation reverts a previous one. We initially introduced a complex mechanism to
 avoid this, however, it did not show a big improvement, so we decided to keep
 the mutation mechanism simple.
 
-
 > In WASM, are you only testing single-module programs (p17)?
 
 Yes. Testing multi-module interactions (a.k.a. WebAssembly scripts) using
 MUTAGEN would be feasible, although we foresee that a more stateful approach
-for mutating test cases would help to facilitate interaction between mutated 
+for mutating test cases would help to facilitate interaction between mutated
 WebAssembly modules --- we are currently investigating this possibility. 
-
 
 > You fix 25 as the number of mutations in 'no reset' mode. Is that higher or
 > lower than typical?
