@@ -14,7 +14,7 @@ Reviewer #2
 
 We clarify that IFC stack machine case study shows a direct comparison between
 FuzzChick and MUTAGEN, where our tool shows a noticeable improvement in terms of
-mean-time-to-failure, failure rate. We will update the introduction to reflect
+mean-time-to-failure and failure rate. We will update the introduction to reflect
 that explicitly.
 
 > on a related note, Table 3 suggests that Mutagen needs to generate more tests
@@ -43,7 +43,7 @@ could be alleviated by running it several times in a row using much shorter
 timeout (e.g. 30 seconds). Under this consideration, for the comparison against
 FuzzChick to be fair, our tool needs to be reliable (always find the bug)
 without being (possibly orders of magnitude) slower on individual runs. Table 3
-shows that this in the case, where the *A12* measure indicates that MUTAGEN is
+shows that this is the case, where the *A12* measure indicates that MUTAGEN is
 not prone to need many more tests to find a bug that FuzzChick in most of the
 cases (except only for bugs #15 and #18, where FuzzChick finds it more quickly
 but not in all runs).
