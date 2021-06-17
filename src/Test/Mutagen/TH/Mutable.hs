@@ -72,14 +72,14 @@ deriveInside cons = do
   let firstclause = DClause [DConP '[] [], DVarP mut, DVarP x] (DVarE mut `DAppE` DVarE x)
   -- recursive constructor clauses
   conclauses <- forM cons $ \con -> do
-    (pvs, condpat) <- createDPat con
+    (pvs, dpat) <- createDPat con
     forM [0 .. length pvs - 1] $ \idx -> do
       let posdpat = DConP '(:) [DLitP (IntegerL (fromIntegral idx)), DVarP pos]
       let mutdpat = DVarP mut
       let clauseBody = DVarE 'wrap `DAppE`
                        (DVarE 'inside `DAppE` DVarE pos `DAppE` DVarE mut `DAppE` DVarE (pvs !! idx)) `DAppE`
                        (DLamE [x] (mkConDExp (dConName con) ([ DVarE v | v <- replace idx pvs x ])))
-      return (DClause [posdpat, mutdpat, condpat] clauseBody)
+      return (DClause [posdpat, mutdpat, dpat] clauseBody)
   -- last clause (error message)
   let lastclause = DClause [DVarP pos, DWildP, DWildP] (DVarE 'invalidPosition `DAppE` DVarE pos)
   return [ DLetDec (DFunD 'inside ([firstclause] <> concat conclauses <> [lastclause])) ]

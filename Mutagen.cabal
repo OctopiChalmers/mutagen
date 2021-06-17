@@ -58,6 +58,7 @@ library
     Test.Mutagen.TH.Arbitrary
     Test.Mutagen.TH.Mutable
     Test.Mutagen.TH.Lazy
+    Test.Mutagen.TH.Fragmentable
     Test.Mutagen.TH.Util
   hs-source-dirs:
     src

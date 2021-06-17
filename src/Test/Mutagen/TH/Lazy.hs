@@ -33,7 +33,7 @@ deriveLazy name ignored = do
 deriveLazyNode :: DCon -> Q DClause
 deriveLazyNode con = do
   acc <- newName "acc"
-  (pvs, condpat) <- createDPat con
+  (pvs, dpat) <- createDPat con
 
   let lazyFieldExps = [ DVarE 'lazyNode `DAppE`
                         (DConE '(:) `DAppE` DLitE (IntegerL idx) `DAppE` DVarE acc) `DAppE`
@@ -42,4 +42,4 @@ deriveLazyNode con = do
   let clauseBody = DVarE '__evaluated__ `DAppE`
                    DVarE acc `DAppE`
                    mkConDExp (dConName con) lazyFieldExps
-  return (DClause [DVarP acc, condpat] clauseBody)
+  return (DClause [DVarP acc, dpat] clauseBody)

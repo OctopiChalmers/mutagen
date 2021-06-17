@@ -9,6 +9,7 @@ import Test.Mutagen
 import Test.Mutagen.TH.Arbitrary
 import Test.Mutagen.TH.Mutable
 import Test.Mutagen.TH.Lazy
+import Test.Mutagen.TH.Fragmentable
 import Test.Mutagen.TH.Util
 
 ----------------------------------------
@@ -41,5 +42,7 @@ deriveInstanceWithOpts opts name ty
     sweeten <$> deriveMutable ty (th_ignore opts) (th_def opts)
   | name == ''Lazy =
     sweeten <$> deriveLazy ty (th_ignore opts)
+  | name == ''Fragmentable =
+    sweeten <$> deriveFragmentable ty (th_ignore opts)
   | otherwise =
     mutagenError "type class not supported" [name]

@@ -144,7 +144,7 @@ mkListDExp exps = foldr consExp nilExp exps
 -- Returns the patterns as well as the bound variables.
 createDPat :: DCon -> Q ([Name], DPat)
 createDPat (DCon _ _ cname cfields _) = do
-  pvs <- replicateM (dConFieldsNum cfields) (newName "v")
+  pvs <- replicateM (dConFieldsNum cfields) (newName "_v")
   let dpat = DConP cname [DVarP pv | pv <- pvs]
   return (pvs, dpat)
 

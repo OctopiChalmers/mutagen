@@ -5,6 +5,8 @@
 {-# LANGUAGE ExistentialQuantification #-}
 module Test.Mutagen.Fragment where
 
+import Control.Monad
+
 import Data.Typeable
 
 import Data.Map (Map)
@@ -50,7 +52,10 @@ newtype FragmentStore = FragmentStore (Map TypeRep (Set Fragment))
   deriving Show
 
 fragmentStoreSize :: FragmentStore -> [(TypeRep, Int)]
-fragmentStoreSize (FragmentStore fs) = [ (tr, Set.size frags) | (tr, frags) <- Map.toList fs ]
+fragmentStoreSize (FragmentStore fs) =
+  [ (tr, Set.size frags)
+  | (tr, frags) <- Map.toList fs
+  ]
 
 instance Semigroup FragmentStore where
   FragmentStore fs1 <> FragmentStore fs2 =
@@ -58,6 +63,13 @@ instance Semigroup FragmentStore where
 
 instance Monoid FragmentStore where
   mempty = emptyFragmentStore
+
+printFragmentStore :: FragmentStore -> IO ()
+printFragmentStore (FragmentStore fs) = do
+  forM_ (Map.assocs fs) $ \(tr, frags) -> do
+    putStrLn ("TypeRep: " <> show tr)
+    forM_ frags $ \frag -> do
+      putStrLn ("* " <> show frag)
 
 emptyFragmentStore :: FragmentStore
 emptyFragmentStore = FragmentStore mempty
@@ -121,8 +133,14 @@ instance Fragmentable Char
 instance Fragmentable Bool
 
 instance Fragmentable a => Fragmentable (Maybe a) where
-  fragmentize Nothing  = singleton @(Maybe a) Nothing
-  fragmentize (Just x) = singleton @(Maybe a) (Just x) <> fragmentize x
+  fragmentize x =
+    case x of
+      Nothing -> singleton x
+      Just v1 -> singleton x <> fragmentize v1
+
+  -- fragmentize Nothing  = singleton @(Maybe a) Nothing
+  -- fragmentize Nothing  = (singleton :: Maybe a -> Set Fragment) Nothing
+  -- fragmentize (Just x) = singleton @(Maybe a) (Just x) <> fragmentize x
 
 instance (Fragmentable a, Fragmentable b) => Fragmentable (Either a b) where
   fragmentize (Left x)  = singleton @(Either a b) (Left x)  <> fragmentize x
