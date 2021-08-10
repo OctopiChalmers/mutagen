@@ -1,0 +1,1 @@
+(0,-1.3324243,Function {funcType = 0, localTypes = [F32], body = [GetLocal 1,FUnOp BS32 FSqrt,IReinterpretF BS32,IUnOp BS32 IClz,Return]})

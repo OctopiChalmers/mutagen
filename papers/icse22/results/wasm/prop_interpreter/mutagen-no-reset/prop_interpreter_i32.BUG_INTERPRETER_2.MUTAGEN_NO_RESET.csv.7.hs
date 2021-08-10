@@ -1,0 +1,1 @@
+(1,-2.5110493,Function {funcType = 0, localTypes = [F32], body = [GetLocal 1,TeeLocal 2,FUnOp BS32 FSqrt,FUnOp BS32 FNeg,IReinterpretF BS32,Return,GetLocal 0,I64ExtendUI32,CurrentMemory,I64Load (MemArg {offset = 0, align = 3}),I32Const 0,Return]})
