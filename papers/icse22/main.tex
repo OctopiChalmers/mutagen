@@ -1,5 +1,5 @@
 %% The first command in your LaTeX source must be the \documentclass command.
-\documentclass[sigconf, anonymous]{acmart}
+\documentclass[sigconf, anonymous, review]{acmart}
 
 % ----------------------------------------
 
@@ -503,7 +503,7 @@ in Section \ref{sec:conclusions}.
 
 
 % ----------------------------------------
-\vspace{-5pt}
+%% \vspace{-5pt}
 
 \section{Background}
 \label{sec:background}
@@ -516,7 +516,7 @@ We also describe in detail the ideas and limitations behind \fuzzchick.
 
 %% which served as the foundation while designing \mutagen.
 
-\vspace{-5pt}
+%% \vspace{-5pt}
 \subsection{Property-Based Testing and \quickcheck}
 
 Property-based testing is a powerful technique for finding bugs without having
@@ -639,11 +639,10 @@ operation:
 
 \begin{verbatim}
 instance Arbitrary a => Arbitrary (Tree a) where
-  arbitrary = sized gen
-    where
-      gen 0 = do { x <- arbitrary; return (Leaf x) }
-      gen n = oneof [ do {x <- arbitrary; return (Leaf x) }
-                    , do {l <- gen (n-1); x <- arbitrary; r <- gen (n-1); return (Branch l x r)} ]
+  arbitrary = sized gen where
+  gen 0 = Leaf <$> arbitrary
+  gen n = oneof [ Leaf <$> arbitrary
+                , Branch <$> gen (n-1) <*> arbitrary <*> gen (n-1) ]
 \end{verbatim}
 
 \noindent Let us break this definition into parts.
@@ -986,20 +985,38 @@ In simple terms, these operations encompass
 \end{inparaenum}
 
 
+%% \begin{figure}
+%% \vspace{-5pt}
+%% \begin{verbatim}
+%% mutate_tree :: (a -> Gen a) -> Tree a -> Gen (Tree a)
+%% mutate_tree mutate_a (Leaf x) =
+%%   oneof [ do { x' <- mutate_a x; return (Leaf x')}                       -- Mutate recursively
+%%         , do { l <- arbitrary; r <- arbitrary; return (Branch l x r) } ] -- Grow constructor
+%% mutate_tree mutate_a (Branch l x r) =
+%%   oneof [ return l                                                       -- Return subexpression
+%%         , return r                                                       -- Return subexpression
+%%         , return (Leaf x)                                                -- Shrink constructor
+%%         , do { l' <- mutate_tree l; return (Branch l' x r) }             -- Mutate recursively
+%%         , do { x' <- mutate_a    x; return (Branch l x' r) }             -- Mutate recursively
+%%         , do { r' <- mutate_tree r; return (Branch l x r') } ]           -- Mutate recursively
+%% \end{verbatim}
+%% \caption{\label{fig:fuzzchick:mutator}\fuzzchick mutator for the \texttt{Tree} data type. }
+%% \end{figure}
+
 \begin{figure}
-\vspace{-5pt}
+%% \vspace{-5pt}
 \begin{verbatim}
 mutate_tree :: (a -> Gen a) -> Tree a -> Gen (Tree a)
 mutate_tree mutate_a (Leaf x) =
-  oneof [ do { x' <- mutate_a x; return (Leaf x')}                       -- Mutate recursively
-        , do { l <- arbitrary; r <- arbitrary; return (Branch l x r) } ] -- Grow constructor
+  oneof [ Leaf <$> mutate_a x
+        , Branch <$> arbitrary <*> return x <*> arbitrary ]
 mutate_tree mutate_a (Branch l x r) =
-  oneof [ return l                                                       -- Return subexpression
-        , return r                                                       -- Return subexpression
-        , return (Leaf x)                                                -- Shrink constructor
-        , do { l' <- mutate_tree l; return (Branch l' x r) }             -- Mutate recursively
-        , do { x' <- mutate_a    x; return (Branch l x' r) }             -- Mutate recursively
-        , do { r' <- mutate_tree r; return (Branch l x r') } ]           -- Mutate recursively
+  oneof [ return l
+        , return r
+        , Leaf   <$> return x
+        , Branch <$> mutate_tree l <*> return x   <*> return r
+        , Branch <$> return l      <*> mutate_a x <*> return r
+        , Branch <$> return l      <*> return x   <*> mutate_tree r
 \end{verbatim}
 \caption{\label{fig:fuzzchick:mutator}\fuzzchick mutator for the \texttt{Tree} data type. }
 \end{figure}
@@ -1297,19 +1314,34 @@ complexity away in our implementation.
 Using a small value is again inspired by exhaustive bounded testing tools, and
 avoids introducing unnecessary randomness when growing data constructors.
 
+%% \begin{figure}
+%% \begin{verbatim}
+%% mutate (Leaf x)       = [ PURE (Branch def x def) ]   -- Swap constructor
+%% mutate (Branch l x r) = [ PURE l, PURE r              -- Return subexpression
+%%                         , PURE (Leaf x)               -- Swap constructor
+%%                         , PURE (Branch l x l)         -- Rearrange subexpressions
+%%                         , PURE (Branch r x r)         -- Rearrange subexpressions
+%%                         , PURE (Branch r x l) ]       -- Rearrange subexpressions
+%% \end{verbatim}
+%% \vspace{-5pt}
+%% \caption{\label{fig:mutagen:mutator}\mutagen mutator for the \texttt{Tree} data
+%%   type.}
+%% \vspace{-10pt}
+%% \end{figure}
+
 \begin{figure}
 \begin{verbatim}
-mutate (Leaf x)       = [ PURE (Branch def x def) ]   -- Swap constructor
-mutate (Branch l x r) = [ PURE l, PURE r              -- Return subexpression
-                        , PURE (Leaf x)               -- Swap constructor
-                        , PURE (Branch l x l)         -- Rearrange subexpressions
-                        , PURE (Branch r x r)         -- Rearrange subexpressions
-                        , PURE (Branch r x l) ]       -- Rearrange subexpressions
+mutate (Leaf x)       = [ PURE (Branch def x def) ]
+mutate (Branch l x r) = [ PURE l, PURE r
+                        , PURE (Leaf x)
+                        , PURE (Branch l x l)
+                        , PURE (Branch r x r)
+                        , PURE (Branch r x l) ]
 \end{verbatim}
-\vspace{-5pt}
+%% \vspace{-5pt}
 \caption{\label{fig:mutagen:mutator}\mutagen mutator for the \texttt{Tree} data
   type.}
-\vspace{-10pt}
+%% \vspace{-10pt}
 \end{figure}
 
 %% At this point, the reader might consider:
@@ -1355,7 +1387,9 @@ For instance, the positions of a \texttt{Tree} are computed as follows:
 
 \begin{verbatim}
 positions (Leaf x)       = node [ (0, positions x) ]
-positions (Branch l x r) = node [ (0, positions l), (1, positions x), (2, positions r) ]
+positions (Branch l x r) = node [ (0, positions l)
+                                , (1, positions x)
+                                , (2, positions r) ]
 \end{verbatim}
 
 \noindent where the function \texttt{node} simply builds a node of the positions
@@ -1413,11 +1447,11 @@ A slightly simplified version of this function for the \texttt{Tree} data type i
 as follows:
 
 \begin{verbatim}
-inside []        x              = mutate x
-inside (0 : pos) (Leaf x)       = [ Leaf x'       | x' <- inside pos x ]
-inside (0 : pos) (Branch l x r) = [ Branch l' x r | l' <- inside pos l ]
-inside (1 : pos) (Branch l x r) = [ Branch l x' r | x' <- inside pos x ]
-inside (2 : pos) (Branch l x r) = [ Branch l x r' | r' <- inside pos r ]
+inside []      x              = mutate x
+inside (0:pos) (Leaf x)       = [ Leaf x'       | x' <- inside pos x ]
+inside (0:pos) (Branch l x r) = [ Branch l' x r | l' <- inside pos l ]
+inside (1:pos) (Branch l x r) = [ Branch l x' r | x' <- inside pos x ]
+inside (2:pos) (Branch l x r) = [ Branch l x r' | r' <- inside pos r ]
 \end{verbatim}
 
 \noindent This function simply traverses the desired position, calling itself
@@ -1659,7 +1693,7 @@ branches at a shallower depth than the first one (2 vs. 3), hence its
 corresponding test case should be given a higher priority.
 
 \begin{figure}[t]
-\vspace{-15pt}
+%% \vspace{-15pt}
 \newcommand\stacked[2]{\underset{\textstyle #2\mathstrut}{#1}}
 \begin{equation}
   \nonumber
@@ -1715,8 +1749,12 @@ corresponding test case should be given a higher priority.
   \right]
   ,
   \stacked{{\color{blue} new=1\phantom{x}}}{{\color{red} depth=3}}
-  \qquad
-  \qquad
+  \end{equation}
+  \begin{equation}
+  \nonumber
+  %% \\
+  %% \qquad
+  %% \qquad
   \left[
   \tikz[
     baseline=-10mm,
@@ -1775,7 +1813,7 @@ corresponding test case should be given a higher priority.
   ,
   \stacked{{\color{blue} new=2\phantom{x}}}{{\color{red} depth=2}}
 \end{equation}
-\vspace{-10pt}
+%% \vspace{-10pt}
 \caption{\label{fig:mutagen:tracelog}Inserting two new execution traces into the
   internal trace log (represented using brackets).}
 \end{figure}
@@ -1824,7 +1862,7 @@ novel.
       $\cdots$\;
     }
   }
-  \vspace{5pt}
+  %% \vspace{5pt}
   \SetKwFunction{Pick}{Pick}
   \SetKwProg{Fn}{Function}{:}{}
   \Fn{\Pick{QSucc, QDisc, gen}}{
@@ -2065,7 +2103,7 @@ used in our tool.
 \hline
 12
 & Interpreter
-& Wrong interpretation of \texttt{i32.lt\_u} instruction when operands are equal \\
+& Wrong interpretation of \texttt{i32.lt\_u} instruction \\
 \hline
 13
 & Interpreter
@@ -2082,7 +2120,7 @@ used in our tool.
 \end{tabular}
 \caption{\label{table:wasm:injectedbugs}Bugs injected into
   \textit{haskell-wasm}.}
-\vspace{-15pt}
+%% \vspace{-15pt}
 \end{table}
 
 
@@ -2292,7 +2330,7 @@ In this light, our testing properties assert that any result produced by
 
 
 \begin{table}[t]
-\footnotesize
+\scriptsize
 \begin{tabular}{|c|c|c|l|}
 \hline
 \textbf{Id}
@@ -2313,7 +2351,7 @@ In this light, our testing properties assert that any result produced by
 3
 & Interpreter
 & Bug
-& Instance function invoker silently proceeds after arity mismatch \\
+& Instance function invoker silently ignores arity mismatch \\
 \hline
 4
 & Interpreter
@@ -2323,12 +2361,12 @@ In this light, our testing properties assert that any result produced by
 5
 & Interpreter
 & Discrepancy
-& NaN reinterpretation does not follow reference implementation\\
+& NaN reinterpretation does not follow reference \\
 \hline
 \end{tabular}
 \caption{\label{table:wasm:bugs}Bugs and discrepancies found by \mutagen in
   \textit{haskell-wasm}.}
-\vspace{-20pt}
+%% \vspace{-20pt}
 \end{table}
 
 
@@ -2476,7 +2514,10 @@ the generated function to take two arguments (of type \texttt{I32} and
 
 \begin{verbatim}
 prop_interpreter_i32 fun i f =
-  prop_interpreter (FuncType { params = [I32, F32], result = [I32]}) fun [VI32 i, VF32 f]
+  prop_interpreter
+    (FuncType { params = [I32, F32], result = [I32] })
+    fun
+    [VI32 i, VF32 f]
 \end{verbatim}
 
 This specialized property lets us generate functions using this fixed type and
@@ -2537,10 +2578,10 @@ throughout the execution of the tool.
   \centering
   \includegraphics[width=\linewidth]{tikz/ifc-mttf.tikz}
   \includegraphics[width=\linewidth]{tikz/ifc-fr.tikz}
-  \vspace{-20pt}
+  %% \vspace{-20pt}
   \caption{\label{fig:results:ifc} Comparison between \fuzzchick and \mutagen
     across 20 different bugs for the IFC stack machine. }
-\vspace{-10pt}
+%% \vspace{-10pt}
 \end{figure}
 
 
@@ -2590,10 +2631,30 @@ Thus, to be an improvement over \fuzzchick, our tool must be able to find bugs
 not only more reliably, but also relatively fast!
 
 
-\begin{wrapfigure}{r}{0.5\textwidth}
-\centering
-\vspace{-20pt}
-\footnotesize
+
+Table \ref{table:ifc:tests} shows a comparison between the mean number of tests
+required by both tools to find the first failure \emph{when we only consider
+  successful runs.}
+%
+Additionally, as advised by \cite{arcuri2014hitchhiker} when comparing random
+testing tools, we computed the non-parametric Vargha-Delaney $A_{12}$ measure
+\cite{vargha2000critique}.
+%
+Intuitively, this measure encodes the probability of \mutagen to yield better
+results than \fuzzchick.
+%
+As it can be observed, using an exhaustive mutation approach can be not only
+more reliable, but also faster.
+%
+\mutagen is likely to find bugs faster than \fuzzchick in 14 of the 20 bugs
+injected into the abstract machine, while being substantially slower in only 2
+cases.
+
+\begin{figure}
+%% \begin{wrapfigure}{r}{0.5\textwidth}
+%% \centering
+%% \vspace{-20pt}
+\small
 \begin{tabular}{ccccc}
 \hline
 \multicolumn{1}{c}{
@@ -2637,26 +2698,9 @@ not only more reliably, but also relatively fast!
   %
   Estimates in {\color{blue} blue} and {\color{red} red} indicate results
   favoring \fuzzchick and \mutagen, respectively. }
-\vspace{-25pt}
-\end{wrapfigure}
-
-Table \ref{table:ifc:tests} shows a comparison between the mean number of tests
-required by both tools to find the first failure \emph{when we only consider
-  successful runs.}
-%
-Additionally, as advised by \cite{arcuri2014hitchhiker} when comparing random
-testing tools, we computed the non-parametric Vargha-Delaney $A_{12}$ measure
-\cite{vargha2000critique}.
-%
-Intuitively, this measure encodes the probability of \mutagen to yield better
-results than \fuzzchick.
-%
-As it can be observed, using an exhaustive mutation approach can be not only
-more reliable, but also faster.
-%
-\mutagen is likely to find bugs faster than \fuzzchick in 14 of the 20 bugs
-injected into the abstract machine, while being substantially slower in only 2
-cases.
+%% \vspace{-25pt}
+%% \end{wrapfigure}
+\end{figure}
 
 
 In terms of the \mutagen heuristics, we can also arrive to some conclusions.
@@ -2780,7 +2824,7 @@ results like this is another interesting direction to aim our future work.
   \includegraphics[width=\linewidth]{tikz/wasm-mttf.tikz}
   \includegraphics[width=\linewidth]{tikz/wasm-fr.tikz}\vspace{-5pt}
   \includegraphics[width=\linewidth]{tikz/wasm-legend.tikz}
-  \vspace{-20pt}
+  %% \vspace{-20pt}
   \caption{\label{fig:results:wasm} Comparison between \quickcheck and \mutagen
     across 15 different bugs injected into \textit{haskell-wasm}. }
 %% \vspace{-5pt}
@@ -2841,7 +2885,7 @@ which ultimately leads us to find bugs.
 \end{tabular}
 \caption{\label{table:wasm:overhead}Mean number of tests per second executed by
   each tool on the WebAssembly case study.}
-\vspace{-10pt}
+%% \vspace{-10pt}
 \end{table}
 
 % ----------------------------------------
