@@ -422,7 +422,7 @@ randomness.
 %% power schedule to assign a given mutation energy to each input test case.
 %
 On the other hand, scheduling mutations exhaustively eliminates the need for a
-power schedule to assign a given mutation energy to each input test case.
+power schedule to assign a given mutation budget to each input test case.
 
 
 %% Notably, \emph{scheduling mutations exhaustively does not mean that mutations
@@ -518,91 +518,15 @@ in Section \ref{sec:conclusions}.
 \section{Background}
 \label{sec:background}
 
-In this section, we briefly introduce the concept of Property-Based Testing
-along with \quickcheck, one of the most popular tools of this sort and often
-used as the baseline when comparing PBT algorithms.
+In this section, we describe in detail the motivation, ideas and limitations
+behind coverage-guided, property-based testing as depicted by
+\citeauthor{lampropoulos2019coverage}.
 %
-We also describe in detail the ideas and limitations behind \fuzzchick.
-
-%% which served as the foundation while designing \mutagen.
-
-%% \vspace{-5pt}
-\subsection{Property-Based Testing and \quickcheck}
-
-Property-based testing is a powerful technique for finding bugs without having
-to write test cases by hand.
-%
-Popularized by Haskell's \quickcheck, this technique focuses on aiming the
-developer's efforts into testing systems via executable properties using
-randomly generated inputs.
-%
-%% Moreover, tools like \quickchick and Isabelle's \quickcheck demonstrate
-%% that PBT can also be used in the formal verification realm.
-%% %
-%% There, one can quickly spot bugs in system specifications before directing the
-%% efforts into pointlessly trying to prove bogus propositions.
-
-
-In the simplest form, there are four main elements the user needs to provide in
-order to perform property-based testing on their systems:
-%
-\begin{itemize}
-\item one or more \emph{executable properties}, often implemented simply as
-  boolean predicates,
-\item \emph{random data generators}, used to repeatedly instantiate the testing
-  properties,
-\item \emph{printers}, used to show the user the random inputs that falsify some
-  testing property (the counterexample) whenever a bug is found, and
-\item \emph{shrinkers}, to minimize counterexamples making them easier to
-  understand by humans.
-\end{itemize}
-
-\noindent In this work we focus solely on the first two elements introduced
-above, namely the testing properties and the random data generators used to feed
-them.
-%
-Printers and shrinkers, for the most part, can often be obtained automatically
-using generic programming capabilities present in the compiler, and although
-being crucial for the testing process as a whole, their role becomes irrelevant
-when it comes to \emph{finding} bugs.
-
-\begin{algorithm}
-  \SetInd{0em}{0.75em}
-  \SetKw{KwNot}{not}
-  \SetAlgoLined
-  \DontPrintSemicolon
-  \SetKwFunction{QC}{Loop}
-  \SetKwProg{Fn}{Function}{:}{}
-  \Fn{\QC{P, N, gen}}{
-    i $\gets$ 0\;
-    \While{i $<$ N}{
-      x $\gets$ Sample(gen)\;
-      \lIf{\KwNot P(x)}{\KwRet Bug(x)}
-      i $\gets$ i+1 \;
-    }
-    \KwRet Ok\;
-  }
-\caption{\label{algo:quickcheck}\quickcheck Testing Loop}
-\end{algorithm}
-
-Perhaps the simplest PBT technique is to repeatedly generate random inputs and
-use them instantiate the testing properties until they either get falsified by a
-counterexample, or we ran a sufficiently large amount of tests --- suggesting
-that the properties hold.
-%
-\quickcheck implements a testing loop that closely follows this simple idea,
-which is outlined in Algorithm \ref{algo:quickcheck}, where $P$ is the testing
-property, $N$ is the maximum number of tests to perform, and $gen$ is the random
-generator used to instantiate $P$.
-
-
-
-To illustrate this technique, let us focus on the same motivating example used
-by \citeauthor{lampropoulos2019coverage}, who propose a simple property defined over
+To illustrate this technique, let us focus on a simple property defined over
 binary trees.
 %
-Such data structure can be defined in Haskell using a custom data type with two
-data constructors for leaves and branches respectively:
+Such a data structure can be defined in Haskell using a custom algebraic data
+type with two data constructors for leaves and branches respectively:
 
 \begin{verbatim}
 data Tree a = Leaf a | Branch (Tree a) a (Tree a)
@@ -613,31 +537,47 @@ using any other type as payload, so the value \texttt{Leaf True} has type
 \texttt{Tree Bool}, whereas the value \texttt{Branch (Leaf 1) 2 (Leaf 3)} has
 type \texttt{Tree Int}.
 %
-Then, we can define tree reflections using a simple recursive function that
-pattern matches against the two possible constructors, inverting the order of
-the subtrees whenever it encounters a branch:
-
-\begin{verbatim}
-mirror :: Tree a -> Tree a
-mirror (Leaf x)       = Leaf x
-mirror (Branch l x r) = Branch (mirror r) x (mirror l)
-\end{verbatim}
-
-Later, a reasonable requirement to assert for is that \texttt{mirror} must be
-\emph{involutive}, i.e., reflecting a tree twice always yields the original
-tree.
+%% Then, we can define tree reflections using a simple recursive function that
+%% pattern matches against the two possible constructors, inverting the order of
+%% the subtrees whenever it encounters a branch:
 %
-We can simply capture this property using a boolean predicate written as a
-normal function:
+%% \begin{verbatim}
+%% mirror :: Tree a -> Tree a
+%% mirror (Leaf x)       = Leaf x
+%% mirror (Branch l x r) = Branch (mirror r) x (mirror l)
+%% \end{verbatim}
+%
+%% Later, a reasonable requirement to assert for is that \texttt{mirror} must be
+%% \emph{involutive}, i.e., reflecting a tree twice always yields the original
+%% tree.
+%% %
+%
+Then, if we assume existence of a predicate \texttt{balanced} of type
+\texttt{Tree a -> Bool} that asserts that a tree satisfies a certain notion of
+balancedness, we can write testing properties to assert that the operations
+defined over the \texttt{Tree} data type preserve this invariant.
+%
+For instance, the following testing property can be used to find bugs in the
+implementation of the \texttt{insert} function:
 
 \begin{verbatim}
-prop_mirror :: Tree Int -> Bool
-prop_mirror t = mirror (mirror t) == t
+prop_insert_inv :: a -> Tree a -> Property
+prop_insert_inv x t =
+  balanced t ==> balanced (insert x t)
 \end{verbatim}
 
-\noindent For simplicity, here we instantiate the tree payload with integers,
-although this predicate should hold for any other type with a properly defined
-notion of equality as well.
+
+\noindent This property asserts that, given a balanced tree \texttt{t} and an
+element \texttt{x} as input, inserting \texttt{x} into \texttt{t} will produce a
+balanced tree as output.
+%
+(The implementation details of \texttt{balanced} and \texttt{insert} are not
+relevant for the point being made here.)
+%
+Moreover, the arrow operator (\texttt{==>}) indicates that the predicate
+\texttt{balanced t} is a precondition of this property, and so attempting to
+test it using an unbalanced tree as an input will result in the test case
+getting \emph{discarded}.
 
 
 The last missing piece is a random generator of trees.
@@ -655,163 +595,74 @@ instance Arbitrary a => Arbitrary (Tree a) where
                 , Branch <$> gen (n-1) <*> arbitrary <*> gen (n-1) ]
 \end{verbatim}
 
-\noindent Let us break this definition into parts.
+\noindent This definition follows a simple type-directed generation approach,
+and it is a good example of what to expect from a random generator synthesized
+automatically from the codebase.
 %
-The first line states that we will provide an \texttt{Arbitrary} instance for
-trees with a payload of type \texttt{a}, provided that values of type \texttt{a}
-can also be randomly generated.
+In esence, this generator randomly picks one data constructor from its
+corresponding data type definition with uniform probability (i.e, either a
+\texttt{Leaf} or a \texttt{Branch}), and then calls itself for every recursive
+subexpression needed to produce a well-typed value, carefully reducing the depth
+limit (controlled by \quickcheck) by a unit on each step, ensuring termination.
 %
-This allows us to use \texttt{arbitrary} to generate \texttt{a}'s inside the
-definition of our tree generator.
+Subexpressions of any other type are generated simply by delegating the task to
+their corresponding \texttt{Arbitrary} instance --- as noted by the use of
+\texttt{arbitrary} when generating random payloads inside of the \texttt{Leaf}
+and \texttt{Branch} constructors.
 
-
-Moreover, \quickcheck internally keeps track of the \emph{maximum generation
-  size}, a parameter that can be tuned by the user to limit the size of the
-randomly generated values.
+Readers familiar with RBPT will recognize that attempting to test this property
+using \quickcheck directly does not work well.
 %
-Our definition exposes this size via \quickcheck's \texttt{sized} combinator,
-allowing us to parameterize the maximum size of the randomly generated trees.
-%
-If the generation size is zero (\texttt{gen 0}), our generator is limited to
-produce just leaves with randomly generated payloads.
-%
-In turn, when the generation size is strictly positive (\texttt{gen n}), the
-generator can perform a random uniform choice (\texttt{oneof}) between
-generating either a single leaf or a branch.
-%
-When generating branches, the generator calls itself recursively in order to
-produce random subtrees (\texttt{gen (n-1)}).
-%
-Notice the importance of reducing the generation size on each recursive call.
-%
-This way we ensure that randomly generated trees using a generation size
-\texttt{n} are always finite and have at most \texttt{n} levels.
-
-Finally, we are ready to let \quickcheck test \texttt{prop\_mirror} against a
-large number of inputs (100 by default) produced by our brand new random tree
-generator:
-
-\begin{verbatim}
-quickCheck prop_mirror
-+++ OK, passed 100 tests.
-\end{verbatim}
-
-\noindent Should we mistakenly introduce a bug in \texttt{mirror}, e.g., by
-dropping the right subtree altogether:
-
-\begin{verbatim}
-mirror (Branch l x r) = Branch (mirror l) x (mirror l)
-\end{verbatim}
-
-\noindent then \quickcheck will quickly falsify \texttt{prop\_mirror}, reporting
-a minimized counterexample that we can use to find the root of the issue:
-
-\begin{verbatim}
-quickCheck prop_mirror
-*** Failed! Falsified (after 2 tests and 2 shrinks):
-Branch (Leaf 0) 0 (Leaf 1)
-\end{verbatim}
-
-At this point, it is clear that the \emph{quality} of our random generators is
-paramount to the performance of the overall PBT process.
-%
-Random generators that rarely produce interesting values will fail to trigger
-bugs in our code, potentially leaving entire parts of the codebase virtually
-untested.
-
-
-Recalling our tree generator, the reader (far from mistaken) might already have
-imagined better ways for implementing it.
-%
-For most practical purposes, this generator is in fact quite bad.
-%
-However, it follows a simple type-directed fashion, and it is a good example of
-what to expect from a random generator synthesized automatically using a process
-that knows very little about the values to be generated apart from their
-(syntactic) data type structure.
-
-As introduced earlier, there exist multiple tools that can automatically derive
-better random generators solely from the static information present in the
-codebase.
-%
-%% Such tools vary on the degree of invariants and requirements
-%% %
-%% However, such approaches are unable to derive useful generators whenever the
-%% target data involves complex invariants that cannot be easily extracted from the
-%% codebase or that cannot be easily expressed in terms of inductive relations.
-%
-Sadly, these tools lack the domain knowledge required to generate random data
-with complex invariants --- especially those present in programming languages
-like well-scopedness and well-typedeness.
-
-
-In particular, \emph{automatically derived generators are remarkably ineffective
-  when used to test properties with sparse preconditions.}
-%
-Let us continue with the example by \citeauthor{lampropoulos2019coverage} to
-illustrate this problem in more detail.
-%
-For this, consider that we want to use our \texttt{Tree} data type to encode
-binary-search trees (BST) --- this requires some minor tweaks in practice.
-%
-Then, given a predicate \texttt{isBST} that asserts if a tree satisfies the BST
-invariants, we might want to use it as pre- and post-condition to assert that
-BST operations like \texttt{insert} preserve them:
-
-\begin{verbatim}
-prop_bst_insert :: Tree a -> a -> Bool
-prop_bst_insert t a =
-  isBST t ==> isBST (insert a t)
-\end{verbatim}
-
-\noindent Attempting to test this property using \quickcheck does not work well:
-
-\begin{verbatim}
-quickCheck prop_bst_insert
-*** Gave up! Passed only 44 tests; 1000 discarded tests.
-\end{verbatim}
-
-\noindent \quickcheck \emph{discards} random inputs as soon as it finds they do
-not pass the precondition (\texttt{isBST t}).
+In practice, \quickcheck will give up quite early if most of the generated test
+cases get discarded because they do not satisfy the balanced precondition.
 %
 Sadly, most of the inputs generated by our na\"ive generator suffer from this
-problem, and the interesting part of the property (\texttt{isBST (insert a t)})
+problem, and the interesting part of the property (\texttt{balanced (insert x t)})
 is tested very sporadically as a result.
+%
+In other words, \emph{the precondition of our testing property becomes very
+  sparse when we use simple, automatically derived generators.}
+
+The next subsection show how coverage-guided, property-based testing can help
+overcoming this limitation without having to write specialized random generators
+by hand.
 
 
-At this point it is reasonable to think that, to obtain the best results when
-using PBT over complex systems, one is forced to put a large amount of time into
-developing manually-written generators.
-%
-In practice, that is most often the case, no automatic effort can beat a
-well-thought manually-written generator that produces interesting complex values
-and finds bugs in very few tests.
-%
-Not all is lost, however.
-%
-It is still possible to obtain acceptable results automatically by incorporating
-dynamic information from the system under test into the testing loop.
-%
-The next subsection introduces the clever technique used by \fuzzchick to find
-bugs in complex systems while using simple automatically derived random
-generators.
+%% At this point it is reasonable to think that, to obtain the best results when
+%% using PBT over complex systems, one is forced to put a large amount of time into
+%% developing manually-written generators.
+%% %
+%% In practice, that is most often the case, no automatic effort can beat a
+%% well-thought manually-written generator that produces interesting complex values
+%% and finds bugs in very few tests.
+%% %
+%% Not all is lost, however.
+%% %
+%% It is still possible to obtain acceptable results automatically by incorporating
+%% dynamic information from the system under test into the testing loop.
+%% %
+%% The next subsection introduces the clever technique used by \fuzzchick to find
+%% bugs in complex systems while using simple automatically derived random
+%% generators.
 
 %% Far from trying to compete against manual-efforts, our work focuses on improving
 %% automatic approaches so they can be used paliatively in earlier development
 %% stages.
 
-\subsection{Coverage-Guided Property-Based Testing with \fuzzchick}
+\subsection{Coverage-Guided Property-Based Testing}
 
-To alleviate the problem of testing properties with sparse preconditions while
-using automatically derived random generators, \fuzzchick introduces
-\emph{coverage-guided, property-based testing} (CGPT), a technique that enhances
-the testing process with two key characteristics:
+To alleviate the problem of testing properties with non-trivial preconditions
+while using automatically derived random generators,
+\citeauthor{lampropoulos2019coverage} introduced \emph{coverage-guided,
+  property-based testing} (CGPT), a technique that enhances the testing process
+with two key characteristics:
 %
 \begin{inparaenum}
 \item \emph{target code instrumentation}, to capture execution information from
   each test case; and
-\item \emph{high-level, type-preserving mutations}, to produce syntactically
-  valid test cases by altering existing ones at the data type level.
+\item \emph{high-level, structure-preserving mutations}, to produce
+  syntactically valid test cases by altering existing ones at the data type
+  level.
 \end{inparaenum}
 
 Using code instrumentation in tandem with mutations is a well-known technique in
@@ -827,21 +678,20 @@ code.
 Later, such tools use generic mutators to combine and produce new test cases
 from previously executed interesting ones.
 %
-\fuzzchick, however, does this in a clever way.
+CGPT, however, does this in a clever way.
 %
 Instead of mutating any previously executed test case that discovers a new part
-of the code, \fuzzchick integrates these fuzzing techniques into the PBT testing
-loop itself.
+of the code, this technique integrates these fuzzing mechanisms into the PBT
+testing loop itself.
 
 
 Since it is possible to distinguish semantically valid test cases from invalid
-ones, i.e., those passing the sparse preconditions of our testing properties as
-opposed to those that are discarded early, \fuzzchick exploits this information
-in order to focus the testing efforts into mutating valid test cases with a
-higher priority than those that were discarded.
+ones, i.e., those passing the testing property preconditions as opposed to those
+that are discarded early, CGPT exploits this information to prefer mutating
+valid test cases than discarded ones.
 
 
-In addition, high-level, type-preserving mutators are better suited for
+In addition, high-level, structure-preserving mutators are better suited for
 producing syntactically valid mutants, avoiding the time wasted by using generic
 low-level mutators that act over the ``serialized'' test cases and know very
 little about their structure, thus producing syntactically broken mutants most
@@ -854,34 +704,35 @@ Tools like LangFuzz \cite{holler2012fuzzing}, Superion \cite{wang2019superion},
 XSmith \cite{xsmith} use existing grammars to tailor the mutators to the
 specific input structure used by the system under test.
 %
-In \fuzzchick, external grammars are not required.
+In CGPT, external grammars are not required.
 %
 The data types used by the inputs of the testing properties already describe the
 structure of the random data we want to mutate in a concrete manner, and
 specialized mutators acting at the data constructor level can be automatically
 derived directly from their definition.
 
-The next subsections describe \fuzzchick's testing loop and type-preserving
-mutations in detail.
+%% The next subsections describe the CGPT testing loop and structure-preserving
+%% mutations in detail.
 
-\subsubsection{Testing loop}
+%% \subsubsection{Testing loop}
 
-Outlined in Algorithm \ref{algo:fuzzchick:loop}, the process starts by creating
-two queues, \textit{QSucc} and \textit{QDisc} for valid and discarded previously
+\paragraph{Testing Loop}
+Outlined in Algorithm \ref{algo:fuzzchick:loop}, CGPT starts by creating two
+queues, \textit{QSucc} and \textit{QDisc} for valid and discarded previously
 executed test cases, respectively.
 %
-Enqueued values are stored along with a given mutation energy, that controls how
+Enqueued values are stored along with a given mutation budget, that controls how
 many times a given test case can be mutated before being finally thrown away.
 
 
-Once inside of the main loop, \fuzzchick picks the next test case using a simple
-criterion: if there are valid values enqueued for mutation, it picks the first
-one, mutates it and returns it, decreasing its energy by one.
+Once inside of the main loop, the algorithm picks the next test case using a
+simple criterion: if there are valid values enqueued for mutation, it picks the
+first one, mutates it and returns it, decreasing its energy by one.
 %
 If \textit{QSucc} is empty, then the same is attempted using \textit{QDisc}.
 %
-If none of the mutation queues contain any candidates, \fuzzchick generates a
-new value from scratch.
+If none of the mutation queues contain any candidates, CGPT generates a new
+value from scratch.
 %
 This selection process is illustrated in detail in Algorithm
 \ref{algo:fuzzchick:pick}.
@@ -893,7 +744,7 @@ and its execution trace over the system under test.
 %
 If the test case fails, it is immediately reported as a bug.
 %
-If not, \fuzzchick evaluates whether it was interesting (i.e., it exercises a
+If not, the algorithm evaluates whether it was interesting (i.e., it exercises a
 new path) based on its trace information and the one from previously executed
 test cases (represented by \textit{TLog}).
 %
@@ -906,18 +757,16 @@ This process alternates between generation and mutation until a bug is found or
 we reach the test limit.
 
 
-The energy assigned to each test case follows that of AFL's power schedule: more
-energy to test cases that lead to shorter executions, or that discover more
-parts of the code.
-%
-Moreover, to favor mutating interesting valid test cases, they get more energy
-than those that were discarded.
-
-
+%% The energy assigned to each test case follows that of AFL's power schedule: more
+%% energy to test cases that lead to shorter executions, or that discover more
+%% parts of the code.
+%% %
+%% Moreover, to favor mutating interesting valid test cases, they get more energy
+%% than those that were discarded.
 
 \begin{algorithm}
   \SetArgSty{textnormal}
-  \SetInd{0em}{0.75em}
+  %% \SetInd{0em}{0.75em}
   \SetKw{KwNot}{not}
   \SetAlgoLined
   \DontPrintSemicolon
@@ -942,12 +791,12 @@ than those that were discarded.
     }
     \KwRet Ok\;
   }
-\caption{\label{algo:fuzzchick:loop}\fuzzchick Testing Loop}
+\caption{\label{algo:fuzzchick:loop}CGPT Testing Loop}
 \end{algorithm}
 
 \begin{algorithm}
   \SetArgSty{textnormal}
-  \SetInd{0em}{0.75em}
+  %% \SetInd{0em}{0.75em}
   \SetKw{KwNot}{not}
   \SetAlgoLined
   \DontPrintSemicolon
@@ -970,30 +819,42 @@ than those that were discarded.
     }
     \lElse{\KwRet Sample(gen)}
   }
-\caption{\label{algo:fuzzchick:pick}\fuzzchick Seed Selection}
+\caption{\label{algo:fuzzchick:pick}CGPT Seed Selection}
 \end{algorithm}
 
-\subsubsection{Type-preserving mutations}
+%% \subsubsection{Type-preserving mutations}
 
-Mutators in \fuzzchick are no more than specialized random generators,
-parameterized by the original input to be mutated.
-%
-They use a simple set of mutation operations that are randomly applied at the
-data type level.
+\paragraph{Structure-preserving Mutators}
+
+%% are no more than specialized random generators, parameterized
+%% by the original input to be mutated.
+%% %
+%% They
+
+Mutators in GCPT use a simple set of mutation operations that are randomly
+applied to their inputs at the data type level.
 %
 In simple terms, these operations encompass
 %
 \begin{inparaenum}
-\item \emph{shrinking the value}, replacing its outermost data constructor with
-  one that contains a subset of its fields, reusing existing subexpressions;
-\item \emph{growing the value}, replacing its outermost data constructor with
-  one that contains a superset of its fields, reusing existing subexpressions
-  and generating random ones when needed;
-\item \emph{returning a subexpression of the same type}; and
+\item \emph{swapping a data constructor}, replacing its outermost data
+  constructor by another one, e.g., a \texttt{Leaf} by a \texttt{Branch} and
+  vice-versa, either dropping unused subexpressions or generating new random
+  ones when the new data constructor contains extra fields that cannot be filled
+  using existing ones;
+%% \item \emph{shrinking the value}, replacing its outermost data constructor with
+%%   one that contains a subset of its fields, reusing existing subexpressions;
+%% \item \emph{growing the value}, replacing its outermost data constructor with
+%%   one that contains a superset of its fields, reusing existing subexpressions
+%%   and generating random ones when needed;
+\item \emph{returning a subexpression of the same type}, e.g, returning a left
+  or right subtree when applied to a \texttt{Branch}; and
 \item \emph{mutating recursively}, applying a mutation operation over an
   immediate subexpression.
 \end{inparaenum}
-
+%
+We will provide more details about structure-preserving mutations in Section
+\ref{sec:mutagen}.
 
 %% \begin{figure}
 %% \vspace{-5pt}
@@ -1013,75 +874,75 @@ In simple terms, these operations encompass
 %% \caption{\label{fig:fuzzchick:mutator}\fuzzchick mutator for the \texttt{Tree} data type. }
 %% \end{figure}
 
-\begin{figure}
-%% \vspace{-5pt}
-\begin{verbatim}
-mutate_tree :: (a -> Gen a) -> Tree a -> Gen (Tree a)
-mutate_tree mutate_a (Leaf x) =
-  oneof [ Leaf <$> mutate_a x
-        , Branch <$> arbitrary <*> return x <*> arbitrary ]
-mutate_tree mutate_a (Branch l x r) =
-  oneof [ return l
-        , return r
-        , Leaf   <$> return x
-        , Branch <$> mutate_tree l <*> return x   <*> return r
-        , Branch <$> return l      <*> mutate_a x <*> return r
-        , Branch <$> return l      <*> return x   <*> mutate_tree r
-\end{verbatim}
-\caption{\label{fig:fuzzchick:mutator}\fuzzchick mutator for the \texttt{Tree} data type. }
-\end{figure}
+%% \begin{figure}
+%% %% \vspace{-5pt}
+%% \begin{verbatim}
+%% mutate_tree :: (a -> Gen a) -> Tree a -> Gen (Tree a)
+%% mutate_tree mutate_a (Leaf x) =
+%%   oneof [ Leaf <$> mutate_a x
+%%         , Branch <$> arbitrary <*> return x <*> arbitrary ]
+%% mutate_tree mutate_a (Branch l x r) =
+%%   oneof [ return l
+%%         , return r
+%%         , Leaf   <$> return x
+%%         , Branch <$> mutate_tree l <*> return x   <*> return r
+%%         , Branch <$> return l      <*> mutate_a x <*> return r
+%%         , Branch <$> return l      <*> return x   <*> mutate_tree r
+%% \end{verbatim}
+%% \caption{\label{fig:fuzzchick:mutator}\fuzzchick mutator for the \texttt{Tree} data type. }
+%% \end{figure}
 
-Fig. \ref{fig:fuzzchick:mutator} illustrates a \fuzzchick-like mutator for our
-previously used \texttt{Tree} data type example.
-%
-Since trees are parametric, for clarity this definition is also parameterized by
-a mutator for the payload (\texttt{mutate\_a}), although this can be abstracted
-away using the type class system.
+%% Fig. \ref{fig:fuzzchick:mutator} illustrates a \fuzzchick-like mutator for our
+%% previously used \texttt{Tree} data type example.
+%% %
+%% Since trees are parametric, for clarity this definition is also parameterized by
+%% a mutator for the payload (\texttt{mutate\_a}), although this can be abstracted
+%% away using the type class system.
 
-%% (where \texttt{mutate\_tree} and
-%% \texttt{mutate\_a} can be transparently coerced into an overloaded
-%% \texttt{mutate} function.)
+%% %% (where \texttt{mutate\_tree} and
+%% %% \texttt{mutate\_a} can be transparently coerced into an overloaded
+%% %% \texttt{mutate} function.)
 
 
-In this mutator, branches can be shrunk into leaves by dropping the subtrees,
-whereas leaves can grow into branches, by reusing the payload and generating two
-random subtrees.
-%
-Moreover, branches can be replaced with one of their subtrees.
-%
-Finally, mutations can be recursively applied over both the payload and the
-subtrees.
-%
-At the top level, all these operations are put together using the \texttt{oneof}
-combinator that randomly picks one of them with uniform probability.
+%% In this mutator, branches can be shrunk into leaves by dropping the subtrees,
+%% whereas leaves can grow into branches, by reusing the payload and generating two
+%% random subtrees.
+%% %
+%% Moreover, branches can be replaced with one of their subtrees.
+%% %
+%% Finally, mutations can be recursively applied over both the payload and the
+%% subtrees.
+%% %
+%% At the top level, all these operations are put together using the \texttt{oneof}
+%% combinator that randomly picks one of them with uniform probability.
 
 %
 % FuzzChick Limitations
 %
-\subsubsection{Limitations of \fuzzchick}
+\subsubsection{Limitations of CGPT}
 
-\citeauthor{lampropoulos2019coverage} demonstrated empirically that \fuzzchick
-lies comfortably in the middle ground between using pure random testing with
-na\"ive automatically derived random generators and complex manually-written
-ones.
+\citeauthor{lampropoulos2019coverage} demonstrated empirically that CGPT lies
+comfortably in the middle ground between using pure random testing with na\"ive
+automatically derived random generators and complex manually-written ones.
 %
-Their results suggest that CGPT is an appealing technique for finding bugs while
-still using a mostly automated workflow.
+%% Their results suggest that CGPT is an appealing technique for finding bugs while
+%% still using a mostly automated workflow.
 %
 However, the authors acknowledge that certain parts of its implementation have
 room for improvement, especially when it comes to the mutator's design.
 %
 %% Moreover, we replicated the Information-Flow Control (IFC) stack machine case
+%
 Moreover, we replicated the IFC stack machine case study bundled with \fuzzchick
-and observed a surprising limitation:
+(their reference implementation) and observed a surprising limitation:
 %
 \emph{after repeating each experiment 30 times, \fuzzchick could only find 5 out
   of the 20 injected bugs with a 100\% efficacy, the hardest one being found
   only around 13\% of the time after an hour of testing.}
 %
-Despite this, the authors show that \fuzzchick outperforms normal random testing
+Despite this, the authors show that CGPT outperforms normal random testing
 coupled with na\"ive random generators by comparing the mean-time-to-failure
-(MTTF) against \emph{QuickChick}.
+(MTTF) against normal random property-based testing.
 %
 In turn, we believe that a more meticulous evaluation ought to take failure to find a
 counterexample as an important metric when comparing PBT tools, not just mean
@@ -1090,9 +951,8 @@ time to failure --- when one is found.
 %% In tandem with the lack of efficacy observed when replicating the evaluation of
 %% the IFC stack machine case study,
 
-
-All these observations led us to consider three main aspects of \fuzzchick that
-can be improved upon --- and that constitute the main goal of this work.
+All these observations led us to consider three main aspects of CGPT that can be
+improved upon --- and that constitute the main goal of this work.
 %
 %% As mentioned earlier, when we recreated the evaluation of the IFC stack machine
 %% case study (described in detail in Section \ref{sec:casestudies}), we found that
@@ -1112,27 +972,35 @@ In no particular order:
 \begin{itemize}
 \item \emph{Mutators distribution:}
 %
-if we inspect the mutator defined in Fig. \ref{fig:fuzzchick:mutator}, there are
-two compromises that the authors of \fuzzchick adopted for the sake of
-simplicity.
+for the sake of simplicity, the mutators proposed by
+\citeauthor{lampropoulos2019coverage} are derived to follow a top-down approach,
+similar to that used by the automatically derived random generators.
 %
-On one hand, deep recursive mutations are very unlikely, since their probability
+In this light, a mutation can happen at top-level or be recursively applied to
+an immediate subexpression with approximately the same probability.
+%
+%%   if we inspect the mutator defined in Fig. \ref{fig:fuzzchick:mutator}, there are
+%% two compromises that the authors of \fuzzchick adopted for the sake of
+%% simplicity.
+%
+This makes deep recursive mutations very unlikely, since their probability
 decreases multiplicatively with each recursive call.
 %
-For instance, mutating a subexpression that lies on the fourth level of a
-\texttt{Tree} happens with a probability smaller than $(1/6)^3 = \sim 0.0046$,
-i.e., when applying a recursive mutation (with probability $1/6$) three
-consecutive times.
+%% For instance, mutating a subexpression that lies on the fourth level of a
+%% \texttt{Tree} happens with a probability smaller than $(1/6)^3 = \sim 0.0046$,
+%% i.e., when applying a recursive mutation (with probability $1/6$) three
+%% consecutive times.
 %
-This only worsens as the type of the mutated value becomes more complex.
+%% This only worsens as the type of the mutated value becomes more complex.
 %
-Hence, \fuzzchick mutators can only be effectively used to transform shallow
+Hence, these simple mutators can only be effectively used to transform shallow
 data structures, potentially excluding interesting applications that might
 require producing deeper valid values, e.g., programs, network protocol
 interactions, etc.
 %
-Ideally, mutations should be able to happen on every subexpression of the input
-seed on a reasonable basis.
+Ideally, \emph{mutations should be able to happen on every subexpression of the
+  input test case on a reasonable basis}.
+
 
 On the other hand, using random generators to produce needed subexpressions
 when growing data constructors can be dangerous, as we are introducing the very
@@ -1142,17 +1010,17 @@ If the random generator produces an invalid subexpression (something quite
 likely), this might just invalidate the whole mutated test case.
 %
 We believe that growing data constructors needs to be done carefully.
-%
-For instance, by using just a minimal piece of data to make the overall mutated
-test case type correct.
-%
-If that mutated test case turns to be interesting, that new subexpression can
-always be mutated later.
+%% %
+%% For instance, by using just a minimal piece of data to make the overall mutated
+%% test case type correct.
+%% %
+%% If that mutated test case turns to be interesting, that new subexpression can
+%% always be mutated later.
 
 \item \emph{Enqueuing mutation candidates:}
 %
-\fuzzchick uses two single queues for keeping valid and discarded mutation
-candidates.
+the CGPT testing loop uses two single queues for keeping valid and discarded
+mutation candidates.
 %
 Whenever a new test case is found interesting, it is placed \emph{at the end of
   its corresponding queue}.
@@ -1163,26 +1031,25 @@ gets processed.
 %
 This can limit the effectiveness of the testing loop if the queues tend to grow
 more often than they tend to shrink, as interesting mutation candidates can get
-buried at the end of a long queue that only exercises the same portion of the
-target code.
+``buried'' at the end of a long queue that only exercises the same portion of
+the target code.
 %
 In an extreme case, they might not be processed at all within the testing
 budget.
 %
-Ideally, one would like a mechanism that prioritizes mutating test cases that
-discover new portions of the code right away, and that is capable of jumping
-back and forth from mutation candidates whenever this happens.
+Ideally, \emph{one would like a mechanism that prioritizes mutating test cases
+  that discover new portions of the code right away}, and that is capable of
+jumping back and forth from mutation candidates whenever this happens.
 %
 %% We show in Section \ref{sec:heuristics} how this can be achieved by analyzing
 %% the execution information in order to prioritize test cases with novel execution
 %% traces.
 
-
 \item \emph{Power schedule:}
 %
-It is not clear how the power schedule used to assign energy to each mutable
-test case in \fuzzchick works in the context of high-level type-preserving
-mutations.
+it is not clear how the power schedule used to assign a given budget to each
+mutable test case in CGPT works in the context of high-level
+structure-preserving mutations.
 %
 If it assigns too much energy to certain not-so-interesting seeds, some bugs
 might not be discovered on a timely basis.
@@ -1201,18 +1068,17 @@ However, AFL uses a different mutation approach that works at the bit level.
 This raises the question about what is the best power schedule configuration
 when using a high-level mutation approach --- something quite challenging to
 characterize in general given the expressivity of the data types used to drive
-the mutators.\\
-
+the mutators.
 \end{itemize}
 
 
 The next section introduces \mutagen, our CGPT tool written in Haskell that aims
-to tackle the main limitations of \fuzzchick using an exhaustive mutation
-approach that requires very little randomness and no power schedule.
+to tackle the main limitations of CGPT using an exhaustive mutation approach
+that requires very little randomness and no power schedule.
 
 % ----------------------------------------
 
-\section{\mutagen: Testing Mutants Exhaustively}
+\section{\mutagen: No Mutant Left Behind}
 \label{sec:mutagen}
 
 In this section we describe the base ideas behind \mutagen, our CGPT tool
@@ -1486,7 +1352,7 @@ test cases from them before falling back to random generation.
 
 \begin{algorithm}
   \SetArgSty{textnormal}
-  \SetInd{0em}{0.75em}
+  %% \SetInd{1em}{em}
   \SetKw{KwNot}{not}
   \SetKw{KwIn}{in}
   \SetKwFor{KwRepeat}{repeat}{times}
@@ -1556,7 +1422,7 @@ precomputed one in line.
 
 \begin{algorithm}
   \SetArgSty{textnormal}
-  \SetInd{0em}{0.75em}
+  %% \SetInd{0em}{0.75em}
   \SetKw{KwNot}{not}
   \SetAlgoLined
   \DontPrintSemicolon
@@ -1588,7 +1454,7 @@ precomputed one in line.
 
 \begin{algorithm}
   \SetArgSty{textnormal}
-  \SetInd{0em}{0.75em}
+  %% \SetInd{0em}{0.75em}
   \SetKw{KwNot}{not}
   \SetAlgoLined
   \DontPrintSemicolon
@@ -1852,7 +1718,7 @@ novel.
 
 \begin{algorithm}
   \SetArgSty{textnormal}
-  \SetInd{0em}{0.75em}
+  %% \SetInd{0em}{0.75em}
   \SetKw{KwNot}{not}
   \SetAlgoLined
   \DontPrintSemicolon
@@ -1893,7 +1759,7 @@ novel.
 
 \begin{algorithm}
   \SetArgSty{textnormal}
-  \SetInd{0em}{0.75em}
+  %% \SetInd{0em}{0.75em}
   \SetKw{KwNot}{not}
   \SetAlgoLined
   \DontPrintSemicolon
