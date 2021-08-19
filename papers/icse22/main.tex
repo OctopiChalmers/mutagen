@@ -138,43 +138,34 @@
 
 \begin{abstract}
 Automatically synthesized random data generators are an appealing option when
-using property-based testing to validate our systems.
+using property-based testing.
 %
-Such random generators can be obtained using a variety of techniques that work
-by extracting static information from the codebase in order to produce random
-test cases.
+Such generators can be obtained using a variety of techniques that extract
+static information from the codebase in order to produce random test cases.
 %
-For the most part, however, such techniques are not suitable for deriving
-generators producing random values satisfying complex invariants, which in turn
-complicates testing properties with sparse preconditions.
+However, such techniques are not suitable for deriving generators producing
+random values satisfying complex invariants, which in turn complicates testing
+properties with sparse preconditions.
 
 
-%% \fuzzchick is a recent tool that borrows ideas from the fuzzing community to
-%% alleviate this limitation.
-%
-\fuzzchick is a coverage-guided, property-based testing (CGPT) tool that
+Coverage-guided, property-based testing (CGPT) is a recent technique that
 alleviates this limitation by enhancing automatically synthesized generators
 with type-preserving mutations guided by execution traces.
 %
-Despite being enlightening, we observed several limitations in the
-implementation of \fuzzchick that reduce its applicability.
-%
-These limitations include a large reliance on randomness when mutating test
-cases, as well as poor scheduling in certain situations, among others.
+Albeit effective, the initial CGPT approach is limited by factors like large
+reliance on randomness and poor mutants scheduling, reducing its applicability
+and bug-finding capacity.
 
 
-In this work we present \mutagen, a CGPT framework that builds upon the ideas
-behind \fuzzchick.
-%
-Instead of relying heavily on randomness, \mutagen uses an exhaustive approach
-to generate new mutants.
+In this work we present \mutagen, a CGPT framework that overcomes these
+limitations by generating mutants in an \emph{exhaustive} manner.
 %
 This is coupled with heuristics that help to schedule mutants based on their
 novelty and to minimize mutating subexpressions of large enumeration types more
 than necessary.
 %
-Our results indicate that our approach is capable of outperforming the simpler
-one used by \fuzzchick, as well as finding bugs in real-world scenarios.
+Our results indicate that our approach is capable of outperforming existing CGPT
+tools, as well as finding bugs in real-world scenarios.
 \end{abstract}
 
 % ----------------------------------------
