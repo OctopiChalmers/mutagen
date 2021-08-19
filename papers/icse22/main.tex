@@ -56,8 +56,8 @@
 %% \acmDOI{10.1145/1122445.1122456}
 
 %% These commands are for a JOURNAL article.
-\acmConference[OOPSLA '21]{OOPSLA '21: ACM SIGPLAN conference on Systems,
-  Programming, Languages, and Applications}{October 17--22 2021}{Chicago, IL}
+\acmConference[ICSE 2022]{The 44th International Conference on Software
+  Engineering}{May 21–29, 2022}{Pittsburgh, PA, USA}
 
 %% \acmJournal{JACM}
 %% \acmVolume{37}
@@ -202,19 +202,25 @@ tools, as well as finding bugs in real-world scenarios.
 
 %% PBT and generation of interesting data for free
 %
-Property-Based Testing (PBT) is a popular technique for finding bugs using
-executable properties that encode the expected behavior of our systems.
+Popularized by \quickcheck \cite{ClaessenH00}, Random Property-Based Testing
+(RPBT) is a popular technique for finding bugs
+\cite{ClaessenH00,hughes2003erlang, papadakis2011proper, bulwahn2012new,
+  denes2014quickchick}.
 %
-Exemplified by frameworks like Haskell's \quickcheck \cite{ClaessenH00} and the
-abundant ports of this tool in other programming languages
-\cite{hughes2003erlang, papadakis2011proper, bulwahn2012new,
-  denes2014quickchick}, the most common PBT approach is to instantiate the
-testing properties using randomly generated inputs.
-
-
-Users of \quickcheck (and PBT in general) are well aware that one of the biggest
-challenges while using these frameworks is to provide suitable random data
-generators needed to instantiate the testing properties.
+This is achieved by using randomly generated inputs to instantiate executable
+properties encoding the expected behavior of the system under test.
+%
+%% Exemplified by frameworks like Haskell's \quickcheck \cite{ClaessenH00} and the
+%% Abundant ports of this tool in other programming languages
+%% \cite{hughes2003erlang, papadakis2011proper, bulwahn2012new,
+%%   denes2014quickchick}
+%
+%% The most common PBT approach is to instantiate the testing properties using
+%% randomly generated inputs.
+%
+However, users of \quickcheck (and RPBT in general) are well aware that one of
+the biggest challenges while using this technique is to provide suitable random
+data generators needed to instantiate the testing properties.
 %
 In some extreme cases, writing highly-tuned random generators capable of
 exercising every part of a complex system on a reasonable basis can take several
@@ -238,43 +244,46 @@ Moreover, automatically synthesized random generators offer particularly poor
 results when the testing properties are constrained by sparse preconditions.
 %
 In this scenario, most of the generated tests are simply thrown away before they
-can be used to test the main components of our system.
+can be used to test the main components of the system under test.
 
 
 %% FuzzChick: PBT + code instrumentation + type-preserving mutations
-\fuzzchick \cite{lampropoulos2019coverage} is a property-based testing framework
-for the Coq programming language that borrows ideas from the fuzzing community
-to generate highly structured values while using automatically derived
-generators.
+%% \fuzzchick \cite{lampropoulos2019coverage} is a property-based testing framework
+%% for the Coq programming language that
 %
-Notably, this tool is implemented as an extension of \quickchick
-\cite{denes2014quickchick}, Coq's own reimplementation of \quickcheck.
-
-
-%Instead of continuously generating random invalid test cases from scratch,
-\fuzzchick keeps a queue of interesting previously executed test cases that can
-be mutated using high-level, type-preserving transformations to produce new
-ones.
+Coverage-Guided, Property-Based Testing (CGPT) \cite{lampropoulos2019coverage}
+is a technique that borrows ideas from the fuzzing community to generate highly
+structured values while still using automatically derived generators.
+%
+%% Notably, this tool is implemented as an extension of \quickchick
+%% \cite{denes2014quickchick}, Coq's own reimplementation of \quickcheck.
+%
+Instead of continuously generating random invalid test cases from scratch, CGPT
+works by keeping a queue of \emph{interesting} previously executed test cases
+that can be mutated to produce new ones.
+%
+Mutations are achieved using high-level, structure-preserving transformations
+that can be derived directly from the codebase.
 %
 Intuitively, mutating an interesting test case in a small way (at the data
-constructor level) has a much higher probability of producing a new interesting
-test case than generating a new one from scratch using a na\"ive generator.
+constructor level) has a higher probability of producing a new interesting test
+case than generating a new one using a na\"ive generator.
 %
-In this light, \fuzzchick is likely to preserve the semantic structure of the
-mutated data, as mutations are applied directly at the data type level, e.g.,
-the program's AST in case of generating code.
+In this light, CGPT is likely to preserve the semantic structure of the mutated
+data, as mutations are applied directly at the data type level, e.g., the
+program's AST in case of generating code.
 %
-Internally, \fuzzchick relies on execution traces to distinguish which executed
-test cases were interesting and are therefore worth mutating --- a popular
-technique known as \emph{coverage-guided fuzzing} and popularized by tools like
-\emph{AFL} \cite{afl}.
+Moreover, CGPT relies on execution traces to distinguish which executed test
+cases were interesting and are therefore worth mutating --- a popular technique
+known as \emph{coverage-guided fuzzing} and popularized by tools like \emph{AFL}
+\cite{afl}.
 %
 Mutated test cases are considered interesting for mutation only when they
 produce new execution traces --- any other test case is simply thrown away.
 %
-Worth mentioning, the techniques behind \fuzzchick are not meant to replace
-sophisticated, manually written random generators, but rather to provide an
-adequate testing solution for early stages of development.
+Worth mentioning, this technique is not meant to replace sophisticated, manually
+written random generators, but rather to provide an adequate testing solution
+for early stages of development.
 %, and while a better test suite using manually-written generators is
 %still under construction.
 
@@ -339,20 +348,25 @@ adequate testing solution for early stages of development.
 %% Notably, we establish several aspects of \fuzzchick that can be
 %% revised.%
 %
-The approach taken by \fuzzchick leaves considerable room for
-improvements in several aspects.%
-\footnote{Some of these were already identified by the authors of \fuzzchick in
-  their original work.}
-%But \fuzzchick suffers several disadvantages.%
+%% The approach taken by \fuzzchick leaves considerable room for
+%% improvements in several aspects.%
+%
+
+In this work, we establish several aspects of the original CGPT approach by
+\citeauthor{lampropoulos2019coverage} that leave considerable room for
+improvement.%
+%
+\footnote{Some of these were already identified by
+  \citeauthor{lampropoulos2019coverage} in their original work.}
 %
 In particular:
 %
 \begin{inparaenum}
-\item type-preserving mutations, if not done carefully, can become superficial
-  and rely heavily on randomness to produce diverse mutants,
+\item structure-preserving mutations, if not done carefully, can become
+  superficial and rely heavily on randomness to produce diverse mutants,
 \item the queuing mechanism can cause large delays if interesting values are
   enqueued frequently and there is no way to prioritize them, and
-\item using an heuristic to assign a certain ``mutation energy'' to each
+\item using an heuristic to assign a certain ``mutation budget'' to each
   interesting test case (often referred to as a \emph{power schedule}) requires
   fine tuning and can be hard to generalize to work well under different testing
   scenarios.
@@ -377,20 +391,24 @@ In particular:
 
 
 %% Our solution
-In this work, we introduce \mutagen, a PBT tool implemented in Haskell
-that also builds upon code instrumentation and type-preserving mutations (see
+In this work, we introduce \mutagen, a CGPT framework that tackles the
+aforementioned limitations by applying mutations \emph{exhaustively} (see
 Section \ref{sec:mutagen}).
+%
+%% implemented in Haskell
+%% that also builds upon code instrumentation and type-preserving mutations
+%
 %
 % the basic ideas behind \fuzzchick, i.e.,
 %
 %% \mutagen is introduced in detail in Section \ref{sec:mutagen}.
 %
 %% Exhaustive mutations
-Unlike \fuzzchick, mutations in \mutagen are applied \emph{exhaustively}.
+%% Unlike \fuzzchick, mutations in \mutagen are applied \emph{exhaustively}.
 %
 That is, given an interesting, previously executed test case, our tool
-precomputes and schedules every type-preserving mutation that can be applied to
-it.
+precomputes and schedules every structure-preserving mutation that can be
+applied to it.
 %
 This approach has two inherent advantages. %when compared to \fuzzchick.
 %
@@ -411,11 +429,11 @@ power schedule to assign a given mutation energy to each input test case.
 %%   are always exhaustive.}
 %
 Our tool distinguishes two kinds of mutations, those that can be computed
-purely, yielding a single deterministic mutated value; and those that can be
+deterministically, yielding a single mutated value; and those that can be
 obtained non-deterministically.
 %
-On one hand, pure mutations encode transformations that swap data constructors
-around, as well as return or rearrange subexpressions.
+On one hand, deterministic mutations encode transformations that swap data
+constructors around, as well as return or rearrange subexpressions.
 %
 Non-deterministic (random) mutations, on the other hand, are useful to represent
 transformations over large enumeration types, e.g., numbers, characters, etc.
@@ -445,13 +463,15 @@ Moreover, our scheduling lets the testing loop jump back and forth between
 mutable test cases as soon as a new more interesting one is enqueued for
 mutation, eliminating potential delays when the mutation queues grow large.
 
-The second heuristic is used to tune the number of times our tool samples random
-mutants, i.e., those corresponding to large enumeration types as described above.
+
+The second heuristic adjusts the number of times our tool samples random
+mutants, i.e., those corresponding to large enumeration types as described
+above.
 %
 For this, we keep track of how often we generate interesting test cases.
 %
-If this frequency suddenly stalls, \mutagen automatically resets the testing
-loop increasing the amount of times we sample such mutants.
+If this frequency suddenly stalls, \mutagen resets the testing loop increasing
+the amount of times we sample such mutants.
 %
 This automatically finds a suitable value for this external parameter on the
 fly.
@@ -460,20 +480,21 @@ fly.
 %% Validation
 To validate our ideas, we use two main case studies (described in detail in
 Section \ref{sec:casestudies}): the Information-Flow Control (IFC) stack machine
-used by \citeauthor{lampropoulos2019coverage} in their original work of
-\fuzzchick, and an existing WebAssembly engine of industrial strenght written in
-Haskell.
+used by \citeauthor{lampropoulos2019coverage} in their original work, and an
+existing WebAssembly engine of industrial strenght written in Haskell.
 %
 In both case studies, we additionally compare the effect of the heuristics
 implemented on top of the base testing loop of \mutagen.
 %
-In the IFC stack machine case study, we compare \fuzzchick against different
-variants of our tool, where our results (Section \ref{sec:evaluation}) indicate
-that \mutagen outperforms \fuzzchick both in terms of time to failure and
-failure rate.
+In the IFC stack machine case study, we compare \mutagen against \fuzzchick, the
+reference CGPT implementation by \citeauthor{lampropoulos2019coverage}
+implemented in Coq.
+%
+Our results (Section \ref{sec:evaluation}) indicate that \mutagen outperforms
+\fuzzchick both in terms of time to failure and failure rate.
 %
 On the other hand, our WebAssembly case study shows the performance of our tool
-in a more realistic scenario.
+in a realistic scenario.
 %
 There, \mutagen is capable of reliably finding 15 planted bugs in the validator
 and interpreter, as well as 3 previously unknown bugs that flew under the radar
@@ -486,11 +507,9 @@ All in all, our evaluation encompasses more than 600 hours of computing time and
 suggests that testing mutants exhaustively can be an appealing technique for
 finding bugs reliably without sacrificing speed.
 
-
 %% Last two sections
 Finally, we discuss related work in Section \ref{sec:related} and conclude
 in Section \ref{sec:conclusions}.
-
 
 
 % ----------------------------------------
