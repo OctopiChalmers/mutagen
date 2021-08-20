@@ -44,6 +44,7 @@
 
 \setlength{\skip\footins}{5pt}
 
+
 % ----------------------------------------
 
 %% Rights management information. This information is sent to you when you
@@ -1072,79 +1073,89 @@ the mutators.
 \end{itemize}
 
 
-The next section introduces \mutagen, our CGPT tool written in Haskell that aims
-to tackle the main limitations of CGPT using an exhaustive mutation approach
-that requires very little randomness and no power schedule.
+The next section introduces \mutagen, our CGPT tool that aims to tackle the main
+limitations of CGPT.
 
 % ----------------------------------------
 
 \section{\mutagen: No Mutant Left Behind}
 \label{sec:mutagen}
 
-In this section we describe the base ideas behind \mutagen, our CGPT tool
-written in Haskell.
+In this section we describe the main ideas behind \mutagen, our enhanced CGPT
+tool written in Haskell.
 %
-Notably, the ideas presented in this work extend beyond Haskell and functional
-programming languages in general.
+Notably, these ideas extend beyond Haskell and functional programming languages
+in general.
 %
 %% Later, Section \ref{sec:heuristics} introduces heuristics that help finding bugs
 %% faster in certain testing scenarios.
 
-In contrast with \fuzzchick, \mutagen does not employ a power schedule to assign
-energy to mutable candidates.
-%
-In turn, it resorts to mutate them on an exhaustive and precise manner, where
+In contrast to CGPT, and many other popular fuzzing tools for that matter,
+\mutagen works by to mutating test cases on an exhaustive and precise manner,
+where
 %
 \begin{inparaenum}
-  \item each subexpression of a mutation candidate is associated with a set of
-    type-preserving mutations, and
-  \item for every mutable subexpression, each one of these mutations is
-    scheduled \emph{exactly once}.
+  \item each subexpression of a mutable test case is associated with a set of
+    structure-preserving mutations, and
+  \item each one of these mutations is scheduled \emph{exactly once}.
 \end{inparaenum}
 %
 %% There is a small exception to this rules that we will introduce soon.
-
-This idea is inspired by exhaustive bounded testing tools like \emph{SmallCheck}
+%
+Our realization is that, by following an exhaustive mutation approach, we can
+avoid the need for a power schedule, i.e., a heuristic to assign a certain
+mutation budget to each mutated test case.
+%
+Moreover, producing mutants exhaustively ensures that no interesting mutation is
+omitted due to randomness, as well a no mutation is evaluated more than once.
+%
+This is inspired by exhaustive bounded testing tools like \emph{SmallCheck}
 \cite{runciman2008smallcheck} or \emph{Korat} \cite{boyapati2002korat}, that
-produce test cases exhaustively.
-%
-In simple words, such tools work by enumerating all possible values of the data
-types used in the testing properties, and then executing them from smaller to
-larger until a bug is found, or a certain size bound is reached.
-%
-The main problem with this approach is that the space of all possible test cases
-often grows exponentially as we increment the size bound, and the user
-experiences what it looks like ``hitting a wall'', where no larger test cases
-can be evaluated until we exhausted all the immediately smaller ones
-\cite{DuregardJW12}.
-%
-To alleviate this problem, such tools often rely on heuristics to prune the
-search space based on detecting unused subexpressions --- this is discussed in
-Section \ref{sec:related}.
+produce test cases exhaustively --- please refer to Section \ref{sec:related}
+for a detailed discussion.
+
+
+The rest of this section describes our exhaustive mutation mechanism, as well as
+the adapted testing loop used in \mutagen.
+
+%% In simple words, such tools work by enumerating all possible values of the data
+%% types used in the testing properties, and then executing them from smaller to
+%% larger until a bug is found, or a certain size bound is reached.
+%% %
+%% The main problem with this approach is that the space of all possible test cases
+%% often grows exponentially as we increment the size bound, and the user
+%% experiences what it looks like ``hitting a wall'', where no larger test cases
+%% can be evaluated until we exhausted all the immediately smaller ones
+%% \cite{DuregardJW12}.
+%% %
+%% To alleviate this problem, such tools often rely on heuristics to prune the
+%% search space based on detecting unused subexpressions --- this is discussed in
+%% Section \ref{sec:related}.
 
 %% In consequence, such tools can only be applied to relatively simple systems,
 %% where the space of inputs does not grow extremely fast.
 
-
-Not to be confused by these tools, in \mutagen we do not enumerate all possible
-test cases exhaustively.
-%
-Our tool uses random generators to find interesting initial seeds, and when it
-finds them, only then proceeds to schedule all possible mutations.
-%
-Moreover, as in \fuzzchick, the testing loop of our tool automatically filters
-the test cases that are worth mutating by keeping only those that discover new
-execution paths in the code under test.
+%% Not to be confused by these tools, in \mutagen we do not enumerate all possible
+%% test cases exhaustively.
+%% %
+%% Our tool uses random generators to find interesting initial seeds, and when it
+%% finds them, only then proceeds to schedule all possible mutations.
+%% %
+%% Moreover, as in \fuzzchick, the testing loop of our tool automatically filters
+%% the test cases that are worth mutating by keeping only those that discover new
+%% execution paths in the code under test.
 
 
 \subsection{Exhaustive Mutations}
 
-To describe \mutagen's testing loop, we first need to introduce the mechanism
-used for testing mutations exhaustively.
-%
-In contrast to \fuzzchick, where mutators are parameterized random generators,
-in our tool we define mutations as the set of mutants that can be obtained by
-altering the input value at the top-level (the root).
+%% Before describing \mutagen's testing loop, we first need to introduce the
+%% mechanism used for testing mutations exhaustively.
+%% %
+%% In contrast to \fuzzchick, where mutators are parameterized random generators,
+%% in our tool
+
+Mutations in \mutagen are defined as the set of mutants that can be obtained by
+transforming the input test case \emph{at the top-level} (the root).
 %
 In Haskell, we define mutations as:
 
@@ -1174,8 +1185,8 @@ These transformations can:
 To illustrate this, Fig. \ref{fig:mutagen:mutator} outlines a mutator for the
 \texttt{Tree} data type.
 %
-Notice how this definition simply enumerates mutants that transform the
-outermost data constructor, hence no recursion is needed here.
+Notably, this definition simply enumerates mutants that transform the outermost
+data constructor, hence no recursion is needed here.
 %
 Moreover, notice how a default value (\texttt{def}) used to fill the subtrees
 when transforming a leaf into a branch.
@@ -1205,7 +1216,7 @@ avoids introducing unnecessary randomness when growing data constructors.
 %% \vspace{-10pt}
 %% \end{figure}
 
-\begin{figure}
+\begin{figure}[t]
 \begin{verbatim}
 mutate (Leaf x)       = [ PURE (Branch def x def) ]
 mutate (Branch l x r) = [ PURE l, PURE r
@@ -1228,15 +1239,15 @@ mutate (Branch l x r) = [ PURE l, PURE r
 %% %
 %% \emph{Certainly not.}
 %
-Random mutants, on the other hand, serve as a way to break exhaustiveness when
-mutating values of large enumeration types --- or any other type the user might
-want to use random mutations with.
+Random mutants, on the other hand, serve as a way to \emph{selectively avoid
+  exhaustiveness} when mutating values of large enumeration types --- or any
+other type the user might want to use random mutations with.
 %
 Instead of mutating every numerical or character subexpression exhaustively, we
 resolve in using a random generator and sample a small number of values from it
 --- the precise amount is a tunable parameter of \mutagen.
 %
-This way, a mutator for integers simply becomes:
+Then, for instance, a mutator for integers becomes:
 
 \begin{verbatim}
 mutate n = [ RAND arbitrary ]
@@ -1249,15 +1260,11 @@ So far we have defined mutations that transform only the root of the input.
 %
 Now it is time to apply these mutations to every subexpression as well.
 %
-To do so, we will use two functions that can be derived from the data type
-definition.
-
+To do so, we will use two functions that can be derived from the code.
 
 In first place, a function \texttt{positions} traverses the input and builds a
-Rose tree of mutable positions.
-%
-These positions are essentially a list of indices encoding the path from the
-root to every mutable subexpression.
+Rose tree of \emph{mutable positions}, where positions are lists of indices
+encoding the path from the root to every mutable subexpression.
 %
 For instance, the positions of a \texttt{Tree} are computed as follows:
 
@@ -1323,11 +1330,11 @@ A slightly simplified version of this function for the \texttt{Tree} data type i
 as follows:
 
 \begin{verbatim}
-inside []      x              = mutate x
-inside (0:pos) (Leaf x)       = [ Leaf x'       | x' <- inside pos x ]
-inside (0:pos) (Branch l x r) = [ Branch l' x r | l' <- inside pos l ]
-inside (1:pos) (Branch l x r) = [ Branch l x' r | x' <- inside pos x ]
-inside (2:pos) (Branch l x r) = [ Branch l x r' | r' <- inside pos r ]
+inside []     x              = mutate x
+inside (0:ps) (Leaf x)       = [ Leaf x'       | x' <- inside ps x ]
+inside (0:ps) (Branch l x r) = [ Branch l' x r | l' <- inside ps l ]
+inside (1:ps) (Branch l x r) = [ Branch l x' r | x' <- inside ps x ]
+inside (2:ps) (Branch l x r) = [ Branch l x r' | r' <- inside ps r ]
 \end{verbatim}
 
 \noindent This function simply traverses the desired position, calling itself
@@ -1346,79 +1353,9 @@ base testing loop used by \mutagen.
 %
 This is outlined in Algorithm \ref{algo:mutagen:loop}.
 %
-As it can be observed, we closely follow \fuzzchick's testing loop, using two
-queues to keep mutable candidates, and enqueueing and retrieving interesting
-test cases from them before falling back to random generation.
-
-\begin{algorithm}
-  \SetArgSty{textnormal}
-  %% \SetInd{1em}{em}
-  \SetKw{KwNot}{not}
-  \SetKw{KwIn}{in}
-  \SetKwFor{KwRepeat}{repeat}{times}
-  \SetAlgoLined
-  \DontPrintSemicolon
-  \SetKwFunction{Muts}{Mutate}
-  \SetKwProg{Fn}{Function}{:}{}
-  \Fn{\Muts{x, mut, R}}{
-    batch $\gets$ $\varnothing$\;
-    \For{pos \KwIn Flatten(Positions(x))}{
-      \For{mutant \KwIn Inside(pos, mut, x)}{
-        \Switch{mutant}{
-          \Case{\texttt{PURE} $\hat{x}$}{
-            Enqueue($\hat{x}$, batch)\;
-          }
-          \Case{\texttt{RAND} gen}{
-            \KwRepeat{R}{
-              $\hat{x}$ $\gets$ Sample(gen)\;
-              Enqueue($\hat{x}$, batch)\;
-            }
-          }
-        }
-      }
-    }
-    \KwRet batch\;
-  }
-\caption{\label{algo:mutagen:init}Mutants Initialization}
-\end{algorithm}
-
-
-The main difference lies in that we precompute all the mutations of a given
-mutation candidate before enqueueing them.
-%
-These mutations are put together into lists that we call \emph{mutation batches}
---- one for each mutated test case.
-%
-To initialize a mutation batch (outlined in Algorithm \ref{algo:mutagen:init}),
-we first flatten all the mutable positions of the input value in level order
-(recall that positions are stored as a Rose tree).
-%
-Then, we iterate over all of them and retrieve all the mutants defined for each
-subexpression.
-%
-For each one of these, there are two possible cases:
-%
-\begin{inparaenum}
-\item if it is a pure mutant carrying a concrete mutated value, we enqueue it
-  into the mutation batch directly; otherwise
-\item it is a random mutant that carries a random generator with it (e.g.,
-  corresponding to a numeric subexpression), in which case we sample and enqueue
-  \textit{R} random values using this generator, where \textit{R} is a parameter
-  set by the user.
-\end{inparaenum}
-%
-At the end, we simply return the accumulated batch.
-
-
-Finally, the seed selection algorithm (Algorithm \ref{algo:mutagen:pick}) simply
-selects the next test case using the same criteria as \fuzzchick, prioritizing
-valid candidates over discarded ones, falling back to random generation when
-both queues are empty.
-%
-Since mutations are precomputed, this function only needs to pick the next test
-case from the current batch, until it becomes empty and can switch to the next
-precomputed one in line.
-
+As it can be observed, we follow the CGPT testing loop, using two queues to keep
+mutable test cases, and enqueueing and retrieving interesting test cases from
+them before falling back to random generation.
 
 \begin{algorithm}
   \SetArgSty{textnormal}
@@ -1454,6 +1391,98 @@ precomputed one in line.
 
 \begin{algorithm}
   \SetArgSty{textnormal}
+  %% \SetInd{1em}{em}
+  \SetKw{KwNot}{not}
+  \SetKw{KwIn}{in}
+  \SetKwFor{KwRepeat}{repeat}{times}
+  \SetAlgoLined
+  \DontPrintSemicolon
+  \SetKwFunction{Muts}{Mutate}
+  \SetKwProg{Fn}{Function}{:}{}
+  \Fn{\Muts{x, mut, R}}{
+    batch $\gets$ $\varnothing$\;
+    \For{pos \KwIn Flatten(Positions(x))}{
+      \For{mutant \KwIn Inside(pos, mut, x)}{
+        \Switch{mutant}{
+          \Case{\texttt{PURE} $\hat{x}$}{
+            Enqueue($\hat{x}$, batch)\;
+          }
+          \Case{\texttt{RAND} gen}{
+            \KwRepeat{R}{
+              $\hat{x}$ $\gets$ Sample(gen)\;
+              Enqueue($\hat{x}$, batch)\;
+            }
+          }
+        }
+      }
+    }
+    \KwRet batch\;
+  }
+\caption{\label{algo:mutagen:init}Mutants Initialization}
+\end{algorithm}
+
+
+The difference with CGPT lies in that we precompute all the mutations of a given
+mutable test case before enqueueing them.
+%
+These mutations are put together into lists that we call \emph{mutation batches}
+--- one for each mutated test case.
+%
+To initialize a mutation batch (outlined in Algorithm \ref{algo:mutagen:init}),
+we first flatten all the mutable positions of the input test case in level order
+(recall that positions are stored as a Rose tree).
+%
+Then, we iterate over all of them and retrieve all the mutants defined for each
+subexpression.
+%
+For each one of these, there are two possible cases:
+%
+\begin{inparaenum}
+\item if it is a pure mutant carrying a concrete mutated value, we enqueue it
+  into the mutation batch directly; otherwise
+\item it is a random mutant that carries a random generator with it (e.g.,
+  corresponding to a numeric subexpression), in which case we sample and enqueue
+  \textit{R} random values using this generator, where \textit{R} is a parameter
+  set by the user.
+\end{inparaenum}
+%
+At the end, we simply return the accumulated batch.
+
+
+Finally, the seed selection algorithm (Algorithm \ref{algo:mutagen:pick}) picks
+the next test case using the same criteria as CGPT, prioritizing valid test
+cases over discarded ones, falling back to random generation when both queues
+are empty.
+%
+Since mutations are precomputed, this function simply picks the next test case
+from the current batch, until it becomes empty and can switch to the next
+precomputed one in line.
+
+
+
+Another difference is the criterion for enqueuing discarded tests.
+%
+We found that, especially for large data types, the queue of discarded
+candidates tends to grow disproportionately large during testing, making them
+hardly usable and consuming large amounts of memory.
+%
+To improve this, we resort to mutate discarded tests cases only when we have
+some evidence that they are ``almost valid.''
+%
+For this, each mutated test case remembers whether its parent (the original test
+case they derive from after being mutated) was valid.
+%
+Then, we enqueue discarded test cases only if they meet this condition.
+%
+As a result, we fill the discarded queue with lesser but much more interesting
+mutable test cases.
+%% %
+%% Moreover, this can potentially lead to \emph{2-step mutations}, where an initial
+%% mutation breaks a valid test case in a small way, it gets enqueued as discarded,
+%% and later a subsequent mutation fixes it by changing a different subexpression.
+
+\begin{algorithm}
+  \SetArgSty{textnormal}
   %% \SetInd{0em}{0.75em}
   \SetKw{KwNot}{not}
   \SetAlgoLined
@@ -1484,31 +1513,9 @@ precomputed one in line.
 \caption{\label{algo:mutagen:pick}\mutagen Seed Selection}
 \end{algorithm}
 
-Another small difference between \mutagen and \fuzzchick is the criterion for
-enqueuing discarded tests.
-%
-We found that, especially for large data types, the queue of discarded
-candidates tends to grow disproportionately large during testing, making them
-hardly usable and consuming large amounts of memory.
-%
-To improve this, we resort to mutate discarded tests cases only when we have
-some evidence that they are ``almost valid.''
-%
-For this, each mutated test case remembers whether its parent (the original test
-case they derive from after being mutated) was valid.
-%
-Then, we enqueue discarded test cases only if they meet this condition.
-%
-As a result, we fill the discarded queue with lesser but much more interesting
-mutation candidates.
-%
-Moreover, this can potentially lead to \emph{2-step mutations}, where an initial
-mutation breaks a valid test case in a small way, it gets enqueued as discarded,
-and later a subsequent mutation fixes it by changing a different subexpression.
 
-
-The next section introduces two heuristics we added to the base testing loop of
-\mutagen based on the limitations we found in \fuzzchick.
+The next section describes two heuristics we added to \mutagen's testing loop
+based on the limitations we found in CGPT.
 %
 %% These heuristics can that offer a substantial improvement in practice.
 
@@ -1520,8 +1527,8 @@ The next section introduces two heuristics we added to the base testing loop of
 In this section we introduce two heuristics implemented on top of the base
 testing loop of our tool.
 %
-\mutagen enables them all by default, although they can be individually disabled
-by the user if deems appropriate.
+\mutagen enables them all by default, and can be individually disabled by the
+user if needed.
 
 \subsection{Priority FIFO Scheduling}
 
@@ -1529,13 +1536,13 @@ This heuristic tackles the issue of enqueuing new interesting mutation
 candidates at the end of (possibly) long queues of not-so-interesting previously
 executed ones.
 
-\fuzzchick uses AFL instrumentation under the hood, which in turn uses an
-\emph{edge coverage} criterion to distinguish novel executions and to assign
-each mutation candidate a given energy.
-%
-In contrast, execution traces \mutagen represent the specific \emph{path} in the
-code taken by the program, as opposed to just the (unordered) set of edges
-traversed in the control-flow graph (CFG).
+%% \fuzzchick uses AFL instrumentation under the hood, which in turn uses an
+%% \emph{edge coverage} criterion to distinguish novel executions and to assign
+%% each mutation candidate a given energy.
+%% %
+Execution traces in \mutagen represent the specific \emph{path} in the code
+taken by the program, as opposed to just the (unordered) set of edges traversed
+in the control-flow graph (CFG) used by default by most coverage-guided fuzzers.
 %
 Using this criterion lets us gather precise information from each new execution.
 %
@@ -1548,13 +1555,12 @@ branches from already seen ones.
 %
 Our assumption here is that test cases that differ (branch) at shallower depths
 from the ones already executed are more likely to discover completely new
-portions of the code under test, and hence we want to assign them a higher
-priority.
+portions of the code under test, and hence we want to prioritize them.
 
 
 In this light, every time we insert a new execution path into the internal trace
-log, we calculate the number of new nodes that were executed, as well as the
-\emph{branching depth} where they got inserted.
+log, we calculate the number of \emph{new nodes} that were executed, as well as
+the \emph{branching depth} where they got inserted.
 %
 The former is used to distinguish interesting test cases (whether or not new
 nodes were inserted), whereas the latter is used by this heuristic to schedule
@@ -1810,21 +1816,20 @@ defined using a random mutant, e.g., numeric values, characters, etc.
 %
 But, how many random mutations should we use? A single one? A few tenths? A few
 hundred?
+%% %
+%% Using too little can put finding bugs at risk.
+%% %
+%% For instance, when the system under test branches based on numeric values, we
+%% should make sure that we set enough random mutations to test each branch on a
+%% reasonable basis.
+%% %
+%% Using too many, on the other hand, can degrade the performance of the testing
+%% loop, as it will spend too much time producing uninteresting mutations.
+%% %
+%% This can happen for instance if the subexpressions defined using random mutants
+%% are only used as payloads, and their value does not affect the execution in any
+%% way.
 %
-Using too little can put finding bugs at risk.
-%
-For instance, when the system under test branches based on numeric values, we
-should make sure that we set enough random mutations to test each branch on a
-reasonable basis.
-%
-Using too many, on the other hand, can degrade the performance of the testing
-loop, as it will spend too much time producing uninteresting mutations.
-%
-This can happen for instance if the subexpressions defined using random mutants
-are only used as payloads, and their value does not affect the execution in any
-way.
-
-
 Answering this question precisely is not an easy task, and the second heuristic
 we introduce in this work aims to tackle this issue.
 %
