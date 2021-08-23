@@ -2526,28 +2526,28 @@ types, as well as properties testing multiple functions simultaneously.
 \section{Evaluation}
 \label{sec:evaluation}
 
-All the experiments were performed in a dedicated workstation with an Intel Core
+We performed all experiments in a dedicated workstation with an Intel Core
 i7-8700 CPU running at 3.20GHz, and equipped with 32GB of RAM.
 %
-We ran each experiment 30 times except for the ones involving the bugs on the
+Each experiment was repeated 30 times except for the ones testing the
 WebAssembly interpreter, which were run 10 times due to time constraints.
 %
-From there, we followed the same approach taken by
+From there, we followed the approach taken by
 \citeauthor{lampropoulos2019coverage} and collected the mean-time-to-failure
 (MTTF) of each bug, i.e., how quickly a bug can be found in wall clock time.
 %
-In all cases, we used a one-hour timeout to stop the execution of both tools if
-they have not yet found a counterexample.
-
-Additionally, we collected the failure rate observed for each bug, i.e. the
+We used a one-hour timeout to stop the execution of both tools if they have not
+yet found a counterexample.
+%
+In addition, we collected the failure rate observed for each bug, i.e. the
 proportion of times each tool finds each bug within the one-hour testing budget.
 %
-We found this metric crucial to be analyzed when replicating \fuzzchick's
-results, as opposed to just paying attention at the MTTF.
+%% We found this metric crucial to be analyzed when replicating \fuzzchick's
+%% results, as opposed to just paying attention at the MTTF.
 
-In both case studies, we additionally show how the FIFO scheduling and trace
-reset heuristics described in Section \ref{sec:heuristics} affect the testing
-performance by disabling them when using our tool.
+In both case studies, we show how the FIFO scheduling and trace reset heuristics
+described in Section \ref{sec:heuristics} affect the testing performance of
+\mutagen by individually disabling them.
 %
 We call these variants \textit{no FIFO} and \textit{no reset}, respectively.
 %
@@ -2577,7 +2577,7 @@ decreasing order.
 Moreover, notice the logarithmic scale used on the MTTF.
 
 As introduced earlier, \fuzzchick can only find 5 out of the 20 bugs injected
-with a \%100 success rate within the one hour testing budget.
+with a 100\% success rate within the one hour testing budget.
 %
 In turn, our tool manages to find every bug on all runs, and taking less than a
 minute in the worst absolute case.
@@ -2585,17 +2585,17 @@ minute in the worst absolute case.
 These results are somewhat pessimistic towards \fuzzchick if compared to the
 ones presented originally by \citeauthor{lampropoulos2019coverage}.
 %
-However, we want to remark that our experiments encompass 30 independent runs
-instead of the 5 originally used when presenting \fuzzchick
+However, we remark that our experiments encompass 30 independent runs instead of
+the 5 originally used when presenting \fuzzchick
 \citeyearpar{lampropoulos2019coverage}.
 %
 Moreover, since the MTTF simply aggregates all runs, regardless of if they found
-a bug or timed out, this metric is quite sensitive to the particular timeout
-used on each experiment, and will tend to inflate the results as soon as the
-failure rate goes below 1.
+a bug or timed out, this metric is quite sensitive to the timeout used on each
+experiment, and will inflate the results as soon as the failure rate goes below
+1.
 %
-For this reason, additionally comparing the failure rate between tools give us a
-better estimation of the reliability of both tools, where \mutagen shows a clear
+For this reason, comparing the failure rate between tools give us a better
+estimation of the reliability of both tools, where \mutagen shows a clear
 improvement.
 
 %% If we only consider the succesfull runs where \fuzzchick does not time out, we
@@ -2603,8 +2603,8 @@ After analyzing the results obtained using \fuzzchick, we observed a
 peculiarity.
 %
 This tool either finds bugs relatively quickly (after a few thousands tests) or
-does not find them at all within the time budget, which suggests that its power
-scheduler assigns some mutation candidates too little energy before they become
+does not find them at all within the one-hour budget, suggesting that its power
+scheduler assigns some enqueued test cases too little energy before they become
 uninteresting and get ultimately thrown away.
 %
 Under this consideration, it is fair to think that \fuzzchick might be a better
@@ -2614,20 +2614,27 @@ Thus, to be an improvement over \fuzzchick, our tool must be able to find bugs
 not only more reliably, but also relatively fast!
 
 
-
 Table \ref{table:ifc:tests} shows a comparison between the mean number of tests
 required by both tools to find the first failure \emph{when we only consider
   successful runs.}
 %
-Additionally, as advised by \cite{arcuri2014hitchhiker} when comparing random
-testing tools, we computed the non-parametric Vargha-Delaney $A_{12}$ measure
-\cite{vargha2000critique}.
+Additionally, as advised by \citeauthor{arcuri2014hitchhiker}
+\cite{arcuri2014hitchhiker} when comparing random testing tools, we computed the
+non-parametric Vargha-Delaney $A_{12}$ measure \cite{vargha2000critique}.
 %
 Intuitively, this measure encodes the probability of \mutagen to yield better
 results than \fuzzchick.
 %
-As it can be observed, using an exhaustive mutation approach can be not only
-more reliable, but also faster.
+The \textit{Estimate} of this measure simply denotes the statistical difference
+between the compared distributions in a categorical manner.
+%
+Estimates in {\color{blue} blue} and {\color{red} red} indicate results
+favoring \fuzzchick and \mutagen, respectively.
+%
+As it can be observed,
+%
+%% using an exhaustive mutation approach can be not only
+%% more reliable, but also faster.
 %
 \mutagen is likely to find bugs faster than \fuzzchick in 14 of the 20 bugs
 injected into the abstract machine, while being substantially slower in only 2
@@ -2677,10 +2684,7 @@ cases.
 \end{tabular}
 \captionof{table}{\label{table:ifc:tests} Mean tests until first failure and effect size
   comparison between \fuzzchick and \mutagen when considering only successful
-  runs.
-  %
-  Estimates in {\color{blue} blue} and {\color{red} red} indicate results
-  favoring \fuzzchick and \mutagen, respectively. }
+  runs.}
 %% \vspace{-25pt}
 %% \end{wrapfigure}
 \end{figure}
@@ -2689,16 +2693,16 @@ cases.
 In terms of the \mutagen heuristics, we can also arrive to some conclusions.
 %
 Firstly, this case study does not seem to be strongly affected by using a FIFO
-scheduling, where the same benchmark takes only roughly \%20 longer to complete
+scheduling, where the same benchmark takes only roughly 20\% longer to complete
 when disabling this heuristic.
 %
-Upon inspection, we found that the reason behind this is that the mutation
-candidate queues remain empty most of the time (generation mode), and when a new
-interesting candidate gets inserted, all its mutants (and their descendants) are
-processed before the next one is enqueued.
+Upon inspection, the reason behind this is that the mutation queues remain empty
+most of the time (generation mode), and when a new interesting candidate gets
+inserted, all its mutants (and their descendants) are processed before the next
+one is enqueued.
 %
-So, the proportion of time this heuristic is actually active tends to be minor
-under this case study.
+So, the proportion of time this heuristic is active tends to be minor.
+%% under this case study.
 
 
 On the other hand, disabling the trace saturation heuristic (\textit{no reset})
@@ -2710,7 +2714,7 @@ worthless time mutating numeric subexpressions inside the generated machine
 states and that a smaller number of random mutations could be equally effective
 to find such bugs.
 %
-However, some of the hardest to find bugs cannot be reliably exposed using this
+However, some of the hardest-to-find bugs cannot be reliably exposed using this
 fixed amount of random mutations (\#4, \#9, \#12, \#18, and \#10), suggesting
 that one should increase this number even further to be able to discover all
 bugs within the time budget.
@@ -2757,7 +2761,7 @@ phenomena.
 On one hand, disabling the FIFO scheduling (case \textit{no FIFO}), the
 hardest-to-find bugs (\#7, \#10, and \#1) are no longer found on every run.
 %
-Moreover, although bugs \#2, \#9, \#8, and \#6 are found with \%100 success rate
+Moreover, although bugs \#2, \#9, \#8, and \#6 are found with 100\% success rate
 across runs, it takes several times longer for \mutagen to find them.
 %
 On the other hand, disabling the trace saturation heuristic (case \textit{no
