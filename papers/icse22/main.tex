@@ -47,6 +47,9 @@
 
 \setlength{\skip\footins}{5pt}
 
+\setlength{\textfloatsep}{5pt}
+\setlength{\floatsep}{5pt}
+
 % ----------------------------------------
 
 %% Rights management information. This information is sent to you when you
@@ -423,7 +426,7 @@ In particular:
 %% Our solution
 In this work, we introduce \mutagen, a CGPT framework that tackles the
 aforementioned limitations by applying mutations \emph{exhaustively} (see
-Section \ref{sec:mutagen}).
+\S \ref{sec:mutagen}).
 %
 %% implemented in Haskell
 %% that also builds upon code instrumentation and type-preserving mutations
@@ -431,7 +434,7 @@ Section \ref{sec:mutagen}).
 %
 % the basic ideas behind \fuzzchick, i.e.,
 %
-%% \mutagen is introduced in detail in Section \ref{sec:mutagen}.
+%% \mutagen is introduced in detail in \S \ref{sec:mutagen}.
 %
 %% Exhaustive mutations
 %% Unlike \fuzzchick, mutations in \mutagen are applied \emph{exhaustively}.
@@ -478,7 +481,7 @@ other number in the 32 or 64 bits range.
 
 %% Heuristics to improve testing loop
 Additionally, the testing loop of our tool incorporates two heuristics that help
-finding bugs faster and more reliably (Section \ref{sec:heuristics}).
+finding bugs faster and more reliably (\S \ref{sec:heuristics}).
 %
 In the first place, \mutagen uses first-in first-out (FIFO) scheduling with
 priority to enqueue interesting test cases for mutation.
@@ -509,7 +512,7 @@ fly.
 
 %% Validation
 To validate our ideas, we use two main case studies (described in detail in
-Section \ref{sec:casestudies}): the Information-Flow Control (IFC) stack machine
+\S \ref{sec:casestudies}): the Information-Flow Control (IFC) stack machine
 used by \citeauthor{lampropoulos2019coverage} in their original work, and an
 existing WebAssembly engine of industrial strenght written in Haskell.
 %
@@ -520,7 +523,7 @@ In the IFC stack machine case study, we compare \mutagen against \fuzzchick, the
 reference CGPT implementation developed in Coq by
 \citeauthor{lampropoulos2019coverage}.
 %
-Our results (Section \ref{sec:evaluation}) indicate that \mutagen outperforms
+Our results (\S \ref{sec:evaluation}) indicate that \mutagen outperforms
 \fuzzchick both in terms of time to failure and failure rate.
 %
 On the other hand, our WebAssembly case study shows the performance of our tool
@@ -538,8 +541,8 @@ suggests that testing mutants exhaustively can be an appealing technique for
 finding bugs reliably without sacrificing speed.
 
 %% Last two sections
-Finally, we discuss related work in Section \ref{sec:related} and conclude
-in Section \ref{sec:conclusions}.
+Finally, we discuss related work in \S \ref{sec:related} and conclude
+in \S \ref{sec:conclusions}.
 
 
 % ----------------------------------------
@@ -671,8 +674,8 @@ is tested very sporadically as a result.
 In other words, \emph{the precondition of our testing property becomes very
   sparse when we use simple, automatically derived generators.}
 
-The next subsection show how GCPT helps overcoming this limitation without
-having to write specialized random generators by hand.
+The next subsection shows how GCPT helps overcoming this limitation without
+having to write specialized generators by hand.
 
 
 %% At this point it is reasonable to think that, to obtain the best results when
@@ -962,7 +965,7 @@ it reaches the test limit.
 %%   immediate subexpression.
 %% \end{inparaenum}
 %% %
-%% We will provide more details about structure-preserving mutations in Section
+%% We will provide more details about structure-preserving mutations in \S
 %% \ref{sec:mutagen}.
 
 %
@@ -1004,13 +1007,13 @@ All these observations led us to consider three main aspects of CGPT that can be
 improved upon --- and that constitute the main goal of this work.
 %
 %% As mentioned earlier, when we recreated the evaluation of the IFC stack machine
-%% case study (described in detail in Section \ref{sec:casestudies}), we found that
+%% case study (described in detail in \S \ref{sec:casestudies}), we found that
 %% after 30 runs (as opposed to the 5 runs used original by
 %% \citeauthor{lampropoulos2019coverage}), \emph{\fuzzchick was only able to find 5
 %%   out of the 20 injected bugs with a failure rate of 1}, the hardest one being
 %% found only around 13\% of the time after an hour of testing.
 %% %
-%% These results are presented in detail in Section \ref{sec:evaluation}.
+%% These results are presented in detail in \S \ref{sec:evaluation}.
 %
 %% At the light of these observations, we identified three main aspects of
 %% \fuzzchick that can be improved upon --- and that constitute the main goal of
@@ -1090,7 +1093,7 @@ Ideally, \emph{one would like a mechanism that prioritizes mutating test cases
   that discover new portions of the code right away}, and that is capable of
 jumping back and forth from mutation candidates whenever this happens.
 %
-%% We show in Section \ref{sec:heuristics} how this can be achieved by analyzing
+%% We show in \S \ref{sec:heuristics} how this can be achieved by analyzing
 %% the execution information in order to prioritize test cases with novel execution
 %% traces.
 
@@ -1133,7 +1136,7 @@ written in Haskell.
 Notably, these ideas extend beyond Haskell and functional programming languages
 in general.
 %
-%% Later, Section \ref{sec:heuristics} introduces heuristics that help finding bugs
+%% Later, \S \ref{sec:heuristics} introduces heuristics that help finding bugs
 %% faster in certain testing scenarios.
 
 In contrast to CGPT, and many other popular fuzzing tools for that matter,
@@ -1157,7 +1160,7 @@ omitted due to randomness, as well a no mutation is evaluated more than once.
 %
 This is inspired by exhaustive bounded testing tools like \emph{SmallCheck}
 \cite{runciman2008smallcheck} or \emph{Korat} \cite{boyapati2002korat}, that
-produce test cases exhaustively --- please refer to Section \ref{sec:related}
+produce test cases exhaustively --- please refer to \S \ref{sec:related}
 for a detailed discussion.
 
 
@@ -1176,7 +1179,7 @@ the adapted testing loop used in \mutagen.
 %% %
 %% To alleviate this problem, such tools often rely on heuristics to prune the
 %% search space based on detecting unused subexpressions --- this is discussed in
-%% Section \ref{sec:related}.
+%% \S \ref{sec:related}.
 
 %% In consequence, such tools can only be applied to relatively simple systems,
 %% where the space of inputs does not grow extremely fast.
@@ -1272,10 +1275,10 @@ mutate (Branch l x r) = [ PURE l, PURE r
                         , PURE (Branch r x r)
                         , PURE (Branch r x l) ]
 \end{verbatim}
-%% \vspace{-5pt}
+\vspace{-5pt}
 \caption{\label{fig:mutagen:mutator}\mutagen mutator for the \texttt{Tree} data
   type.}
-%% \vspace{-10pt}
+%% \vspace{-15pt}
 \end{figure}
 
 %% At this point, the reader might consider:
@@ -1331,21 +1334,22 @@ In this light, the mutable positions of the value \texttt{Branch (Leaf 1) 2
 
 \begin{equation}
   \nonumber
-  {\small \texttt{positions}}\quad
+  \footnotesize
+  \texttt{positions}\quad
   \left(
   \tikz[
-    baseline=-7mm,
-    level distance=0.6cm,
-    level 1/.style={sibling distance=0.75cm},
-    level 2/.style={sibling distance=0.75cm}
+    baseline=-6mm,
+    level distance=0.5cm,
+    level 1/.style={sibling distance=0.5cm},
+    level 2/.style={sibling distance=0.5cm}
   ]{
-    \node {\small \texttt{Branch}}
-      child {node {\small \texttt{Leaf}}
-        child {node {\small \texttt{1}}}
+    \node {\texttt{Branch}}
+      child {node {\texttt{Leaf}}
+        child {node {\texttt{1}}}
       }
-      child {node {\small \texttt{2}}}
-      child {node {\small \texttt{Leaf}}
-        child {node {\small \texttt{3}}}
+      child {node {\texttt{2}}}
+      child {node {\texttt{Leaf}}
+        child {node {\texttt{3}}}
       };
   }
   \right)
@@ -1353,18 +1357,18 @@ In this light, the mutable positions of the value \texttt{Branch (Leaf 1) 2
   =
   \quad
   \tikz[
-    baseline=-7mm,
-    level distance=0.6cm,
-    level 1/.style={sibling distance=0.75cm},
-    level 2/.style={sibling distance=0.75cm}
+    baseline=-6mm,
+    level distance=0.5cm,
+    level 1/.style={sibling distance=0.5cm},
+    level 2/.style={sibling distance=0.5cm}
   ]{
-    \node {\texttt{\small []}}
-      child {node {\small \texttt{[0]}}
-        child {node {\small \texttt{[0,0]}}}
+    \node {\texttt{[]}}
+      child {node {\texttt{[0]}}
+        child {node {\texttt{[0,0]}}}
       }
-      child {node {\small \texttt{[1]}}}
-      child {node {\small \texttt{[2]}}
-        child {node {\small \texttt{[2,0]}}}
+      child {node {\texttt{[1]}}}
+      child {node {\texttt{[2]}}
+        child {node {\texttt{[2,0]}}}
       };
   }
 \end{equation}
@@ -1591,133 +1595,6 @@ based on the limitations we found in CGPT.
 
 % ----------------------------------------
 
-\begin{figure*}[t]
-%% \vspace{-15pt}
-\newcommand\stacked[2]{\underset{\textstyle #2\mathstrut}{#1}}
-\begin{align*}
-  \nonumber
-  \qquad\qquad\qquad\qquad
-  \left[
-  \tikz[
-    baseline=-10mm,
-    level distance=0.6cm,
-    level 1/.style={sibling distance=0.75cm},
-    level 2/.style={sibling distance=0.75cm}
-  ]{
-    \node {\small \texttt{1}}
-      child {node {\small \texttt{2}}
-        child {node {\small \texttt{3}}
-          child {node {\small \texttt{4}}}
-        }
-      }
-  }
-  \right]
-  \;
-  +
-  \;
-  \tikz[
-    baseline=-10mm,
-    level distance=0.6cm,
-    level 1/.style={sibling distance=0.75cm},
-    level 2/.style={sibling distance=0.75cm}
-  ]{
-    \node {\small \texttt{1}}
-      child {node {\small \texttt{2}}
-        child {node {\small \texttt{3}}
-          child {node {\small \texttt{5}}}
-        }
-      }
-  }
-  \;
-  =
-  \;
-  \left[
-  \tikz[
-    baseline=-10mm,
-    level distance=0.6cm,
-    level 1/.style={sibling distance=0.75cm},
-    level 2/.style={sibling distance=0.75cm}
-  ]{
-    \node {\color{red} \small \texttt{1}}
-      child {node {\color{red} \small \texttt{2}}
-        child {node {\color{red} \small \texttt{3}}
-          child {node {\small \texttt{4}}}
-          child {node {\color{blue} \small \texttt{5}}}
-        }
-      }
-  }
-  \right]
-  ,
-  \stacked{{\color{blue} new=1\phantom{x}}}{{\color{red} depth=3}}
-  %% \end{equation}
-  %% \begin{equation}
-  %% \nonumber
-  %% \\
-  \qquad
-  \qquad
-  \left[
-  \tikz[
-    baseline=-10mm,
-    level distance=0.6cm,
-    level 1/.style={sibling distance=0.75cm},
-    level 2/.style={sibling distance=0.75cm}
-  ]{
-    \node {\small \texttt{1}}
-      child {node {\small \texttt{2}}
-        child {node {\small \texttt{3}}
-          child {node {\small \texttt{4}}}
-          child {node {\small \texttt{5}}}
-        }
-      }
-  }
-  \right]
-  \;
-  +
-  \;
-  \tikz[
-    baseline=-10mm,
-    level distance=0.6cm,
-    level 1/.style={sibling distance=0.75cm},
-    level 2/.style={sibling distance=0.75cm}
-  ]{
-    \node {\small \texttt{1}}
-      child {node {\small \texttt{2}}
-        child {node {\small \texttt{6}}
-          child {node {\small \texttt{7}}
-          }
-        }
-      }
-  }
-  \;
-  =
-  \;
-  \left[
-  \tikz[
-    baseline=-10mm,
-    level distance=0.6cm,
-    level 1/.style={sibling distance=0.75cm},
-    level 2/.style={sibling distance=1cm}
-  ]{
-    \node {\color{red} \small \texttt{1}}
-      child {node {\color{red} \small \texttt{2}}
-        child {node {\small \texttt{3}}
-          child {node {\small \texttt{4}}}
-          child {node {\small \texttt{5}}}
-        }
-        child {node {\color{blue}\small \texttt{6}}
-          child {node {\color{blue}\small \texttt{7}}}
-        }
-      }
-  }
-  \right]
-  ,
-  \stacked{{\color{blue} new=2\phantom{x}}}{{\color{red} depth=2}}
-\end{align*}
-%% \vspace{-10pt}
-\caption{\label{fig:mutagen:tracelog}Inserting two new execution traces into the
-  internal trace log (represented using brackets).}
-\end{figure*}
-
 
 \section{\mutagen Heuristics}
 \label{sec:heuristics}
@@ -1756,7 +1633,7 @@ Our assumption is that test cases that differ (branch) at shallower depths from
 the ones already executed are more likely to discover new portions of the code
 under test, and hence we want to prioritize them.
 
-\begin{algorithm}[b]
+\begin{algorithm}[t]
   \SetArgSty{textnormal}
   %% \SetInd{0em}{0.75em}
   \SetKw{KwNot}{not}
@@ -1841,10 +1718,138 @@ back to previous test cases as soon as their mutants become less novel.
 %%   algorithm. Ellipses denote parts of the code that are not relevant for the
 %%   point being made. }
 
+\begin{figure}[t]
+%% \vspace{-15pt}
+\scriptsize
+\newcommand\stacked[2]{\underset{\textstyle #2\mathstrut}{#1}}
+\begin{align*}
+  \nonumber
+  %% \qquad\qquad\qquad\qquad
+  \left[
+  \tikz[
+    baseline=-8mm,
+    level distance=0.5cm,
+    level 1/.style={sibling distance=0.5cm},
+    level 2/.style={sibling distance=0.5cm}
+  ]{
+    \node {\small \texttt{1}}
+      child {node {\small \texttt{2}}
+        child {node {\small \texttt{3}}
+          child {node {\small \texttt{4}}}
+        }
+      }
+  }
+  \right]
+  \;
+  +
+  \;
+  \tikz[
+    baseline=-8mm,
+    level distance=0.5cm,
+    level 1/.style={sibling distance=0.5cm},
+    level 2/.style={sibling distance=0.5cm}
+  ]{
+    \node {\small \texttt{1}}
+      child {node {\small \texttt{2}}
+        child {node {\small \texttt{3}}
+          child {node {\small \texttt{5}}}
+        }
+      }
+  }
+  \;
+  =
+  \;
+  \left[
+  \tikz[
+    baseline=-8mm,
+    level distance=0.5cm,
+    level 1/.style={sibling distance=0.5cm},
+    level 2/.style={sibling distance=0.5cm}
+  ]{
+    \node {\color{red} \small \texttt{1}}
+      child {node {\color{red} \small \texttt{2}}
+        child {node {\color{red} \small \texttt{3}}
+          child {node {\small \texttt{4}}}
+          child {node {\color{blue} \small \texttt{5}}}
+        }
+      }
+  }
+  \right]
+  ,
+  \stacked{{\color{blue} new=1\phantom{x}}}{{\color{red} depth=3}}
+  %% \end{equation}
+  %% \begin{equation}
+  %% \nonumber
+  %% \\
+  %% \qquad
+  \quad
+  \left[
+  \tikz[
+    baseline=-8mm,
+    level distance=0.5cm,
+    level 1/.style={sibling distance=0.5cm},
+    level 2/.style={sibling distance=0.5cm}
+  ]{
+    \node {\small \texttt{1}}
+      child {node {\small \texttt{2}}
+        child {node {\small \texttt{3}}
+          child {node {\small \texttt{4}}}
+          child {node {\small \texttt{5}}}
+        }
+      }
+  }
+  \right]
+  \;
+  +
+  \;
+  \tikz[
+    baseline=-8mm,
+    level distance=0.5cm,
+    level 1/.style={sibling distance=0.5cm},
+    level 2/.style={sibling distance=0.5cm}
+  ]{
+    \node {\small \texttt{1}}
+      child {node {\small \texttt{2}}
+        child {node {\small \texttt{6}}
+          child {node {\small \texttt{7}}
+          }
+        }
+      }
+  }
+  \;
+  =
+  \;
+  \left[
+  \tikz[
+    baseline=-8mm,
+    level distance=0.5cm,
+    level 1/.style={sibling distance=0.5cm},
+    level 2/.style={sibling distance=0.75cm}
+  ]{
+    \node {\color{red} \small \texttt{1}}
+      child {node {\color{red} \small \texttt{2}}
+        child {node {\small \texttt{3}}
+          child {node {\small \texttt{4}}}
+          child {node {\small \texttt{5}}}
+        }
+        child {node {\color{blue}\small \texttt{6}}
+          child {node {\color{blue}\small \texttt{7}}}
+        }
+      }
+  }
+  \right]
+  ,
+  \stacked{{\color{blue} new=2\phantom{x}}}{{\color{red} depth=2}}
+\end{align*}
+\vspace{-10pt}
+\caption{\label{fig:mutagen:tracelog}Inserting two new execution traces into the
+  internal trace log (represented using brackets).}
+\end{figure}
+
 
 \subsection{Detecting Trace Space Saturation And Tuning Random Mutations Parameter}
 
-As introduced in Section \ref{sec:mutagen}, our tool is parameterized by the
+As introduced in \S \ref{sec:mutagen}, our tool is parameterized by the
 number of random mutations to be generated over each mutable subexpression
 defined using a random mutant, e.g., numeric values.
 %
@@ -2092,7 +2097,7 @@ and updates its label with the maximum sensibility of the involved labels.
 In the rule table, this looks as follows:
 
 \begin{center}
-\footnotesize
+\scriptsize
 \begin{tabular}{|c|c|c|c|}
 \hline
 \textbf{Instruction}
@@ -2286,7 +2291,7 @@ These bugs were mechanically injected by either
 \end{table}
 
 \begin{table}[t]
-\footnotesize
+\scriptsize
 \begin{tabular}{|c|c|l|}
 \hline
 \textbf{Id}
@@ -2546,7 +2551,7 @@ proportion of times each tool finds each bug within the one-hour testing budget.
 %% results, as opposed to just paying attention at the MTTF.
 
 In both case studies, we show how the FIFO scheduling and trace reset heuristics
-described in Section \ref{sec:heuristics} affect the testing performance of
+described in \S \ref{sec:heuristics} affect the testing performance of
 \mutagen by individually disabling them.
 %
 We call these variants \textit{no FIFO} and \textit{no reset}, respectively.
@@ -2575,6 +2580,8 @@ The injected bugs are ordered by the failure rate achieved by \fuzzchick in
 decreasing order.
 %
 Moreover, notice the logarithmic scale used on the MTTF.
+
+
 
 As introduced earlier, \fuzzchick can only find 5 out of the 20 bugs injected
 with a 100\% success rate within the one hour testing budget.
@@ -2640,11 +2647,18 @@ As it can be observed,
 injected into the abstract machine, while being substantially slower in only 2
 cases.
 
-\begin{figure}
+\setlength{\intextsep}{10pt}%
+\setlength{\columnsep}{10pt}%
+\begin{wrapfigure}{r}{0.5\linewidth}
 %% \begin{wrapfigure}{r}{0.5\textwidth}
 %% \centering
-%% \vspace{-20pt}
-\small
+\vspace{-15pt}
+\scriptsize
+
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1}
+
+%% \begin{minipage}{0.5\linewidth}
 \begin{tabular}{ccccc}
 \hline
 \multicolumn{1}{c}{
@@ -2682,12 +2696,14 @@ cases.
 & & Mean & 0.67 & {\color{red} medium} \\
 \hline
 \end{tabular}
+%% \end{minipage}
+
 \captionof{table}{\label{table:ifc:tests} Mean tests until first failure and effect size
   comparison between \fuzzchick and \mutagen when considering only successful
   runs.}
-%% \vspace{-25pt}
+\vspace{-20pt}
 %% \end{wrapfigure}
-\end{figure}
+\end{wrapfigure}
 
 
 In terms of the \mutagen heuristics, we can also arrive to some conclusions.
@@ -2701,7 +2717,8 @@ most of the time (generation mode), and when a new interesting candidate gets
 inserted, all its mutants (and their descendants) are processed before the next
 one is enqueued.
 %
-So, the proportion of time this heuristic is active tends to be minor.
+Hence, the small proportion of time this heuristic is active tends to be
+inconsequential.
 %% under this case study.
 
 
@@ -2838,8 +2855,8 @@ the instrumentation directly into the Haskell runtime --- a substantial
 challenge to tackle in the future.
 %
 Despite this, our tool is still capable of running substantially more tests that
-pass the sparse preconditions than \quickcheck in the same amount of time, and
-which ultimately leads us to find bugs.
+pass the sparse preconditions than \quickcheck in the same amount of time,
+\emph{and which ultimately leads us to find bugs}.
 
 \begin{table}
 \footnotesize
@@ -2916,11 +2933,11 @@ which ultimately leads us to find bugs.
 
 There exists a vast literature on fuzzing and property-based testing.
 %
-In this section we only focus on three main topics:
+In this section we will focus on three main topics:
 %
 automated random data generation using static information,
 %
-fuzzing using coverage information, and
+coverage-guided fuzzing, and
 %
 exhaustive bounded testing, all of which inspired the design of \mutagen.
 
@@ -2929,16 +2946,16 @@ exhaustive bounded testing, all of which inspired the design of \mutagen.
 
 Obtaining good random generators automatically from static information (e.g.,
 grammars or data type definitions) has been tackled from different angles.
-
+%
 % DRAGEN and DRAGEN2
 In Haskell, DRAGEN \cite{DBLP:conf/haskell/MistaRH18} is a meta-programming tool
 that synthesises random generators from data types definitions, using stochastic
 models to predict and optimize their distribution based on a target one set by
 the user.
 %
-DRAGEN2 \cite{Mista2019GeneratingRS} extends this idea adding support for
-generating richer random data by extracting static information like library APIs
-and function input patterns from the codebase.
+DRAGEN2 \cite{Mista2019GeneratingRS} extends this idea with support for
+generating richer random data by extracting library APIs and function input
+patterns from the codebase.
 %
 % Bolztmann-brain
 Similarly, \cite{Bendkowski2017} developed a polynomial tuning mechanism based
@@ -2948,11 +2965,10 @@ approximate-size distributions for combinatorial structures like lists or trees.
 %
 % QuickFuzz
 %
-Exploiting some of the ideas described above, \emph{QuickFuzz} \cite{GriecoCB16,
-  grieco2017} is a generational fuzzer that leverages existing Haskell libraries
-describing common file formats to synthesize random data generators that are
-used in tandem with existing off-the-shelf low-level fuzzers to find bugs in
-heavily used programs.
+\emph{QuickFuzz} \cite{GriecoCB16, grieco2017} is a fuzzer that exploits these
+ideas and uses existing Haskell libraries describing common file formats to
+synthesize random data generators that are used in tandem with existing
+off-the-shelf low-level fuzzers to find bugs in heavily used programs.
 
 
 
@@ -2967,7 +2983,7 @@ distribution.
 %
 % Luck
 %
-Later, \citeauthor{LampropoulosGHH17} \citeyearpar{LampropoulosGHH17} extends
+Later, \citeauthor{LampropoulosGHH17} \citeyearpar{LampropoulosGHH17} extended
 this approach by adding a limited form of constraint solving controllable by the
 user in a domain-specific language called \emph{Luck}.
 %
@@ -2975,7 +2991,7 @@ user in a domain-specific language called \emph{Luck}.
 %
 Recently, \citeauthor{Lampropoulos2017} \citeyearpar{Lampropoulos2017} proposed
 a derivation mechanism to obtain constrained random generators directly by
-defining their structure using inductively defined relations in Coq.
+defining the target structure using inductively defined relations in Coq.
 
 
 
@@ -2986,8 +3002,8 @@ In principle, our tool is tailored to improve the performance of poor
 automatically derived generators.
 %
 However, more specialized generators can be used directly by \mutagen, and
-combining them with type-preserving mutations using a hybrid technique is an
-idea that we aim to address in the future.
+combining them with type-preserving mutations is an idea we aim to address in
+the future.
 
 
 \paragraph{Coverage-guided Fuzzing}
@@ -2997,8 +3013,8 @@ idea that we aim to address in the future.
 fuzzing.
 %
 % AFLfast
-\emph{AFLFast} \cite{bohme2017coverage} is an extension to AFL that uses Markov
-chain models to tune the power scheduler towards testing low-frequency paths.
+\emph{AFLFast} \cite{bohme2017coverage} extends AFL with Markov chain models to
+tune the power scheduler towards testing low-frequency paths.
 %
 In \mutagen, the scheduler does not account for path frequency.
 %
@@ -3006,33 +3022,32 @@ Instead, it favors a breadth-first traversal of the execution path space.
 %
 % CollAFL
 Similar to our tool, \emph{CollAFL} \cite{gan2018collafl} is a variant of AFL
-that uses path- instead of edge-based coverage, which helps distinguishing
-executions more precisely by reducing path collisions.
+that uses path- instead of edge-based coverage to distinguish executions more
+precisely by reducing path collisions.
 
 %AFLGo
-When the source code history is available, \emph{AFLGo} \cite{bohme2017directed}
+If the source code history is available, \emph{AFLGo} \cite{bohme2017directed}
 is a fuzzer that can be targeted to exercise the specific parts of the code
 affected by recent commits in order to find potential new bugs.
 %
-Back to PBT, a related idea called \emph{targeted property-based testing} (TPBT)
-is to use fitness functions to guide the testing efforts towards user defined
-goals \cite{loscher2017targeted, loscher2018automating}.
+In PBT, a related idea called \emph{targeted property-based testing} (TPBT) is
+to use fitness functions to guide testing efforts towards user defined goals
+\cite{loscher2017targeted, loscher2018automating}.
 
 
-% Coverage-guided fuzzing + symbolic execution
-%
-Moreover, a popular technique is to combine coverage-guided fuzzing with ideas
-borrowed from symbolic execution tools like \emph{KLEE} \cite{cadar2008klee} to
-avoid getting stuck in superficial paths \cite{stephens2016driller}.
-%
-When using off-the-shelf symbolic executors, this technique is often limited by
-the path explosion problem, although recent tools like \emph{QSYM}
-\cite{yun2018qsym} demonstrate that using tailored concolic executors can help
-to overcome this limitation.
+%% % Coverage-guided fuzzing + symbolic execution
+%% %
+%% Moreover, a popular technique is to combine coverage-guided fuzzing with ideas
+%% borrowed from symbolic execution tools like \emph{KLEE} \cite{cadar2008klee} to
+%% avoid getting stuck in superficial paths \cite{stephens2016driller}.
+%% %
+%% When using off-the-shelf symbolic executors, this technique is often limited by
+%% the path explosion problem, although recent tools like \emph{QSYM}
+%% \cite{yun2018qsym} demonstrate that using tailored concolic executors can help
+%% to overcome this limitation.
 
-
-Most of these ideas can potentially be incorporated in our tool, and we keep
-them as a challenge for future work.
+All these ideas can potentially be incorporated in our tool, and we keep them as
+a challenge for future work.
 
 
 \paragraph{Exhaustive Bounded Testing}
@@ -3062,8 +3077,8 @@ technique is not suitable for testing properties with sparse preconditions
 expressed elsewhere.
 %
 % SmallCheck and LazySmallCheck
-\emph{SmallCheck} \cite{runciman2008smallcheck} is a Haskell tool that also
-follows this idea.
+\emph{SmallCheck} \cite{runciman2008smallcheck} is a Haskell tool that follows
+this idea.
 %
 It progressively executes the testing properties against all possible input
 values up to a certain size bound.
@@ -3090,8 +3105,8 @@ correspond to each evaluated subexpression.
 In this work we use exhaustiveness as a way to reliably enforce that all
 possible mutants of an interesting seed are executed.
 %
-In contrast to fully exhaustive testing tools, \mutagen initially relies on
-randomness to find initial interesting mutable candidates.
+In contrast to fully exhaustive testing tools, \mutagen relies on randomness to
+find initial interesting mutable test cases.
 %
 In terms of pruning, it is possible to instruct \mutagen to detect unused
 subexpressions (using a technique similar to that of \emph{LazySmallCheck}) to
@@ -3101,11 +3116,11 @@ This could, in principle, improve the overall performance when testing
 properties that tend to short-circuit, leaving parts of the input unevaluated.
 %
 In our case studies, however, we observed that their preconditions tend to be
-quite strict when executing test cases obtained by mutating passed existing
-ones, fully evaluating their input before executing the postcondition.
+quite strict when executing test cases obtained by mutating valid existing ones,
+fully evaluating their input before executing the postcondition.
 %
-Thus, we do not expect to see considerable improvements by applying this idea in
-this particular scenario.
+Thus, we do not forsee considerable improvements by applying this idea in this
+particular scenario.
 %
 Gathering empirical evidence about using pruning via lazy evaluation in \mutagen
 is an effort that we keep as future work.
@@ -3120,20 +3135,26 @@ is an effort that we keep as future work.
 We presented \mutagen, a coverage-guided, property-based testing framework
 written in Haskell.
 %
-Inspired by \fuzzchick, our tool uses coverage information to guide
-automatically derived mutators producing high-level, type-preserving mutations.
-%
-However, instead of relying heavily on randomness and power schedules to find
-bugs, our tool uses an exhaustive mutation approach that generates every
-possible mutant for each interesting input candidate, and schedules it to be
-tested exactly once.
-%
-This is in turn inspired by exhaustive bounded testing tools that focus on
-testing every possible input value of the system under test up to a certain size
-bound.
-%
-Moreover, we foresee no problems into translating our tool in other programming
-languages beyond Haskell.
+Inspired by exhaustive bounded testing tools, our tool extends the CGPT approach
+introduced by \citeauthor{lampropoulos2019coverage} with an exhaustive mutation
+mechanism that generates every possible mutant for each interesting test case,
+and schedules it to be tested exactly once.
+
+%% , our tool uses coverage information
+%% to guide automatically derived mutators producing high-level, type-preserving
+%% mutations.
+%% %
+%% However, instead of relying heavily on randomness and power schedules to find
+%% bugs, our tool uses an exhaustive mutation approach that generates every
+%% possible mutant for each interesting input candidate, and schedules it to be
+%% tested exactly once.
+%% %
+%% This is in turn inspired by exhaustive bounded testing tools that focus on
+%% testing every possible input value of the system under test up to a certain size
+%% bound.
+%% %
+%% Moreover, we foresee no problems into translating our tool in other programming
+%% languages beyond Haskell.
 
 %% --- a more generic technique of limited applicability.
 
@@ -3145,12 +3166,11 @@ Moreover, we show how our tool can be applied in a real-world testing scenario,
 where it quickly discovers several planted and some previously unknown bugs.
 
 
-As already indicated throughout this work, there are several directions for
-future work we aim to investigate:
+As indicated throughout this work, there are several directions for future work:
 %
 combining \mutagen with specialized generators; improving the code
-instrumentation in order to effectively target mutations towards specific parts
-of the code; and evaluating the effect of lazy pruning; among others.
+instrumentation in order to target mutations towards specific parts of the code;
+and evaluating the effect of lazy pruning; among others.
 %
 In addition, we want to investigate how to redefine our automatically
 synthesized mutators in a stateful manner.
