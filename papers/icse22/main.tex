@@ -783,7 +783,7 @@ it reaches the test limit.
 %% simple criterion: if there are valid values enqueued for mutation, it picks the
 %% first one, mutates it and returns it, decreasing its energy by one.
 %% %
-%% If \textit{QSucc} is empty, then the same is attempted using \textit{QDisc}.
+%% If \textit{QValid} is empty, then the same is attempted using \textit{QDisc}.
 %% %
 %% If none of the mutation queues contain any candidates, CGPT generates a new
 %% value from scratch.
@@ -834,7 +834,7 @@ it reaches the test limit.
 
 %% \paragraph{Testing Loop}
 %% Outlined in Algorithm \ref{algo:fuzzchick:loop}, CGPT starts by creating two
-%% queues, \textit{QSucc} and \textit{QDisc} for valid and discarded previously
+%% queues, \textit{QValid} and \textit{QDisc} for valid and discarded previously
 %% executed test cases, respectively.
 %% %
 %% Enqueued values are stored along with a given mutation budget, that controls how
@@ -845,7 +845,7 @@ it reaches the test limit.
 %% simple criterion: if there are valid values enqueued for mutation, it picks the
 %% first one, mutates it and returns it, decreasing its energy by one.
 %% %
-%% If \textit{QSucc} is empty, then the same is attempted using \textit{QDisc}.
+%% If \textit{QValid} is empty, then the same is attempted using \textit{QDisc}.
 %% %
 %% If none of the mutation queues contain any candidates, CGPT generates a new
 %% value from scratch.
@@ -883,15 +883,15 @@ it reaches the test limit.
 %%   \SetKwProg{Fn}{Function}{:}{}
 %%   \Fn{\FC{P, N, gen, mut}}{
 %%     i $\gets$ 0\;
-%%     TLog, QSucc, QDisc $\gets$ $\varnothing$\;
+%%     TLog, QValid, QDisc $\gets$ $\varnothing$\;
 %%     \While{i $<$ N}{
-%%       x $\gets$ Pick(QSucc, QDisc, gen, mut)\;
+%%       x $\gets$ Pick(QValid, QDisc, gen, mut)\;
 %%       (result, trace) $\gets$ WithTrace(P(x))\;
 %%       \lIf{\KwNot result}{\KwRet Bug(x)}
 %%       \If{Interesting(TLog, trace)}{
 %%         e $\gets$ Energy(TLog, x, trace)\;
 %%         \eIf{\KwNot Discarded(result)}{
-%%           Enqueue(QSucc, (x, e))\;
+%%           Enqueue(QValid, (x, e))\;
 %%         }{
 %%           Enqueue(QDisc, (x, e))\;
 %%         }
@@ -911,11 +911,11 @@ it reaches the test limit.
 %%   \DontPrintSemicolon
 %%   \SetKwFunction{Pick}{Pick}
 %%   \SetKwProg{Fn}{Function}{:}{}
-%%   \Fn{\Pick{QSucc, QDisc, gen, mut}}{
-%%     \If{\KwNot Empty(QSucc)}{
-%%       (x,e) $\gets$ Deque(QSucc)\;
+%%   \Fn{\Pick{QValid, QDisc, gen, mut}}{
+%%     \If{\KwNot Empty(QValid)}{
+%%       (x,e) $\gets$ Deque(QValid)\;
 %%       \If{e $>$ 0}{
-%%         PushFront(QSucc, (x, e-1))
+%%         PushFront(QValid, (x, e-1))
 %%       }
 %%       \KwRet Sample(mut(x))\;
 %%     }
@@ -1119,17 +1119,16 @@ characterize in general given the expressivity of the data types used to drive
 the mutators.
 \end{itemize}
 
-
-The next section introduces \mutagen, our CGPT tool that aims to tackle the main
-limitations of CGPT.
+The next section introduces \mutagen, our revised CGPT that aims to tackle the
+main limitations of CGPT.
 
 % ----------------------------------------
 
 \section{\mutagen: No Mutant Left Behind}
 \label{sec:mutagen}
 
-In this section we describe the main ideas behind \mutagen, our enhanced CGPT
-tool written in Haskell.
+In this section we describe the main ideas behind \mutagen, our CGPT tool
+written in Haskell.
 %
 Notably, these ideas extend beyond Haskell and functional programming languages
 in general.
@@ -1241,12 +1240,13 @@ when transforming a leaf into a branch.
 This value corresponds to the simplest expression we can construct for the
 mutant to be type-correct.
 %
-In practice (\texttt{def = Leaf def}), where the inner \texttt{def} is the
-simplest value of the payload --- we use the type class system to abstract this
-complexity away in our implementation.
+In our example, the default value of a \texttt{Tree} is \texttt{Leaf def}, where
+the inner \texttt{def} is the default value of the payload --- we use the type
+class system to abstract this complexity away in our implementation.
 %
-Using a small value is again inspired by exhaustive bounded testing tools, and
-avoids introducing unnecessary randomness when growing data constructors.
+Using a small default value is again inspired by exhaustive bounded testing
+tools, and avoids introducing unnecessary randomness when growing mutated
+expressions.
 
 %% \begin{figure}
 %% \begin{verbatim}
@@ -1297,7 +1297,7 @@ resolve in using a random generator and sample a small number of values from it
 Then, for instance, a mutator for integers becomes:
 
 \begin{verbatim}
-mutate n = [ RAND arbitrary ]
+mutate n = [ RAND gen_int ]
 \end{verbatim}
 
 
@@ -1400,11 +1400,14 @@ base testing loop used by \mutagen.
 %
 This is outlined in Algorithm \ref{algo:mutagen:loop}.
 %
-As it can be observed, we follow the CGPT testing loop, using two queues to keep
-mutable test cases, and enqueueing and retrieving interesting test cases from
-them before falling back to random generation.
+Like in CGPT, we use two queues, QValid and QDisc to keep valid and discarded mutable test cases,
+respectively.
+%
+%% The testing loop enqueues and retrieves interesting test cases from them before
+%% falling back to random generation.
 
-\begin{algorithm}
+
+\begin{algorithm}[b]
   \SetArgSty{textnormal}
   %% \SetInd{0em}{0.75em}
   \SetKw{KwNot}{not}
@@ -1414,17 +1417,17 @@ them before falling back to random generation.
   \SetKwProg{Fn}{Function}{:}{}
   \Fn{\MG{P, N, R, gen, mut}}{
     i $\gets$ 0\;
-    TLog, QSucc, QDisc $\gets$ $\varnothing$\;
+    TLog, QValid, QDisc $\gets$ $\varnothing$\;
     \While{i $<$ N}{
-      x $\gets$ Pick(QSucc, QDisc, gen)\;
+      x $\gets$ Pick(QValid, QDisc, gen)\;
       (result, trace) $\gets$ WithTrace(P(x))\;
       \lIf{\KwNot result}{\KwRet Bug(x)}
       \If{Interesting(TLog, trace)}{
         \If{\KwNot Discarded(result)}{
           batch $\gets$ Mutate(x, mut, R)\;
-          Enqueue(QSucc, batch)\;
+          Enqueue(QValid, batch)\;
         }
-        \uElseIf{Passed(Parent(x))}{
+        \uElseIf{\KwNot Discarded(Parent(x))}{
           batch $\gets$ Mutate(x, mut, R)\;
           Enqueue(QDisc, batch)\;
         }
@@ -1436,7 +1439,7 @@ them before falling back to random generation.
 \caption{\label{algo:mutagen:loop}\mutagen Testing Loop}
 \end{algorithm}
 
-\begin{algorithm}
+\begin{algorithm}[t]
   \SetArgSty{textnormal}
   %% \SetInd{1em}{em}
   \SetKw{KwNot}{not}
@@ -1469,8 +1472,9 @@ them before falling back to random generation.
 \end{algorithm}
 
 
-The difference with CGPT lies in that we precompute all the mutations of a given
-mutable test case before enqueueing them.
+
+In \mutagen, we precompute all the mutations of a given mutable test case before
+enqueueing them.
 %
 These mutations are put together into lists that we call \emph{mutation batches}
 --- one for each mutated test case.
@@ -1506,8 +1510,27 @@ from the current batch, until it becomes empty and can switch to the next
 precomputed one in line.
 
 
+Having selected the next test case, the main loop proceeds to execute it,
+capturing both the result (valid, discarded due to preconditions, or failed)
+and its execution trace over the system under test.
+%
+If the test case fails, it is immediately reported as a bug.
+%
+If not, the algorithm evaluates whether it was interesting (i.e., it exercises a
+new path) based on its trace information and the one from previously executed
+test cases (represented by \textit{TLog}).
+%
+If the test case does in fact discover a new path, it is enqueued on its
+corresponding queue, depending on whether it was valid or got discarded.
+%
+%% (i.e., it failed the precondition).
+%
+This process alternates between generation and mutation until a bug is found or
+we reach the test limit.
 
-Another difference is the criterion for enqueuing discarded tests.
+
+Another difference with CGPT's testing loop is the criterion for enqueuing
+discarded tests.
 %
 We found that, especially for large data types, the queue of discarded
 candidates tends to grow disproportionately large during testing, making them
@@ -1528,7 +1551,7 @@ mutable test cases.
 %% mutation breaks a valid test case in a small way, it gets enqueued as discarded,
 %% and later a subsequent mutation fixes it by changing a different subexpression.
 
-\begin{algorithm}
+\begin{algorithm}[b]
   \SetArgSty{textnormal}
   %% \SetInd{0em}{0.75em}
   \SetKw{KwNot}{not}
@@ -1536,22 +1559,22 @@ mutable test cases.
   \DontPrintSemicolon
   \SetKwFunction{Pick}{Pick}
   \SetKwProg{Fn}{Function}{:}{}
-  \Fn{\Pick{QSucc, QDisc, gen}}{
-    \If{\KwNot Empty(QSucc)}{
-      batch $\gets$ Deque(QSucc)\;
+  \Fn{\Pick{QValid, QDisc, gen}}{
+    \If{\KwNot Empty(QValid)}{
+      batch $\gets$ Deque(QValid)\;
       \If{Empty(batch)}{
-        Pick(QSucc, QDisc, gen)\;
+        Pick(QValid, QDisc, gen)\;
       } \uElse{
-        PushFront(QSucc, Rest(batch))\;
+        PushFront(QValid, Rest(batch))\;
         \KwRet First(batch)\;
       }
     }
-    \If{\KwNot Empty(QSucc)}{
-      batch $\gets$ Deque(QSucc)\;
+    \If{\KwNot Empty(QValid)}{
+      batch $\gets$ Deque(QValid)\;
       \If{Empty(batch)}{
-        Pick(QSucc, QDisc, gen)\;
+        Pick(QValid, QDisc, gen)\;
       } \uElse{
-        PushFront(QSucc, Rest(batch))\;
+        PushFront(QValid, Rest(batch))\;
         \KwRet First(batch)\;
       }
     }
@@ -1568,64 +1591,12 @@ based on the limitations we found in CGPT.
 
 % ----------------------------------------
 
-\section{\mutagen Heuristics}
-\label{sec:heuristics}
-
-In this section we introduce two heuristics implemented on top of the base
-testing loop of our tool.
-%
-\mutagen enables them all by default, and can be individually disabled by the
-user if needed.
-
-\subsection{Priority FIFO Scheduling}
-
-This heuristic tackles the issue of enqueuing new interesting mutation
-candidates at the end of (possibly) long queues of not-so-interesting previously
-executed ones.
-
-%% \fuzzchick uses AFL instrumentation under the hood, which in turn uses an
-%% \emph{edge coverage} criterion to distinguish novel executions and to assign
-%% each mutation candidate a given energy.
-%% %
-Execution traces in \mutagen represent the specific \emph{path} in the code
-taken by the program, as opposed to just the (unordered) set of edges traversed
-in the control-flow graph (CFG) used by default by most coverage-guided fuzzers.
-%
-Using this criterion lets us gather precise information from each new execution.
-%
-%% To keep track of the execution path of each test, our tool keeps an internal
-%% prefix tree that records every new entry by traversing this data structure and
-%% inserting new nodes after a new path prefix gets discovered.
-%% %
-In particular, we are interested in the \emph{depth} where each new execution
-branches from already seen ones.
-%
-Our assumption here is that test cases that differ (branch) at shallower depths
-from the ones already executed are more likely to discover completely new
-portions of the code under test, and hence we want to prioritize them.
-
-
-In this light, every time we insert a new execution path into the internal trace
-log, we calculate the number of \emph{new nodes} that were executed, as well as
-the \emph{branching depth} where they got inserted.
-%
-The former is used to distinguish interesting test cases (whether or not new
-nodes were inserted), whereas the latter is used by this heuristic to schedule
-mutation candidates.
-%
-Fig. \ref{fig:mutagen:tracelog} illustrates this idea, inserting two execution
-traces (one after another) into a trace log that initially contains a single
-execution path.
-%
-The second insertion (with trace $1 \rightarrow 2 \rightarrow 6 \rightarrow 7$)
-branches at a shallower depth than the first one (2 vs. 3), hence its
-corresponding test case should be given a higher priority.
-
-\begin{figure}[t]
+\begin{figure*}[t]
 %% \vspace{-15pt}
 \newcommand\stacked[2]{\underset{\textstyle #2\mathstrut}{#1}}
-\begin{equation}
+\begin{align*}
   \nonumber
+  \qquad\qquad\qquad\qquad
   \left[
   \tikz[
     baseline=-10mm,
@@ -1678,12 +1649,12 @@ corresponding test case should be given a higher priority.
   \right]
   ,
   \stacked{{\color{blue} new=1\phantom{x}}}{{\color{red} depth=3}}
-  \end{equation}
-  \begin{equation}
-  \nonumber
+  %% \end{equation}
+  %% \begin{equation}
+  %% \nonumber
   %% \\
-  %% \qquad
-  %% \qquad
+  \qquad
+  \qquad
   \left[
   \tikz[
     baseline=-10mm,
@@ -1741,35 +1712,51 @@ corresponding test case should be given a higher priority.
   \right]
   ,
   \stacked{{\color{blue} new=2\phantom{x}}}{{\color{red} depth=2}}
-\end{equation}
+\end{align*}
 %% \vspace{-10pt}
 \caption{\label{fig:mutagen:tracelog}Inserting two new execution traces into the
   internal trace log (represented using brackets).}
-\end{figure}
-
-With this mechanism in place, we can modify \mutagen's base testing loop by
-replacing each mutation queue with a priority queue indexed by the branching
-depth of each new execution.
-%
-These changes are illustrated in Algorithm \ref{algo:mutagen:fifo}.
-%
-Statements in {\color{red} red} indicate important changes to the base
-algorithm, whereas ellipses denote parts of the code that are not relevant for
-the point being made.
+\end{figure*}
 
 
-To pick the next test case, we simply retrieve the one with the highest priority
-(the smallest branching depth).
-%
-Then, whenever we find a new interesting test case, we enqueue it at the
-beginning of the queue of its corresponding priority.
-%
-This allows the testing loop to jump immediately onto processing new interesting
-candidates as soon as they are found (even at the same priority), and to jump
-back to previous candidates as soon as their mutants become progressively less
-novel.
+\section{\mutagen Heuristics}
+\label{sec:heuristics}
 
-\begin{algorithm}
+
+In this section we introduce two heuristics implemented on top of the base
+testing loop of our tool.
+%% %
+%% \mutagen enables them by default, and can be individually disabled by the user
+%% if needed.
+
+\subsection{Priority FIFO Scheduling}
+
+This heuristic tackles the issue of enqueuing new interesting mutation
+candidates at the end of (possibly) long queues of not-so-interesting previously
+executed ones.
+
+%% \fuzzchick uses AFL instrumentation under the hood, which in turn uses an
+%% \emph{edge coverage} criterion to distinguish novel executions and to assign
+%% each mutation candidate a given energy.
+%% %
+Execution traces in \mutagen represent the specific \emph{path} in the code
+taken by the program, as opposed to just the (unordered) set of edges traversed
+in the control-flow graph (CFG) used by default by most coverage-guided fuzzers.
+%
+Using this criterion lets us gather precise information from each new execution.
+%
+%% To keep track of the execution path of each test, our tool keeps an internal
+%% prefix tree that records every new entry by traversing this data structure and
+%% inserting new nodes after a new path prefix gets discovered.
+%% %
+In particular, we are interested in the \emph{depth} where each new execution
+branches from already seen ones.
+%
+Our assumption is that test cases that differ (branch) at shallower depths from
+the ones already executed are more likely to discover new portions of the code
+under test, and hence we want to prioritize them.
+
+\begin{algorithm}[b]
   \SetArgSty{textnormal}
   %% \SetInd{0em}{0.75em}
   \SetKw{KwNot}{not}
@@ -1779,14 +1766,14 @@ novel.
   \SetKwProg{Fn}{Function}{:}{}
   \Fn{\MG{P, N, R, gen, mut}}{
     $\cdots$\;
-    x $\gets$ Pick(QSucc, QDisc, gen, mut)\;
+    x $\gets$ Pick(QValid, QDisc, gen, mut)\;
     (result, trace) $\gets$ WithTrace(P(x))\;
     $\cdots$\;
     \If{Interesting(TLog, trace)}{
       \If{\KwNot Discarded(result)}{
         batch $\gets$ Mutate(x, mut, R)\;
         {\color{red} prio $\gets$ BranchDepth(TLog, trace)}\; %% NEW
-        {\color{red} PushFront(QSucc, prio, batch)}\;          %% NEW
+        {\color{red} PushFront(QValid, prio, batch)}\;          %% NEW
       }
       $\cdots$\;
     }
@@ -1794,13 +1781,13 @@ novel.
   %% \vspace{5pt}
   \SetKwFunction{Pick}{Pick}
   \SetKwProg{Fn}{Function}{:}{}
-  \Fn{\Pick{QSucc, QDisc, gen}}{
-    \If{\KwNot Empty(QSucc)}{
-      {\color{red} (batch, prio) $\gets$ DequeMin(QSucc)}\; %%NEW
+  \Fn{\Pick{QValid, QDisc, gen}}{
+    \If{\KwNot Empty(QValid)}{
+      {\color{red} (batch, prio) $\gets$ DequeMin(QValid)}\; %%NEW
       \If{Empty(batch)}{
-        Pick(QSucc, QDisc, gen)\;
+        Pick(QValid, QDisc, gen)\;
       } \uElse{
-        {\color{red} PushFront(QSucc, prio, Rest(batch))}\; %% NEW
+        {\color{red} PushFront(QValid, prio, Rest(batch))}\; %% NEW
         \KwRet First(batch)\;
       }
     }
@@ -1809,6 +1796,110 @@ novel.
 
 \caption{\label{algo:mutagen:fifo}Priority FIFO Heuristic}
 \end{algorithm}
+
+
+In this light, every time we insert a new execution path into the internal trace
+log, we calculate the number of \emph{new nodes} that were executed, as well as
+the \emph{branching depth} where they got inserted.
+%
+The former is used to distinguish interesting test cases (whether or not new
+nodes were inserted), whereas the latter is used by this heuristic to schedule
+mutation candidates.
+%
+Fig. \ref{fig:mutagen:tracelog} illustrates this idea, inserting two execution
+traces (one after another) into a trace log that initially contains a single
+execution path.
+%
+The second insertion (with trace $1 \rightarrow 2 \rightarrow 6 \rightarrow 7$)
+branches at a shallower depth than the first one (2 vs. 3), and so its
+corresponding test case should be given a higher priority.
+
+
+Using this mechanism, we can modify \mutagen's base testing loop by replacing
+each mutation queue with a priority queue indexed by the branching depth of each
+new execution.
+%
+These changes are illustrated in Algorithm \ref{algo:mutagen:fifo}.
+%
+Statements in {\color{red} red} indicate important changes to the base
+algorithm, whereas ellipses denote parts of the code that are not relevant for
+the point being made.
+
+
+To pick the next test case, we retrieve the one with the highest priority (the
+smallest branching depth).
+%
+Then, when we find a new interesting test case, it gets enqueued at the
+\emph{beginning} of the queue at its corresponding priority.
+%
+This allows the testing loop to jump immediately onto mutating new interesting
+test cases as soon as they are found (even at the same priority), and to jump
+back to previous test cases as soon as their mutants become less novel.
+
+%% \caption{\label{fig:heuristics} The two main heuristics implemented in \mutagen.
+%%   Statements in {\color{red} red} indicate important changes to the base
+%%   algorithm. Ellipses denote parts of the code that are not relevant for the
+%%   point being made. }
+
+
+\subsection{Detecting Trace Space Saturation And Tuning Random Mutations Parameter}
+
+As introduced in Section \ref{sec:mutagen}, our tool is parameterized by the
+number of random mutations to be generated over each mutable subexpression
+defined using a random mutant, e.g., numeric values.
+%
+But, how many random mutations should we use? A single one? A few tenths? A few
+hundred?
+%% %
+%% Using too little can put finding bugs at risk.
+%% %
+%% For instance, when the system under test branches based on numeric values, we
+%% should make sure that we set enough random mutations to test each branch on a
+%% reasonable basis.
+%% %
+%% Using too many, on the other hand, can degrade the performance of the testing
+%% loop, as it will spend too much time producing uninteresting mutations.
+%% %
+%% This can happen for instance if the subexpressions defined using random mutants
+%% are only used as payloads, and their value does not affect the execution in any
+%% way.
+%
+Answering this question precisely is not an easy task, and this second heuristic
+aims to tackle this issue.
+
+We found that, the smaller the number of random mutations we set, the easier it
+is for the trace log that records executions to start getting saturated, i.e.,
+when interesting test cases stop getting discovered or are discovered very
+sporadically.
+%
+We realized that we can use this information to automatically optimize the
+number of random mutations used by our tool.
+%
+This idea is described in Algorithm \ref{algo:mutagen:reset}.
+%
+The process is simple:
+%
+\begin{inparaenum}
+  \item we start the testing loop with the number of random mutations set to
+    one,
+  %
+  \item each time we find that a test is not interesting (i.e. boring), we
+    increment a counter,
+  \item if we have not produced any interesting test case after a certain
+    threshold (1000 tests seems to be a reasonable value in practice), we
+    increment the number of random mutations and the threshold by twice the
+    current amount.
+    %
+    Additionally, each time this happens we also reset the trace log, so
+    interesting test cases found on a previous iteration can be found and
+    enqueued for mutation again --- this time with a higher effort dedicated to
+    producing random mutations.
+\end{inparaenum}
+
+Then, if the execution of the system under test depends heavily on the values
+stored at randomly mutable subexpressions, starting with a single random
+mutation will quickly saturate the trace space, and this heuristic will
+continuously increase the random mutations parameter until that stops happening.
 
 \begin{algorithm}
   \SetArgSty{textnormal}
@@ -1849,70 +1940,6 @@ novel.
 \caption{\label{algo:mutagen:reset}Trace Saturation Heuristic}
 \end{algorithm}
 
-%% \caption{\label{fig:heuristics} The two main heuristics implemented in \mutagen.
-%%   Statements in {\color{red} red} indicate important changes to the base
-%%   algorithm. Ellipses denote parts of the code that are not relevant for the
-%%   point being made. }
-
-
-\subsection{Detecting Trace Space Saturation And Tuning Random Mutations Parameter}
-
-As introduced in Section \ref{sec:mutagen}, our tool is parameterized by the
-number of random mutations to be generated over each mutable subexpression
-defined using a random mutant, e.g., numeric values, characters, etc.
-%
-But, how many random mutations should we use? A single one? A few tenths? A few
-hundred?
-%% %
-%% Using too little can put finding bugs at risk.
-%% %
-%% For instance, when the system under test branches based on numeric values, we
-%% should make sure that we set enough random mutations to test each branch on a
-%% reasonable basis.
-%% %
-%% Using too many, on the other hand, can degrade the performance of the testing
-%% loop, as it will spend too much time producing uninteresting mutations.
-%% %
-%% This can happen for instance if the subexpressions defined using random mutants
-%% are only used as payloads, and their value does not affect the execution in any
-%% way.
-%
-Answering this question precisely is not an easy task, and the second heuristic
-we introduce in this work aims to tackle this issue.
-%
-We found that, the smaller the number of random mutations we set, the easier it
-is for the trace log that records executions to start getting saturated, i.e.,
-when interesting test cases stop getting discovered or are discovered very
-sporadically.
-%
-We realized that we can use this information to automatically optimize the
-number of random mutations used by our tool.
-%
-This idea is described in Algorithm \ref{algo:mutagen:reset}.
-%
-The process is simple:
-%
-\begin{inparaenum}
-  \item we start the testing loop with the number of random mutations set to
-    one,
-  %
-  \item each time we find that a test is not interesting (i.e. boring), we
-    increment a counter,
-  \item if we have not produced any interesting test case after a certain
-    threshold (1000 tests seems to be a reasonable value in practice), we
-    increment the number of random mutations and the threshold by twice the
-    current amount.
-    %
-    Additionally, each time this happens we also reset the trace log, so
-    interesting test cases found on a previous iteration can be found and
-    enqueued for mutation again --- this time with a higher effort dedicated to
-    producing random mutations.
-\end{inparaenum}
-
-Then, if the execution of the system under test depends heavily on the values
-stored at randomly mutable subexpressions, starting with a single random
-mutation will quickly saturate the trace space, and this heuristic will
-continuously increase the random mutations parameter until that stops happening.
 
 %% \subsection{Mutation Inheritance}
 
