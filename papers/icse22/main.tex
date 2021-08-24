@@ -156,7 +156,7 @@ properties with sparse preconditions.
 
 Coverage-guided, property-based testing (CGPT) is a recent technique that
 alleviates this limitation by enhancing automatically synthesized generators
-with type-preserving mutations guided by execution traces.
+with structure-preserving mutations guided by execution traces.
 %
 Albeit effective, the initial CGPT approach is limited by factors like large
 reliance on randomness and poor mutants scheduling, reducing its applicability
@@ -225,12 +225,12 @@ properties encoding the expected behavior of the system under test.
 %% randomly generated inputs.
 %
 However, users of \quickcheck (and RPBT in general) are well aware that one of
-the biggest challenges while using this technique is to provide suitable random
-data generators needed to instantiate the testing properties.
+the biggest challenges while using RPBT is to provide suitable random data
+generators needed to instantiate the testing properties.
 %
-In some extreme cases, writing highly-tuned random generators capable of
-exercising every part of a complex system on a reasonable basis can take several
-thousand person-hours of trial and error \cite{lampropoulos2019coverage}.
+In extreme cases, writing highly-tuned random generators capable of exercising
+every part of a complex system on a reasonable basis can take several thousand
+person-hours of trial and error \cite{lampropoulos2019coverage}.
 %
 To alleviate this, there exist several techniques to automatically synthesize
 random data generators by reifying the static information present in the
@@ -265,7 +265,7 @@ structured values while still using automatically derived generators.
 %% \cite{denes2014quickchick}, Coq's own reimplementation of \quickcheck.
 %
 Instead of continuously generating random invalid test cases from scratch, CGPT
-works by keeping a queue of \emph{interesting} previously executed test cases
+works by keeping queues of \emph{interesting} previously executed test cases
 that can be mutated using high-level, structure-preserving transformations to
 produce new ones.
 %
@@ -298,9 +298,8 @@ test, external grammars are not required in CGPT.
 %
 The data types used by the inputs of the testing properties already describe the
 structure of the random data we want to mutate in a concrete manner, and
-specialized mutators acting at the data constructor level can be automatically
-derived directly from their definition --- making strongly-typed programming
-languages with expressive type systems an ideal match for CGPT.
+specialized mutators can be automatically derived directly from their definition
+--- making strongly-typed programming languages an ideal match for CGPT.
 
 %% In this light, CGPT is likely to preserve the semantic structure of the mutated
 %% data, as mutations are applied directly at the data type level, e.g., the
@@ -313,7 +312,8 @@ known as \emph{coverage-guided fuzzing} and popularized by tools like \emph{AFL}
 %
 Mutated test cases are considered interesting for mutation only when they
 produce new execution traces --- any other test case is simply thrown away.
-%
+
+
 Worth mentioning, this technique is not meant to replace sophisticated, manually
 written random generators, but rather to provide an adequate testing solution
 for early stages of development.
@@ -385,24 +385,24 @@ for early stages of development.
 %% improvements in several aspects.%
 %
 
-In this work, we establish several aspects of the original CGPT approach by
-\citeauthor{lampropoulos2019coverage} that leave considerable room for
-improvement.%
-%
+In this work, we establish several aspects%
 \footnote{Some of these were already identified by
   \citeauthor{lampropoulos2019coverage} in their original work.}
+%
+of the original CGPT approach by \citeauthor{lampropoulos2019coverage} that
+leave considerable room for improvement (see \S \ref{sec:background}).
 %
 In particular:
 %
 \begin{inparaenum}
 \item structure-preserving mutations, if not done carefully, can become
   superficial and rely heavily on randomness to produce diverse mutants,
-\item the queuing mechanism can cause large delays if interesting values are
-  enqueued frequently and there is no way to prioritize them, and
+\item the queuing mechanism can cause delays if interesting values are enqueued
+  frequently and there is no way to prioritize them, and
 \item using an heuristic to assign a certain ``mutation budget'' to each
   interesting test case (often referred to as a \emph{power schedule}) requires
-  fine tuning and can be hard to generalize to work well under different testing
-  scenarios.
+  fine tuning and can be hard to generalize to different kinds of testing
+  properties.
 \end{inparaenum}
 %
 %% Moreover, we replicated the Information-Flow Control (IFC) stack machine case
@@ -480,10 +480,10 @@ other number in the 32 or 64 bits range.
 
 
 %% Heuristics to improve testing loop
-Additionally, the testing loop of our tool incorporates two heuristics that help
+Additionally, the testing loop of \mutagen incorporates two heuristics that help
 finding bugs faster and more reliably (\S \ref{sec:heuristics}).
 %
-In the first place, \mutagen uses first-in first-out (FIFO) scheduling with
+In the first place, our tool uses first-in first-out (FIFO) scheduling with
 priority to enqueue interesting test cases for mutation.
 %
 This scheduling algorithm is indexed by the novelty of each new test case with
@@ -511,10 +511,10 @@ fly.
 
 
 %% Validation
-To validate our ideas, we use two main case studies (described in detail in
-\S \ref{sec:casestudies}): the Information-Flow Control (IFC) stack machine
-used by \citeauthor{lampropoulos2019coverage} in their original work, and an
-existing WebAssembly engine of industrial strenght written in Haskell.
+To validate our ideas, we use two case studies (described in detail in \S
+\ref{sec:casestudies}): the Information-Flow Control (IFC) stack machine used by
+\citeauthor{lampropoulos2019coverage} in their original work, and an existing
+{Web-Assembly} engine of industrial strenght written in Haskell.
 %
 In both case studies, we additionally compare the effect of the heuristics
 implemented on top of the base testing loop of \mutagen.
@@ -634,8 +634,8 @@ accessible%
 
 \begin{verbatim}
 gen_tree :: Size -> Gen a -> Gen (Tree a)
-gen_tree gen_a 0 = Leaf <$> gen_a
-gen_tree gen_a n = oneof
+gen_tree 0 gen_a = Leaf <$> gen_a
+gen_tree n gen_a = oneof
   [ Leaf <$> gen_a
   , Branch <$> gen_tree (n-1) <*> gen_a <*> gen_tree (n-1) ]
 \end{verbatim}
@@ -664,12 +664,12 @@ Readers familiar with RBPT will recognize that attempting to test
 \texttt{prop\_insert\_inv} using this generator in \quickcheck directly does not
 work well.
 %
-In practice, \quickcheck will give up quite early if most of the generated test
-cases get discarded because they do not satisfy the balanced precondition.
+In practice, \quickcheck will give up quite if most of the generated test cases
+get discarded because they do not satisfy the balanced precondition.
 %
-Sadly, most of the inputs generated by our na\"ive generator suffer from this
-problem, and the interesting part of the property (\texttt{balanced (insert x t)})
-is tested very sporadically as a result.
+Sadly, most of the inputs produced by our na\"ive generator suffer from this
+problem, and the interesting part of the property (\texttt{balanced (insert x
+  t)}) is tested very sporadically as a result.
 %
 In other words, \emph{the precondition of our testing property becomes very
   sparse when we use simple, automatically derived generators.}
@@ -986,7 +986,7 @@ room for improvement, especially when it comes to the mutator's design.
 %% Moreover, we replicated the Information-Flow Control (IFC) stack machine case
 %
 Moreover, we replicated the IFC stack machine case study bundled with \fuzzchick
-(their reference implementation) and observed a surprising limitation:
+and observed a surprising limitation:
 %
 \emph{after repeating each experiment 30 times, \fuzzchick could only find 5 out
   of the 20 injected bugs with a 100\% efficacy, the hardest one being found
@@ -1004,7 +1004,9 @@ time to failure --- when one is found.
 %% the IFC stack machine case study,
 
 All these observations led us to consider three main aspects of CGPT that can be
-improved upon --- and that constitute the main goal of this work.
+improved upon:
+%
+%% --- and that constitute the main goal of this work.
 %
 %% As mentioned earlier, when we recreated the evaluation of the IFC stack machine
 %% case study (described in detail in \S \ref{sec:casestudies}), we found that
@@ -1019,14 +1021,14 @@ improved upon --- and that constitute the main goal of this work.
 %% \fuzzchick that can be improved upon --- and that constitute the main goal of
 %% this work.
 %
-In no particular order:
+%% In no particular order:
 
 \begin{itemize}
 \item \emph{Mutators distribution:}
 %
 for the sake of simplicity, the mutators proposed by
-\citeauthor{lampropoulos2019coverage} are derived to follow a top-down approach,
-similar to that used by the automatically derived random generators.
+\citeauthor{lampropoulos2019coverage} are derived to follow a top-down approach.
+%% similar to that used by the automatically derived random generators.
 %
 In this light, a mutation can happen at top-level or be recursively applied to
 an immediate subexpression with approximately the same probability.
@@ -1047,21 +1049,24 @@ decreases multiplicatively with each recursive call.
 %
 Hence, these simple mutators can only be effectively used to transform shallow
 data structures, potentially excluding interesting applications that might
-require producing deeper valid values, e.g., programs, network protocol
-interactions, etc.
+require producing deeper valid values.
+%
+%e.g., programs, network protocol interactions, etc.
 %
 Ideally, \emph{mutations should be able to happen on every subexpression of the
   input test case on a reasonable basis}.
 
 
-On the other hand, using random generators to produce needed subexpressions
-when growing data constructors can be dangerous, as we are introducing the very
-same ``uncontrolled'' randomness that we wanted to mitigate in the first place!
+%% On the other hand, using random generators inside mutators to produce new
+%% subexpressions when ``growing'' a data constructor can be dangerous, as this
+%% introduces the same ``uncontrolled'' randomness we want to mitigate in the first
+%% place!
+%% %
+%% If such generator produces an invalid subexpression, it might invalidate the
+%% whole mutated test case.
 %
-If the random generator produces an invalid subexpression (something quite
-likely), this might just invalidate the whole mutated test case.
-%
-We believe that growing data constructors needs to be done carefully.
+%% Hence, growing data constructors must be done carefully.
+
 %% %
 %% For instance, by using just a minimal piece of data to make the overall mutated
 %% test case type correct.
@@ -1071,8 +1076,8 @@ We believe that growing data constructors needs to be done carefully.
 
 \item \emph{Enqueuing mutation candidates:}
 %
-the CGPT testing loop uses two single queues for keeping valid and discarded
-mutation candidates.
+the CGPT testing loop uses two single-ended queues for keeping valid and
+discarded interesting test cases.
 %
 Whenever a new test case is found interesting, it is placed \emph{at the end of
   its corresponding queue}.
@@ -1081,17 +1086,19 @@ If this test case happens to have discovered a whole new portion of the target
 code, it will not be further mutated until the rest of the queue ahead of it
 gets processed.
 %
-This can limit the effectiveness of the testing loop if the queues tend to grow
-more often than they tend to shrink, as interesting mutation candidates can get
-``buried'' at the end of a long queue that only exercises the same portion of
-the target code.
+This can limit the effectiveness of the testing loop if the queues grow more
+often than they shrink, as interesting test cases can get ``buried'' at the end
+of a long queue and,
 %
-In an extreme case, they might not be processed at all within the testing
-budget.
+%% that only exercises the same portion of the target code.
 %
-Ideally, \emph{one would like a mechanism that prioritizes mutating test cases
-  that discover new portions of the code right away}, and that is capable of
-jumping back and forth from mutation candidates whenever this happens.
+in an extreme case, not get processed at all within the testing budget.
+%
+Ideally, \emph{we need a mechanism that prioritizes mutating test cases that
+  discover new portions of the code right away}.
+%
+%% , and that is capable of jumping
+%% back and forth from  whenever this happens.
 %
 %% We show in \S \ref{sec:heuristics} how this can be achieved by analyzing
 %% the execution information in order to prioritize test cases with novel execution
@@ -1099,9 +1106,9 @@ jumping back and forth from mutation candidates whenever this happens.
 
 \item \emph{Power schedule:}
 %
-it is not clear how the power schedule used to assign a given budget to each
-mutable test case in CGPT works in the context of high-level
-structure-preserving mutations.
+it is not clear how the heuristic used to assign a given budget to each mutable
+test case in CGPT works in the context of high-level structure-preserving
+mutations.
 %
 If it assigns too much budget to certain not-so-interesting seeds, some bugs
 might not be discovered on a timely basis.
@@ -1114,12 +1121,11 @@ trace information.
 To keep the comparison fair, the authors replicated the same power schedule
 configuration used in AFL.
 %
-However, AFL uses a different mutation approach that works at the bit level.
+However, AFL uses a bit-level mutation approach.
 %
-This raises the question about what is the best power schedule configuration
-when using a high-level mutation approach --- something quite challenging to
-characterize in general given the expressivity of the data types used to drive
-the mutators.
+It is unclear what the best heuristic configuration is when using a high-level
+mutation approach --- something challenging to characterize in general given the
+expressivity of the data types used to drive the mutators.
 \end{itemize}
 
 The next section introduces \mutagen, our revised CGPT that aims to tackle the
@@ -1139,9 +1145,8 @@ in general.
 %% Later, \S \ref{sec:heuristics} introduces heuristics that help finding bugs
 %% faster in certain testing scenarios.
 
-In contrast to CGPT, and many other popular fuzzing tools for that matter,
-\mutagen works by to mutating test cases on an exhaustive and precise manner,
-where
+In contrast to CGPT and many other popular fuzzing tools, \mutagen works by to
+mutating test cases on an exhaustive and precise manner, where
 %
 \begin{inparaenum}
   \item each subexpression of a mutable test case is associated with a set of
@@ -1151,9 +1156,8 @@ where
 %
 %% There is a small exception to this rules that we will introduce soon.
 %
-Our realization is that, by following an exhaustive mutation approach, we can
-avoid the need for a power schedule, i.e., a heuristic to assign a certain
-mutation budget to each mutated test case.
+Our realization is that, by using an exhaustive mutation approach, we avoid
+needing a heuristic to assign a mutation budget to each mutated test case.
 %
 Moreover, producing mutants exhaustively ensures that no interesting mutation is
 omitted due to randomness, as well a no mutation is evaluated more than once.
@@ -1247,9 +1251,9 @@ In our example, the default value of a \texttt{Tree} is \texttt{Leaf def}, where
 the inner \texttt{def} is the default value of the payload --- we use the type
 class system to abstract this complexity away in our implementation.
 %
-Using a small default value is again inspired by exhaustive bounded testing
-tools, and avoids introducing unnecessary randomness when growing mutated
-expressions.
+Using a small default value, as oppossed to a randomly generated one (as done by
+the original GCPT), is again inspired by exhaustive bounded testing tools, and
+avoids introducing unnecessary randomness when growing mutated expressions.
 
 %% \begin{figure}
 %% \begin{verbatim}
@@ -1266,7 +1270,7 @@ expressions.
 %% \vspace{-10pt}
 %% \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[b]
 \begin{verbatim}
 mutate (Leaf x)       = [ PURE (Branch def x def) ]
 mutate (Branch l x r) = [ PURE l, PURE r
@@ -1411,7 +1415,7 @@ respectively.
 %% falling back to random generation.
 
 
-\begin{algorithm}[b]
+\begin{algorithm}[t]
   \SetArgSty{textnormal}
   %% \SetInd{0em}{0.75em}
   \SetKw{KwNot}{not}
@@ -1555,7 +1559,7 @@ mutable test cases.
 %% mutation breaks a valid test case in a small way, it gets enqueued as discarded,
 %% and later a subsequent mutation fixes it by changing a different subexpression.
 
-\begin{algorithm}[b]
+\begin{algorithm}[t]
   \SetArgSty{textnormal}
   %% \SetInd{0em}{0.75em}
   \SetKw{KwNot}{not}
