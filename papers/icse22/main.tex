@@ -18,7 +18,11 @@
 \usepackage{pgfplots}
 \usepackage{paralist}
 \usepackage{enumitem}
-%% \usepackage[square,numbers]{natbib}
+\usepackage{titlesec}
+
+\titlespacing*{\section}{0pt}{5pt}{5pt}
+\titlespacing*{\subsection}{0pt}{5pt}{5pt}
+\titlespacing*{\paragraph}{10pt}{0pt}{10pt}
 
 \settopmatter{printacmref=false}
 
@@ -49,6 +53,10 @@
 
 \setlength{\textfloatsep}{5pt}
 \setlength{\floatsep}{5pt}
+
+\SetAlFnt{\small}
+\SetAlCapFnt{\small}
+\SetAlCapNameFnt{\small}
 
 % ----------------------------------------
 
@@ -1336,6 +1344,7 @@ children.
 In this light, the mutable positions of the value \texttt{Branch (Leaf 1) 2
   (Leaf 3)} are as follows:
 
+\vspace{-5pt}
 \begin{equation}
   \nonumber
   \footnotesize
@@ -1910,7 +1919,7 @@ stored at randomly mutable subexpressions, starting with a single random
 mutation will quickly saturate the trace space, and this heuristic will
 continuously increase the random mutations parameter until that stops happening.
 
-\begin{algorithm}
+\begin{algorithm}[t]
   \SetArgSty{textnormal}
   %% \SetInd{0em}{0.75em}
   \SetKw{KwNot}{not}
@@ -1962,6 +1971,7 @@ continuously increase the random mutations parameter until that stops happening.
 
 % ----------------------------------------
 
+%% \vspace{-10pt}
 \section{Case studies}
 \label{sec:casestudies}
 
@@ -2291,7 +2301,7 @@ These bugs were mechanically injected by either
 \end{tabular}
 \caption{\label{table:wasm:bugs}Issues found by \mutagen in
   \textit{haskell-wasm}.}
-%% \vspace{-20pt}
+\vspace{-10pt}
 \end{table}
 
 \begin{table}[t]
