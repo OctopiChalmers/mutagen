@@ -22,6 +22,7 @@
 
 \titlespacing*{\section}{0pt}{5pt}{5pt}
 \titlespacing*{\subsection}{0pt}{5pt}{5pt}
+\titlespacing*{\subsubsection}{0pt}{5pt}{5pt}
 \titlespacing*{\paragraph}{10pt}{0pt}{10pt}
 
 \settopmatter{printacmref=false}
@@ -602,8 +603,7 @@ implementation of the \texttt{insert} function:
 
 \begin{verbatim}
 prop_insert_inv :: a -> Tree a -> Property
-prop_insert_inv x t =
-  balanced t ==> balanced (insert x t)
+prop_insert_inv x t = balanced t ==> balanced (insert x t)
 \end{verbatim}
 
 
@@ -640,12 +640,12 @@ accessible%
 %%                 , Branch <$> gen (n-1) <*> arbitrary <*> gen (n-1) ]
 %% \end{verbatim}
 
+% gen_tree :: Size -> Gen a -> Gen (Tree a)
+
 \begin{verbatim}
-gen_tree :: Size -> Gen a -> Gen (Tree a)
-gen_tree 0 gen_a = Leaf <$> gen_a
-gen_tree n gen_a = oneof
-  [ Leaf <$> gen_a
-  , Branch <$> gen_tree (n-1) <*> gen_a <*> gen_tree (n-1) ]
+genTree 0 = Leaf <$> genA
+genTree n = oneof
+  [Leaf <$> genA, Branch <$> genTree(n-1) <*> genA <*> genTree(n-1)]
 \end{verbatim}
 
 \noindent This definition follows a common type-directed generation approach,
@@ -660,7 +660,7 @@ limit by a unit on each step, ensuring termination by restricting itself to
 generating leaves when it reaches zero.
 %
 Payloads are generated simply by delegating the task to an external random
-generator (\texttt{gen\_a}) defined elsewhere.
+generator (\texttt{genA}) defined elsewhere.
 %
 
 %% Subexpressions of any other type are generated
@@ -668,19 +668,20 @@ generator (\texttt{gen\_a}) defined elsewhere.
 %% --- as noted by the use of \texttt{arbitrary} when generating random payloads
 %% inside of the \texttt{Leaf} and \texttt{Branch} constructors.
 
-Readers familiar with RBPT will recognize that attempting to test
-\texttt{prop\_insert\_inv} using this generator in \quickcheck directly does not
-work well.
+Readers familiar with RBPT will recognize that using \texttt{genTree} to test
+\texttt{prop\_insert\_inv} with \quickcheck directly does not work well.
 %
-In practice, \quickcheck will give up quite if most of the generated test cases
-get discarded because they do not satisfy the balanced precondition.
+In practice, \quickcheck gives up if most of the generated test cases get
+discarded due to failed preconditions.
+%
+%because they do not satisfy the balanced precondition.
 %
 Sadly, most of the inputs produced by our na\"ive generator suffer from this
 problem, and the interesting part of the property (\texttt{balanced (insert x
   t)}) is tested very sporadically as a result.
-%
-In other words, \emph{the precondition of our testing property becomes very
-  sparse when we use simple, automatically derived generators.}
+%% %
+%% In other words, \emph{the precondition of our testing property becomes very
+%%   sparse when we use simple, automatically derived generators.}
 
 The next subsection shows how GCPT helps overcoming this limitation without
 having to write specialized generators by hand.
@@ -794,7 +795,7 @@ it reaches the test limit.
 %% simple criterion: if there are valid values enqueued for mutation, it picks the
 %% first one, mutates it and returns it, decreasing its energy by one.
 %% %
-%% If \textit{QValid} is empty, then the same is attempted using \textit{QDisc}.
+%% If \textit{QValid} is empty, then the same is attempted using \textit{QDiscarded}.
 %% %
 %% If none of the mutation queues contain any candidates, CGPT generates a new
 %% value from scratch.
@@ -845,7 +846,7 @@ it reaches the test limit.
 
 %% \paragraph{Testing Loop}
 %% Outlined in Algorithm \ref{algo:fuzzchick:loop}, CGPT starts by creating two
-%% queues, \textit{QValid} and \textit{QDisc} for valid and discarded previously
+%% queues, \textit{QValid} and \textit{QDiscarded} for valid and discarded previously
 %% executed test cases, respectively.
 %% %
 %% Enqueued values are stored along with a given mutation budget, that controls how
@@ -856,7 +857,7 @@ it reaches the test limit.
 %% simple criterion: if there are valid values enqueued for mutation, it picks the
 %% first one, mutates it and returns it, decreasing its energy by one.
 %% %
-%% If \textit{QValid} is empty, then the same is attempted using \textit{QDisc}.
+%% If \textit{QValid} is empty, then the same is attempted using \textit{QDiscarded}.
 %% %
 %% If none of the mutation queues contain any candidates, CGPT generates a new
 %% value from scratch.
@@ -894,9 +895,9 @@ it reaches the test limit.
 %%   \SetKwProg{Fn}{Function}{:}{}
 %%   \Fn{\FC{P, N, gen, mut}}{
 %%     i $\gets$ 0\;
-%%     TLog, QValid, QDisc $\gets$ $\varnothing$\;
+%%     TLog, QValid, QDiscarded $\gets$ $\varnothing$\;
 %%     \While{i $<$ N}{
-%%       x $\gets$ Pick(QValid, QDisc, gen, mut)\;
+%%       x $\gets$ Pick(QValid, QDiscarded, gen, mut)\;
 %%       (result, trace) $\gets$ WithTrace(P(x))\;
 %%       \lIf{\KwNot result}{\KwRet Bug(x)}
 %%       \If{Interesting(TLog, trace)}{
@@ -904,7 +905,7 @@ it reaches the test limit.
 %%         \eIf{\KwNot Discarded(result)}{
 %%           Enqueue(QValid, (x, e))\;
 %%         }{
-%%           Enqueue(QDisc, (x, e))\;
+%%           Enqueue(QDiscarded, (x, e))\;
 %%         }
 %%       }
 %%       i $\gets$ i+1\;
@@ -922,7 +923,7 @@ it reaches the test limit.
 %%   \DontPrintSemicolon
 %%   \SetKwFunction{Pick}{Pick}
 %%   \SetKwProg{Fn}{Function}{:}{}
-%%   \Fn{\Pick{QValid, QDisc, gen, mut}}{
+%%   \Fn{\Pick{QValid, QDiscarded, gen, mut}}{
 %%     \If{\KwNot Empty(QValid)}{
 %%       (x,e) $\gets$ Deque(QValid)\;
 %%       \If{e $>$ 0}{
@@ -930,10 +931,10 @@ it reaches the test limit.
 %%       }
 %%       \KwRet Sample(mut(x))\;
 %%     }
-%%     \uElseIf{\KwNot Empty(QDisc)}{
-%%       (x,e) $\gets$ Deque(QDisc)\;
+%%     \uElseIf{\KwNot Empty(QDiscarded)}{
+%%       (x,e) $\gets$ Deque(QDiscarded)\;
 %%       \If{e $>$ 0}{
-%%         PushFront(QDisc, (x, e-1))
+%%         PushFront(QDiscarded, (x, e-1))
 %%       }
 %%       \KwRet Sample(mut(x))\;
 %%     }
@@ -1118,8 +1119,8 @@ it is not clear how the heuristic used to assign a given budget to each mutable
 test case in CGPT works in the context of high-level structure-preserving
 mutations.
 %
-If it assigns too much budget to certain not-so-interesting seeds, some bugs
-might not be discovered on a timely basis.
+If it assigns too much budget to certain not-so-interesting test cases, some
+bugs might not be discovered on a timely basis.
 %
 Conversely, assigning too little budget to interesting test cases might mean
 that some bugs cannot be discovered at all --- randomly generating the same test
@@ -1278,19 +1279,19 @@ avoids introducing unnecessary randomness when growing mutated expressions.
 %% \vspace{-10pt}
 %% \end{figure}
 
-\begin{figure}[b]
+\begin{figure}[t]
 \begin{verbatim}
-mutate (Leaf x)       = [ PURE (Branch def x def) ]
-mutate (Branch l x r) = [ PURE l, PURE r
-                        , PURE (Leaf x)
-                        , PURE (Branch l x l)
-                        , PURE (Branch r x r)
-                        , PURE (Branch r x l) ]
+mutate (Leaf x) =
+  [ PURE (Branch def x def) ]
+mutate (Branch l x r) =
+  [ PURE l, PURE r
+  , PURE (Leaf x)
+  , PURE (Branch l x l), PURE (Branch r x r), PURE (Branch r x l) ]
 \end{verbatim}
 \vspace{-5pt}
 \caption{\label{fig:mutagen:mutator}\mutagen mutator for the \texttt{Tree} data
   type.}
-%% \vspace{-15pt}
+\vspace{-5pt}
 \end{figure}
 
 %% At this point, the reader might consider:
@@ -1331,10 +1332,10 @@ encoding the path from the root to every mutable subexpression.
 For instance, the positions of a \texttt{Tree} are computed as follows:
 
 \begin{verbatim}
-positions (Leaf x)       = node [ (0, positions x) ]
-positions (Branch l x r) = node [ (0, positions l)
-                                , (1, positions x)
-                                , (2, positions r) ]
+positions (Leaf x) =
+  node [ (0, positions x) ]
+positions (Branch l x r) =
+  node [ (0, positions l), (1, positions x), (2, positions r) ]
 \end{verbatim}
 
 \noindent where the function \texttt{node} simply builds a node of the positions
@@ -1417,7 +1418,7 @@ base testing loop used by \mutagen.
 %
 This is outlined in Algorithm \ref{algo:mutagen:loop}.
 %
-Like in CGPT, we use two queues, QValid and QDisc to keep valid and discarded mutable test cases,
+Like in CGPT, we use two queues, QValid and QDiscarded to keep valid and discarded mutable test cases,
 respectively.
 %
 %% The testing loop enqueues and retrieves interesting test cases from them before
@@ -1434,9 +1435,9 @@ respectively.
   \SetKwProg{Fn}{Function}{:}{}
   \Fn{\MG{P, N, R, gen, mut}}{
     i $\gets$ 0\;
-    TLog, QValid, QDisc $\gets$ $\varnothing$\;
+    TLog, QValid, QDiscarded $\gets$ $\varnothing$\;
     \While{i $<$ N}{
-      x $\gets$ Pick(QValid, QDisc, gen)\;
+      x $\gets$ Pick(QValid, QDiscarded, gen)\;
       (result, trace) $\gets$ WithTrace(P(x))\;
       \lIf{\KwNot result}{\KwRet Bug(x)}
       \If{Interesting(TLog, trace)}{
@@ -1446,7 +1447,7 @@ respectively.
         }
         \uElseIf{\KwNot Discarded(Parent(x))}{
           batch $\gets$ Mutate(x, mut, R)\;
-          Enqueue(QDisc, batch)\;
+          Enqueue(QDiscarded, batch)\;
         }
       }
       i $\gets$ i+1\;
@@ -1576,11 +1577,11 @@ mutable test cases.
   \DontPrintSemicolon
   \SetKwFunction{Pick}{Pick}
   \SetKwProg{Fn}{Function}{:}{}
-  \Fn{\Pick{QValid, QDisc, gen}}{
+  \Fn{\Pick{QValid, QDiscarded, gen}}{
     \If{\KwNot Empty(QValid)}{
       batch $\gets$ Deque(QValid)\;
       \If{Empty(batch)}{
-        Pick(QValid, QDisc, gen)\;
+        Pick(QValid, QDiscarded, gen)\;
       } \uElse{
         PushFront(QValid, Rest(batch))\;
         \KwRet First(batch)\;
@@ -1589,7 +1590,7 @@ mutable test cases.
     \If{\KwNot Empty(QValid)}{
       batch $\gets$ Deque(QValid)\;
       \If{Empty(batch)}{
-        Pick(QValid, QDisc, gen)\;
+        Pick(QValid, QDiscarded, gen)\;
       } \uElse{
         PushFront(QValid, Rest(batch))\;
         \KwRet First(batch)\;
@@ -1656,7 +1657,7 @@ under test, and hence we want to prioritize them.
   \SetKwProg{Fn}{Function}{:}{}
   \Fn{\MG{P, N, R, gen, mut}}{
     $\cdots$\;
-    x $\gets$ Pick(QValid, QDisc, gen, mut)\;
+    x $\gets$ Pick(QValid, QDiscarded, gen, mut)\;
     (result, trace) $\gets$ WithTrace(P(x))\;
     $\cdots$\;
     \If{Interesting(TLog, trace)}{
@@ -1671,11 +1672,11 @@ under test, and hence we want to prioritize them.
   %% \vspace{5pt}
   \SetKwFunction{Pick}{Pick}
   \SetKwProg{Fn}{Function}{:}{}
-  \Fn{\Pick{QValid, QDisc, gen}}{
+  \Fn{\Pick{QValid, QDiscarded, gen}}{
     \If{\KwNot Empty(QValid)}{
       {\color{red} (batch, prio) $\gets$ DequeMin(QValid)}\; %%NEW
       \If{Empty(batch)}{
-        Pick(QValid, QDisc, gen)\;
+        Pick(QValid, QDiscarded, gen)\;
       } \uElse{
         {\color{red} PushFront(QValid, prio, Rest(batch))}\; %% NEW
         \KwRet First(batch)\;
@@ -2405,8 +2406,7 @@ In other words, we are testing for false negatives.
 In Haskell, we write the following property:
 
 \begin{verbatim}
-prop_validator m =
-  isValidHaskellWasm m ==> isValidRefImpl m
+prop_validator m = isValidHaskellWasm m ==> isValidRefImpl m
 \end{verbatim}
 
 Where the precondition (\texttt{isValidHaskellWasm m}) runs the input WebAssembly
@@ -2516,10 +2516,8 @@ two arguments (of type \texttt{I32} and \texttt{F32}) and return an \texttt{I32}
 as a result:
 
 \begin{verbatim}
-prop_interpreter_i32 fun i f =
-  prop_interpreter (FuncType { params = [I32, F32], result = [I32] })
-                   fun
-                   [VI32 i, VF32 f]
+prop_interpreter_i32 fun i f = prop_interpreter
+  (FuncType { params = [I32, F32], result = [I32] }) fun [VI32 i, VF32 f]
 \end{verbatim}
 
 This specialized property lets us generate functions using this fixed type and
@@ -2564,15 +2562,15 @@ proportion of times each tool finds each bug within the one-hour testing budget.
 %% We found this metric crucial to be analyzed when replicating \fuzzchick's
 %% results, as opposed to just paying attention at the MTTF.
 
-In both case studies, we show how the FIFO scheduling and trace reset heuristics
-described in \S \ref{sec:heuristics} affect the testing performance of
-\mutagen by individually disabling them.
+In both case studies, we show how the two \mutagen heuristics described in \S
+\ref{sec:heuristics} affect the testing performance by individually disabling
+them.
 %
 We call these variants \textit{no FIFO} and \textit{no reset}, respectively.
 %
 In the case of \textit{no reset}, the amount of random mutations is no longer
 controlled by this heuristic, so we arbitrarily fixed it to 25 random mutations
-throughout the execution of the tool.
+throughout the testing loop.
 
 \subsection{IFC Stack Machine}
 
@@ -2903,7 +2901,7 @@ pass the sparse preconditions than \quickcheck in the same amount of time,
 \end{tabular}
 \caption{\label{table:wasm:overhead}Mean number of tests per second executed by
   each tool on the WebAssembly case study.}
-%% \vspace{-10pt}
+\vspace{-10pt}
 \end{table}
 
 % ----------------------------------------
@@ -3117,7 +3115,7 @@ correspond to each evaluated subexpression.
 
 
 In this work we use exhaustiveness as a way to reliably enforce that all
-possible mutants of an interesting seed are executed.
+possible mutants of an interesting test case are executed.
 %
 In contrast to fully exhaustive testing tools, \mutagen relies on randomness to
 find initial interesting mutable test cases.
@@ -3185,16 +3183,16 @@ As indicated throughout this work, there are several directions for future work:
 combining \mutagen with specialized generators; improving the code
 instrumentation in order to target mutations towards specific parts of the code;
 and evaluating the effect of lazy pruning; among others.
-%
-In addition, we want to investigate how to redefine our automatically
-synthesized mutators in a stateful manner.
-%
-This way, it would be possible to apply mutations that preserve complex
-properties of the generated data simply by construction, e.g., mutations that
-\emph{always} produce well-typed programs where variables are always in scope.
-%
-The main challenge will be to achieve this while keeping the testing process as
-automatable as possible.
+%% %
+%% In addition, we want to investigate how to redefine our automatically
+%% synthesized mutators in a stateful manner.
+%% %
+%% This way, it would be possible to apply mutations that preserve complex
+%% properties of the generated data simply by construction, e.g., mutations that
+%% \emph{always} produce well-typed programs where variables are always in scope.
+%% %
+%% The main challenge will be to achieve this while keeping the testing process as
+%% automatable as possible.
 
 
 % ----------------------------------------
