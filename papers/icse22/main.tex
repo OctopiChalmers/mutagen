@@ -115,7 +115,7 @@
 %% The "title" command has an optional parameter,
 %% allowing the author to define a "short title" to be used in page headers.
 \title[\mutagen]{\mutagen: Coverage-Guided, Property-Based Testing using
-  Exhaustive Type-Preserving Mutations}
+  Exhaustive Structure-Preserving Mutations}
 
 %%
 %% The "author" command and its associated commands are used to define
@@ -267,8 +267,8 @@ can be used to test the main components of the system under test.
 %% for the Coq programming language that
 %
 Coverage-Guided, Property-Based Testing (CGPT) \cite{lampropoulos2019coverage}
-is a technique that borrows ideas from the fuzzing community to generate highly
-structured values while still using automatically derived generators.
+is a technique that borrows ideas from the fuzzing community to generate
+highly-structured values while still using automatically derived generators.
 %
 %% Notably, this tool is implemented as an extension of \quickchick
 %% \cite{denes2014quickchick}, Coq's own reimplementation of \quickcheck.
@@ -306,7 +306,7 @@ test, external grammars are not required in CGPT.
 %% In CGPT, external grammars are not required.
 %
 The data types used by the inputs of the testing properties already describe the
-structure of the random data we want to mutate in a concrete manner, and
+structure of the random data one needs to mutate in a concrete manner, and
 specialized mutators can be automatically derived directly from their definition
 --- making strongly-typed programming languages an ideal match for CGPT.
 
@@ -543,7 +543,7 @@ and interpreter, as well as 3 previously unknown bugs that flew under the radar
 of the existing unit test suite of this engine.
 %
 This case study also help us to compare the performance of our tool against a
-more traditional PBT approach that does not rely on code instrumentation.
+more traditional RPBT approach that does not rely on code instrumentation.
 %
 All in all, our evaluation encompasses more than 600 hours of computing time and
 suggests that testing mutants exhaustively can be an appealing technique for
@@ -599,7 +599,7 @@ balancedness, we can write testing properties to assert that the operations
 defined over the \texttt{Tree} data type preserve this invariant.
 %
 For instance, the following testing property can be used to find bugs in the
-implementation of the \texttt{insert} function:
+implementation of a given \texttt{insert} function:
 
 \begin{verbatim}
 prop_insert_inv :: a -> Tree a -> Property
@@ -626,11 +626,11 @@ The last missing piece is a random generator of trees.
 %% \cite{jones1997type}, instantiating the \texttt{Arbitrary} type class with a
 %% random generator as the implementation of the overloaded \texttt{arbitrary}
 %% operation:
-A simple implementation of such a generator (simplified to make it more
-accessible%
+We can write a na\"ive one (simplified to make it more accessible%
 \footnote{In practice, this code will most likely be implemented using Haskell's
-  type-class mechanism, hiding the complexity behind the size limit and the payload generator.}%
-) can be written as follows:
+  type-class mechanism, hiding the complexity behind the size limit and the
+  payload generator.}%
+) as follows:
 
 %% \begin{verbatim}
 %% instance Arbitrary a => Arbitrary (Tree a) where
@@ -642,10 +642,18 @@ accessible%
 
 % gen_tree :: Size -> Gen a -> Gen (Tree a)
 
+%% \begin{verbatim}
+%% genTree size = case size of
+%%   0 -> Leaf <$> genA
+%%   n -> oneof [ Leaf <$> genA
+%%              , Branch <$> genTree (n-1) <*> genA <*> genTree (n-1) ]
+%% \end{verbatim}
+
 \begin{verbatim}
-genTree 0 = Leaf <$> genA
-genTree n = oneof
-  [Leaf <$> genA, Branch <$> genTree(n-1) <*> genA <*> genTree(n-1)]
+genTree(sz) =
+  if sz == 0 then Leaf <$> genA
+  else oneof [ Leaf <$> genA
+             , Branch <$> genTree(sz-1) <*> genA <*> genTree(sz-1) ]
 \end{verbatim}
 
 \noindent This definition follows a common type-directed generation approach,
@@ -655,9 +663,10 @@ automatically from the codebase.
 In esence, this generator randomly picks one data constructor from its
 corresponding data type definition with uniform probability (i.e, either a
 \texttt{Leaf} or a \texttt{Branch}), and then calls itself for every recursive
-subexpression needed to produce a well-typed value, carefully reducing the size
-limit by a unit on each step, ensuring termination by restricting itself to
-generating leaves when it reaches zero.
+subexpression needed to produce a well-typed value, carefully reducing the input
+size limit \texttt{sz} by a unit on each step, ensuring termination by
+restricting itself to generating leaves when it reaches zero (case \texttt{sz ==
+  0}).
 %
 Payloads are generated simply by delegating the task to an external random
 generator (\texttt{genA}) defined elsewhere.
@@ -767,13 +776,12 @@ i.e., more budget to test cases that lead to shorter executions, or that
 discover more parts of the code.
 %
 On each iteration, the algorithm selects the next test case by mutating the
-first value on the queue of valid test cases or, alternatively, from the queue
-of discarded test cases if the former one is empty.
+first value on the queue of valid test cases. If that queue is empty, it then
+selects the first one from the queue of discarded test cases.
 %
-If none of the queues contain test cases to mutate, CGPT generates a new value
-from scratch.
+If both queues are empty, CGPT generates a new random value from scratch.
 %
-Then, the algorithm run this test case and evaluates whether it was interesting
+The algorithm then run this test case and evaluates whether it was interesting
 (i.e., it exercises a new path) based on its trace information.
 %
 If the test case does in fact discover a new path, it is enqueued at the end of
@@ -1039,14 +1047,15 @@ for the sake of simplicity, the mutators proposed by
 \citeauthor{lampropoulos2019coverage} are derived to follow a top-down approach.
 %% similar to that used by the automatically derived random generators.
 %
-In this light, a mutation can happen at top-level or be recursively applied to
-an immediate subexpression with approximately the same probability.
+This means that mutations can happen at the top-level or be recursively applied
+to an immediate subexpression of the input test case with approximately the same
+probability.
 %
 %%   if we inspect the mutator defined in Fig. \ref{fig:fuzzchick:mutator}, there are
 %% two compromises that the authors of \fuzzchick adopted for the sake of
 %% simplicity.
 %
-This makes deep recursive mutations very unlikely, since their probability
+This makes deep recursive mutations very unlikely, as their probability
 decreases multiplicatively with each recursive call.
 %
 %% For instance, mutating a subexpression that lies on the fourth level of a
@@ -1057,8 +1066,8 @@ decreases multiplicatively with each recursive call.
 %% This only worsens as the type of the mutated value becomes more complex.
 %
 Hence, these simple mutators can only be effectively used to transform shallow
-data structures, potentially excluding interesting applications that might
-require producing deeper valid values.
+data structures, excluding applications that might require producing deeper
+mutations.
 %
 %e.g., programs, network protocol interactions, etc.
 %
@@ -1128,9 +1137,8 @@ case again later does not help, as it becomes uninteresting based on historic
 trace information.
 
 To keep the comparison fair, the authors replicated the same power schedule
-configuration used in AFL.
-%
-However, AFL uses a bit-level mutation approach.
+configuration used in AFL, which is tailored to work in tandem with generic
+bit-level mutators.
 %
 It is unclear what the best heuristic configuration is when using a high-level
 mutation approach --- something challenging to characterize in general given the
@@ -1256,13 +1264,17 @@ when transforming a leaf into a branch.
 This value corresponds to the simplest expression we can construct for the
 mutant to be type-correct.
 %
-In our example, the default value of a \texttt{Tree} is \texttt{Leaf def}, where
-the inner \texttt{def} is the default value of the payload --- we use the type
-class system to abstract this complexity away in our implementation.
+In our example, the default value of a \texttt{Tree} is a leaf containing the
+smallest value of the tree payload type.
+%
+%% \texttt{Leaf def}, where
+%% the inner \texttt{def} is the default value of the payload.%
+\footnote{We use the type class system to abstract this complexity away in our
+  implementation.}
 %
 Using a small default value, as oppossed to a randomly generated one (as done by
-the original GCPT), is again inspired by exhaustive bounded testing tools, and
-avoids introducing unnecessary randomness when growing mutated expressions.
+the original CGPT), is also inspired by exhaustive bounded testing tools, and
+avoids introducing unnecessary randomness when ``growing'' mutated expressions.
 
 %% \begin{figure}
 %% \begin{verbatim}
@@ -1279,7 +1291,7 @@ avoids introducing unnecessary randomness when growing mutated expressions.
 %% \vspace{-10pt}
 %% \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[b]
 \begin{verbatim}
 mutate (Leaf x) =
   [ PURE (Branch def x def) ]
@@ -1307,13 +1319,14 @@ Random mutants, on the other hand, serve as a way to \emph{selectively avoid
 other type the user might want to use random mutations with.
 %
 Instead of mutating every numerical or character subexpression exhaustively, we
-sample a small number of values from a given random generator --- this amount is
-a tunable parameter of \mutagen.
+sample a small number of values from a given random generator.
+%
+This amount is a tunable parameter of \mutagen.
 %
 Then, for instance, a mutator for integers becomes:
 
 \begin{verbatim}
-mutate n = [ RAND gen_int ]
+mutate n = [ RAND genInt ]
 \end{verbatim}
 
 
@@ -1323,7 +1336,7 @@ So far we have defined mutations that transform only the root of the input.
 %
 Now it is time to apply these mutations to every subexpression as well.
 %
-To do so, we will use two functions that can be derived from the code.
+To do so, we use two utility functions that can be automatically synthesized.
 
 In first place, a function \texttt{positions} traverses the input and builds a
 Rose tree of \emph{mutable positions}, where positions are lists of indices
@@ -1387,15 +1400,18 @@ In this light, the mutable positions of the value \texttt{Branch (Leaf 1) 2
   }
 \end{equation}
 
-\noindent Later, given the desired position to mutate within a test case, we
-define another function \texttt{inside} that finds the subexpression
-corresponding to it and applies the mutation.
+Later, we define a function \texttt{inside} that takes a desired
+position within an input test case and mutates its corresponding subexpression.
+%
+%% given the desired position to mutate within a test case, we
+%% define another function \texttt{inside} that finds the subexpression
+%% corresponding to it and mutates it.
 %
 A slightly simplified version of this function for the \texttt{Tree} data type is
 as follows:
 
 \begin{verbatim}
-inside []     x              = mutate x
+inside []     t              = mutate t
 inside (0:ps) (Leaf x)       = [ Leaf x'       | x' <- inside ps x ]
 inside (0:ps) (Branch l x r) = [ Branch l' x r | l' <- inside ps l ]
 inside (1:ps) (Branch l x r) = [ Branch l x' r | x' <- inside ps x ]
@@ -1403,8 +1419,8 @@ inside (2:ps) (Branch l x r) = [ Branch l x r' | r' <- inside ps r ]
 \end{verbatim}
 
 \noindent This function simply traverses the desired position, calling itself
-recursively until it reaches the desired subexpression, where the mutation can
-be applied locally at the top-level (case \texttt{inside [] x}).
+recursively until it reaches the desired subexpression, where a \texttt{mutate}
+can be applied locally at the top-level (case \texttt{inside [] t}).
 %
 The rest of the function takes care of unwrapping and rewrapping the
 intermediate subexpressions and is not particularly relevant for the point being
@@ -1413,8 +1429,8 @@ made.
 
 \subsection{Testing loop}
 
-Having the exhaustive mutation mechanism in place, we can finally introduce the
-base testing loop used by \mutagen.
+Having the exhaustive mutation mechanism in place, we can now introduce the base
+testing loop used by \mutagen.
 %
 This is outlined in Algorithm \ref{algo:mutagen:loop}.
 %
@@ -1528,15 +1544,15 @@ from the current batch, until it becomes empty and can switch to the next
 precomputed one in line.
 
 
-Having selected the next test case, the main loop proceeds to execute it,
-capturing both the result (valid, discarded, or failed)
-and its execution trace over the system under test.
+Having selected the next test case, the testing loop proceeds to execute it,
+capturing both the result (valid, discarded, or failed) and its execution trace
+over the system under test.
 %
 If the test case fails, it is reported as a bug.
 %
 If not, the algorithm evaluates whether it was interesting (i.e., it exercises a
 new path) based on its trace information and the one from previously executed
-test cases (represented by \textit{TLog}).
+test cases (represented by TLog).
 %
 If the test case discovers a new path, it is enqueued on its corresponding
 queue.
@@ -1644,96 +1660,11 @@ Using this criterion lets us gather precise information from each new execution.
 In particular, we are interested in the \emph{depth} where each new execution
 branches from already seen ones.
 %
-Our assumption is that test cases that differ (branch) at shallower depths from
+Our assumption is that test case executions that branch at shallower depths from
 the ones already executed are more likely to discover new portions of the code
 under test, and hence we want to prioritize them.
 
-\begin{algorithm}[t]
-  \SetArgSty{textnormal}
-  %% \SetInd{0em}{0.75em}
-  \SetKw{KwNot}{not}
-  \SetAlgoLined
-  \DontPrintSemicolon
-  \SetKwFunction{MG}{Loop}
-  \SetKwProg{Fn}{Function}{:}{}
-  \Fn{\MG{P, N, R, gen, mut}}{
-    $\cdots$\;
-    x $\gets$ Pick(QValid, QDiscarded, gen, mut)\;
-    (result, trace) $\gets$ WithTrace(P(x))\;
-    $\cdots$\;
-    \If{Interesting(TLog, trace)}{
-      \If{\KwNot Discarded(result)}{
-        batch $\gets$ Mutate(x, mut, R)\;
-        {\color{red} prio $\gets$ BranchDepth(TLog, trace)}\; %% NEW
-        {\color{red} PushFront(QValid, prio, batch)}\;          %% NEW
-      }
-      $\cdots$\;
-    }
-  }
-  %% \vspace{5pt}
-  \SetKwFunction{Pick}{Pick}
-  \SetKwProg{Fn}{Function}{:}{}
-  \Fn{\Pick{QValid, QDiscarded, gen}}{
-    \If{\KwNot Empty(QValid)}{
-      {\color{red} (batch, prio) $\gets$ DequeMin(QValid)}\; %%NEW
-      \If{Empty(batch)}{
-        Pick(QValid, QDiscarded, gen)\;
-      } \uElse{
-        {\color{red} PushFront(QValid, prio, Rest(batch))}\; %% NEW
-        \KwRet First(batch)\;
-      }
-    }
-    $\cdots$\;
-  }
-
-\caption{\label{algo:mutagen:fifo}Priority FIFO Heuristic}
-\end{algorithm}
-
-
-In this light, every time we insert a new execution path into the internal trace
-log, we calculate the number of \emph{new nodes} that were executed, as well as
-the \emph{branching depth} where they got inserted.
-%
-The former is used to distinguish interesting test cases (whether or not new
-nodes were inserted), whereas the latter is used by this heuristic to schedule
-mutation candidates.
-%
-Fig. \ref{fig:mutagen:tracelog} illustrates this idea, inserting two execution
-traces (one after another) into a trace log that initially contains a single
-execution path.
-%
-The second insertion (with trace $1 \rightarrow 2 \rightarrow 6 \rightarrow 7$)
-branches at a shallower depth than the first one (2 vs. 3), and so its
-corresponding test case should be given a higher priority.
-
-
-Using this mechanism, we can modify \mutagen's base testing loop by replacing
-each mutation queue with a priority queue indexed by the branching depth of each
-new execution.
-%
-These changes are illustrated in Algorithm \ref{algo:mutagen:fifo}.
-%
-Statements in {\color{red} red} indicate important changes to the base
-algorithm, whereas ellipses denote parts of the code that are not relevant for
-the point being made.
-
-
-To pick the next test case, we retrieve the one with the highest priority (the
-smallest branching depth).
-%
-Then, when we find a new interesting test case, it gets enqueued at the
-\emph{beginning} of the queue at its corresponding priority.
-%
-This allows the testing loop to jump immediately onto mutating new interesting
-test cases as soon as they are found (even at the same priority), and to jump
-back to previous test cases as soon as their mutants become less novel.
-
-%% \caption{\label{fig:heuristics} The two main heuristics implemented in \mutagen.
-%%   Statements in {\color{red} red} indicate important changes to the base
-%%   algorithm. Ellipses denote parts of the code that are not relevant for the
-%%   point being made. }
-
-\begin{figure}[t]
+\begin{figure}[b]
 %% \vspace{-15pt}
 \scriptsize
 \newcommand\stacked[2]{\underset{\textstyle #2\mathstrut}{#1}}
@@ -1861,6 +1792,92 @@ back to previous test cases as soon as their mutants become less novel.
   internal trace log (represented using brackets).}
 \end{figure}
 
+\begin{algorithm}[t]
+  \SetArgSty{textnormal}
+  %% \SetInd{0em}{0.75em}
+  \SetKw{KwNot}{not}
+  \SetAlgoLined
+  \DontPrintSemicolon
+  \SetKwFunction{MG}{Loop}
+  \SetKwProg{Fn}{Function}{:}{}
+  \Fn{\MG{P, N, R, gen, mut}}{
+    $\cdots$\;
+    x $\gets$ Pick(QValid, QDiscarded, gen, mut)\;
+    (result, trace) $\gets$ WithTrace(P(x))\;
+    $\cdots$\;
+    \If{Interesting(TLog, trace)}{
+      \If{\KwNot Discarded(result)}{
+        batch $\gets$ Mutate(x, mut, R)\;
+        {\color{red} prio $\gets$ BranchDepth(TLog, trace)}\; %% NEW
+        {\color{red} PushFront(QValid, prio, batch)}\;          %% NEW
+      }
+      $\cdots$\;
+    }
+  }
+  %% \vspace{5pt}
+  \SetKwFunction{Pick}{Pick}
+  \SetKwProg{Fn}{Function}{:}{}
+  \Fn{\Pick{QValid, QDiscarded, gen}}{
+    \If{\KwNot Empty(QValid)}{
+      {\color{red} (batch, prio) $\gets$ DequeMin(QValid)}\; %%NEW
+      \If{Empty(batch)}{
+        Pick(QValid, QDiscarded, gen)\;
+      } \uElse{
+        {\color{red} PushFront(QValid, prio, Rest(batch))}\; %% NEW
+        \KwRet First(batch)\;
+      }
+    }
+    $\cdots$\;
+  }
+
+\caption{\label{algo:mutagen:fifo}Priority FIFO Heuristic}
+\end{algorithm}
+
+
+In this light, every time we insert a new execution path into the internal trace
+log (TLog), we calculate the number of \emph{new nodes} that were executed, as
+well as the \emph{branching depth} where they got inserted.
+%
+The former is used to distinguish interesting test cases (whether or not new
+nodes were inserted), whereas the latter is used by this heuristic to schedule
+mutation candidates.
+%
+Fig. \ref{fig:mutagen:tracelog} illustrates this idea, inserting two execution
+traces (one after another) into a trace log that initially contains a single
+execution path.
+%
+The second insertion (with trace $1 \rightarrow 2 \rightarrow 6 \rightarrow 7$)
+branches at a shallower depth than the first one (2 vs. 3), and so its
+corresponding test case is given a higher priority.
+
+
+Using this mechanism, we can modify \mutagen's base testing loop by replacing
+each mutation queue with a priority queue indexed by the branching depth of each
+new execution.
+%
+These changes are illustrated in Algorithm \ref{algo:mutagen:fifo}.
+%
+Statements in {\color{red} red} indicate important changes to the base
+algorithm, whereas ellipses denote parts of the code that are not relevant for
+the point being made.
+
+
+To pick the next test case, we retrieve the one with the highest priority (the
+smallest branching depth).
+%
+Then, when we find a new interesting test case, it gets enqueued at the
+\emph{beginning} of the queue at its corresponding priority.
+%
+This allows the testing loop to jump immediately onto mutating new interesting
+test cases as soon as they are found (even at the same priority), and to jump
+back to previous test cases as soon as their mutants become less novel.
+
+%% \caption{\label{fig:heuristics} The two main heuristics implemented in \mutagen.
+%%   Statements in {\color{red} red} indicate important changes to the base
+%%   algorithm. Ellipses denote parts of the code that are not relevant for the
+%%   point being made. }
+
+
 
 \subsection{Detecting Trace Space Saturation And Tuning Random Mutations Parameter}
 
@@ -1975,7 +1992,7 @@ continuously increase the random mutations parameter until that stops happening.
 
 We evaluated the performance of \mutagen using two case studies.
 %
-The first one is a simple abstract stack machine that enforces the
+The first one is a simple abstract stack machine that enforces
 \emph{noninterference} \cite{goguen1982security} using runtime checks.
 %
 Its implementation was proven correct by \citeauthor{10.1145/2578855.2535839}
@@ -2022,7 +2039,7 @@ level, or public information ``can flow'' to secret one but not the opposite
 Security labels are propagated throughout the execution of the program whenever
 the machine executes an instruction.
 %
-Such instructions are defined as:
+These instructions are defined as:
 %
 \begin{verbatim}
 data Instr = Nop | Push Int | Call Int | Ret | Add | Load | Store | Halt
@@ -2197,7 +2214,7 @@ the functionality expected from a compliant engine.
 %% \vspace{-10pt}
 %% \end{wrapfigure}
 
-\begin{table}[t]
+\begin{table}[b]
 \scriptsize
 \begin{tabular}{|c|c|c|l|}
 \hline
@@ -2237,7 +2254,7 @@ the functionality expected from a compliant engine.
 \vspace{-10pt}
 \end{table}
 
-\begin{table}[t]
+\begin{table}[b]
 \scriptsize
 \begin{tabular}{|c|c|l|}
 \hline
@@ -2332,9 +2349,9 @@ Instead, we used the reference implementation to find discrepancies (that could
 potentially lead to bugs) via differential testing
 \cite{mckeeman1998differential}.
 %
-In this light, our testing properties assert that any result produced by
+In this manner, our testing properties assert that any result produced by
 \textit{haskell-wasm} matches that of the reference implementation.
-%
+
 Notably, this engine had several latent bugs that were not caught by the
 existing unit tests and that we discovered by \mutagen while developing our test
 suite.
@@ -2486,7 +2503,7 @@ Then, it invokes the function \texttt{foo} of the module \texttt{m} both on
 \textit{haskell-wasm} and the reference interpreter with the provided arguments
 (\texttt{args}).
 %
-Then, the property asserts whether their results are equivalent.%
+Finally, the property asserts whether their results are equivalent.%
 %
 \footnote{In our implementation, we additionally set a short timeout to discard
   potentially diverging programs with infinite loops.}
@@ -2570,7 +2587,7 @@ We call these variants \textit{no FIFO} and \textit{no reset}, respectively.
 %
 In the case of \textit{no reset}, the amount of random mutations is no longer
 controlled by this heuristic, so we arbitrarily fixed it to 25 random mutations
-throughout the testing loop.
+throughout the execution of testing loop.
 
 \subsection{IFC Stack Machine}
 
@@ -2626,7 +2643,7 @@ find them at all within the one-hour budget.
 %% uninteresting and get ultimately thrown away.
 %
 With this in mind, it is fair to think that \fuzzchick might be a better choice
-if we set a shorter timeout and run it several times.
+if we set a shorter timeout and run it several times in a row.
 %
 Thus, to be an improvement over \fuzzchick, our tool must find bugs not only
 more reliably, but also fast!
@@ -2980,9 +2997,9 @@ patterns from the codebase.
 % QuickFuzz
 %
 \emph{QuickFuzz} \cite{GriecoCB16, grieco2017} is a fuzzer that exploits these
-ideas to synthesize random generators from existing Haskell libraries and that
-are used in tandem with existing low-level fuzzers to find bugs in heavily used
-programs.
+ideas to synthesize random generators from existing Haskell libraries. These
+generators are used in tandem with existing low-level fuzzers to find bugs in
+heavily used programs.
 
 
 
@@ -3014,7 +3031,7 @@ behind \mutagen.
 %
 While our tool is tailored to improve the performance of poor automatically
 derived generators, specialized ones can be used directly by \mutagen, and
-combining them with type-preserving mutations is part of our future work.
+combining them with structure-preserving mutations is part of our future work.
 
 
 \paragraph{Coverage-guided Fuzzing}
@@ -3170,8 +3187,9 @@ to be tested exactly once.
 %% --- a more generic technique of limited applicability.
 
 
-Our experimental results indicate that \mutagen outperforms the simpler approach
-taken by \fuzzchick in terms of both failure rate and tests until first failure.
+Our experimental results indicate that \mutagen outperforms the simpler CGPT
+approach implemented in \fuzzchick in terms of both failure rate and tests until
+first failure.
 %
 Moreover, we show how our tool can be applied in a real-world testing scenario,
 where it quickly discovers several planted and some previously unknown bugs.
@@ -3179,8 +3197,8 @@ where it quickly discovers several planted and some previously unknown bugs.
 
 As indicated throughout this work, there are several directions for future work:
 %
-combining \mutagen with specialized generators; improving the code
-instrumentation in order to target mutations towards specific parts of the code;
+combining \mutagen with specialized generators; enhancing the code
+instrumentation to be able target mutations towards specific parts of the code;
 and evaluating the effect of lazy pruning; among others.
 %% %
 %% In addition, we want to investigate how to redefine our automatically
