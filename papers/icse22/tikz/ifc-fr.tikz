@@ -31,7 +31,7 @@
       legend style={/tikz/every even column/.append style={column sep=0.2cm}}]
     ]
     % MTTF FuzzChick
-    \addplot[fill=cyan, fill opacity=0.75] coordinates {
+    \addplot[fill=red, fill opacity=0.75] coordinates {
       (3  ,  1          )
       (12 ,  0.7        )
       (13 ,  0.666666667)
@@ -55,7 +55,7 @@
     };
 
     % MTTF Mutagen (all heuristics)
-    \addplot[fill=red, fill opacity=0.75] coordinates {
+    \addplot[fill=cyan, fill opacity=0.75] coordinates {
       (3  ,  1)
       (12 ,  1)
       (13 ,  1)
@@ -79,7 +79,7 @@
     };
 
     % Mutagen (no FIFO)
-    \addplot[fill=orange, fill opacity=0.75] coordinates {
+    \addplot[fill=green!80!gray, fill opacity=0.75] coordinates {
       (3  ,  1)
       (12 ,  1)
       (13 ,  1)

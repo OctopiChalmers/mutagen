@@ -33,12 +33,12 @@
     };
 
     % MTTF Mutagen (all heuristics)
-    \addplot[fill=red, fill opacity=0.75] coordinates {
+    \addplot[fill=cyan, fill opacity=0.75] coordinates {
       (0,0)
     };
 
     % Mutagen (no FIFO)
-    \addplot[fill=orange, fill opacity=0.75] coordinates {
+    \addplot[fill=green!80!yellow, fill opacity=0.75] coordinates {
       (0,0)
     };
 

@@ -45,7 +45,7 @@
     };
 
     % MTTF Mutagen (all heuristics)
-    \addplot[fill=red, fill opacity=0.75] coordinates {
+    \addplot[fill=cyan, fill opacity=0.75] coordinates {
       (1 ,  8.352916367)
       (2 ,  100.3984609)
       (3 ,  116.3318205)
@@ -59,7 +59,7 @@
     };
 
     % Mutagen (no FIFO)
-    \addplot[fill=orange, fill opacity=0.75] coordinates {
+    \addplot[fill=green!80!gray, fill opacity=0.75] coordinates {
       (1 ,  9.548645333)
       (2 ,  113.7525438)
       (3 ,  23.7543312 )
@@ -146,7 +146,7 @@
     };
 
    % MTTF Mutagen (all heuristics)
-    \addplot[fill=red, fill opacity=0.75] coordinates {
+    \addplot[fill=cyan, fill opacity=0.75] coordinates {
       (11, 211180.2487)
       (12, 227998.6841)
       (13, 243089.0174)
@@ -155,7 +155,7 @@
     };
 
     % Mutagen (no FIFO)
-    \addplot[fill=orange, fill opacity=0.75] coordinates {
+    \addplot[fill=green!80!gray, fill opacity=0.75] coordinates {
       (11, 265949.1014)
       (12, 50546.13719)
       (13, 3249916.714)
