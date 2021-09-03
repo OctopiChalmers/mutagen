@@ -661,7 +661,7 @@ We can write a na\"ive one for trees of integers (simplified to make it more acc
 \begin{verbatim}
 genTree(sz) =
   if sz == 0 then do x <- genInt ; return (Leaf x)
-  else oneof [ do i <- genInt ; return (Leaf i)
+  else oneof [ do x <- genInt ; return (Leaf x)
              , do l <- genTree(sz-1) ;
                   x <- genInt        ;
                   r <- genTree(sz-1) ;
@@ -3176,15 +3176,16 @@ of our future work.
 \section{Conclusions}
 \label{sec:conclusions}
 
-We presented \mutagen, a coverage-guided, property-based testing framework
-written in Haskell.
+We presented \mutagen, a coverage-guided, property-based testing framework.
+%written in Haskell.
 %
 %% Inspired by exhaustive bounded testing tools,
 %
-Our tool extends the CGPT approach introduced by
-\citeauthor{lampropoulos2019coverage} with an exhaustive mutation mechanism that
-generates every possible mutant for each interesting test case, and schedules it
-to be tested exactly once.
+Our tool extends the CGPT approach
+%introduced by
+%\citeauthor{lampropoulos2019coverage}
+with an exhaustive mutation mechanism that generates every possible mutant for
+each interesting test case, and schedules it to be tested exactly once.
 
 %% , our tool uses coverage information
 %% to guide automatically derived mutators producing high-level, type-preserving
