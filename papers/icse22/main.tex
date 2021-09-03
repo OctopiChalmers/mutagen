@@ -570,7 +570,7 @@ in \S \ref{sec:conclusions}.
 \label{sec:background}
 
 In this section, we briefly describe the motivation, ideas and limitations
-behind CGPT as depicted by \citeauthor{lampropoulos2019coverage}.
+behind CGPT \cite{lampropoulos2019coverage}.
 %
 To illustrate this technique, let us focus on a simple property defined over
 binary trees.
@@ -616,8 +616,8 @@ prop_insert_inv x t = balanced t ==> balanced (insert x t)
 \end{verbatim}
 
 
-\noindent This property asserts that, given a balanced tree \texttt{t} and an
-element \texttt{x} as input, inserting \texttt{x} into \texttt{t} will produce a
+\noindent This property asserts that, given an element \texttt{x} and a balanced
+tree \texttt{t} as input, inserting \texttt{x} into \texttt{t} will produce a
 balanced tree as output.
 %
 (The implementation details of \texttt{balanced} and \texttt{insert} are not
@@ -635,7 +635,7 @@ The last missing piece is a random generator of trees.
 %% \cite{jones1997type}, instantiating the \texttt{Arbitrary} type class with a
 %% random generator as the implementation of the overloaded \texttt{arbitrary}
 %% operation:
-We can write a na\"ive one (simplified to make it more accessible%
+We can write a na\"ive one for trees of integers (simplified to make it more accessible%
 \footnote{In practice, this code will most likely be implemented using Haskell's
   type-class mechanism, hiding the complexity behind the size limit and the
   payload generator.}%
@@ -660,9 +660,12 @@ We can write a na\"ive one (simplified to make it more accessible%
 
 \begin{verbatim}
 genTree(sz) =
-  if sz == 0 then Leaf <$> genA
-  else oneof [ Leaf <$> genA
-             , Branch <$> genTree(sz-1) <*> genA <*> genTree(sz-1) ]
+  if sz == 0 then do x <- genInt ; return (Leaf x)
+  else oneof [ do i <- genInt ; return (Leaf i)
+             , do l <- genTree(sz-1) ;
+                  x <- genInt        ;
+                  r <- genTree(sz-1) ;
+                  return (Branch l x r) ]
 \end{verbatim}
 
 \noindent This definition follows a common type-directed generation approach,
@@ -677,8 +680,8 @@ size limit \texttt{sz} by a unit on each step, ensuring termination by
 restricting itself to generating leaves when it reaches zero (case \texttt{sz ==
   0}).
 %
-Payloads are generated simply by delegating the task to an external random
-generator (\texttt{genA}) defined elsewhere.
+Integers are generated simply by delegating the task to an external random
+generator (\texttt{genInt}) defined elsewhere.
 %
 
 %% Subexpressions of any other type are generated
@@ -1236,12 +1239,16 @@ the adapted testing loop used in \mutagen.
 Mutations in \mutagen are defined as the set of mutants that can be obtained by
 transforming the input test case \emph{at the top-level} (the root).
 %
-In Haskell, we define mutations as:
-
+We define mutations for a value of type \texttt{a} (written \texttt{Mutations
+  a}) as \emph{a function that takes a value of such a type and returns a list of
+mutants} (written \texttt{Mutant a}).
+%
+In Haskell, we introduce the following type synonym:
+%
 \begin{verbatim}
-type Mutation a = a -> [Mutant a]
+type Mutations a = a -> [Mutant a]
 \end{verbatim}
-
+%
 \noindent Where \texttt{Mutant}s come in two flavours, pure and random:
 
 \begin{verbatim}
@@ -1274,7 +1281,8 @@ This value corresponds to the simplest expression we can construct for the
 mutant to be type-correct.
 %
 In our example, the default value of a \texttt{Tree} is a leaf containing the
-smallest value of the tree payload type.
+smallest value of the tree payload type, e.g., in the case of trees with
+integers \texttt{def} is defined as \texttt{Leaf 0}.
 %
 %% \texttt{Leaf def}, where
 %% the inner \texttt{def} is the default value of the payload.%
@@ -1351,20 +1359,20 @@ In first place, a function \texttt{positions} traverses the input and builds a
 Rose tree of \emph{mutable positions}, where positions are lists of indices
 encoding the path from the root to every mutable subexpression.
 %
-For instance, the positions of a \texttt{Tree} are computed as follows:
-
-\begin{verbatim}
-positions (Leaf x) =
-  node [ (0, positions x) ]
-positions (Branch l x r) =
-  node [ (0, positions l), (1, positions x), (2, positions r) ]
-\end{verbatim}
-
-\noindent where the function \texttt{node} simply builds a node of the positions
-Rose tree and propagates the accumulated prefix (the path from the root) to its
-children.
+% For instance, the positions of a \texttt{Tree} are computed as follows:
 %
-In this light, the mutable positions of the value \texttt{Branch (Leaf 1) 2
+% \begin{verbatim}
+% positions (Leaf x) =
+%   node [ (0, positions x) ]
+% positions (Branch l x r) =
+%   node [ (0, positions l), (1, positions x), (2, positions r) ]
+% \end{verbatim}
+%
+% \noindent where the function \texttt{node} simply builds a node of the positions
+% Rose tree and propagates the accumulated prefix (the path from the root) to its
+% children.
+%
+For instance, the mutable positions of the value \texttt{Branch (Leaf 1) 2
   (Leaf 3)} are as follows:
 
 \vspace{-5pt}
@@ -1416,22 +1424,23 @@ position within an input test case and mutates its corresponding subexpression.
 %% define another function \texttt{inside} that finds the subexpression
 %% corresponding to it and mutates it.
 %
-A slightly simplified version of this function for the \texttt{Tree} data type is
-as follows:
-
-\begin{verbatim}
-inside []     t              = mutate t
-inside (0:ps) (Leaf x)       = [ Leaf x'       | x' <- inside ps x ]
-inside (0:ps) (Branch l x r) = [ Branch l' x r | l' <- inside ps l ]
-inside (1:ps) (Branch l x r) = [ Branch l x' r | x' <- inside ps x ]
-inside (2:ps) (Branch l x r) = [ Branch l x r' | r' <- inside ps r ]
-\end{verbatim}
-
-\noindent This function simply traverses the desired position, calling itself
-recursively until it reaches the desired subexpression, where a \texttt{mutate}
-can be applied locally at the top-level (case \texttt{inside [] t}).
+% A slightly simplified version of this function for the \texttt{Tree} data type is
+% as follows:
 %
-The rest of the function takes care of unwrapping and rewrapping the
+% \begin{verbatim}
+% inside []     t              = mutate t
+% inside (0:ps) (Leaf x)       = [ Leaf x'       | x' <- inside ps x ]
+% inside (0:ps) (Branch l x r) = [ Branch l' x r | l' <- inside ps l ]
+% inside (1:ps) (Branch l x r) = [ Branch l x' r | x' <- inside ps x ]
+% inside (2:ps) (Branch l x r) = [ Branch l x r' | r' <- inside ps r ]
+% \end{verbatim}
+%
+This function simply traverses the desired position, calling itself recursively
+until it reaches the desired subexpression, where a mutation encoded by \texttt{mutate} can be
+applied.
+% locally at the top-level (case \texttt{inside [] t}).
+%
+The rest of the \texttt{inside}'s functionality simply unwraps and rewraps the
 intermediate subexpressions and is not particularly relevant for the point being
 made.
 
