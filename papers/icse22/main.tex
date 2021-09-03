@@ -288,13 +288,14 @@ constructor level) has a higher probability of producing a new interesting test
 case than generating a new one using a na\"ive generator.
 %
 In addition, high-level, structure-preserving mutators are better suited for
-producing syntactically valid mutants, avoiding the time wasted by using generic
-low-level mutators that act over the ``serialized'' test cases and know very
-little about their structure, thus producing syntactically broken mutants most
-of the time.
+producing syntactically valid mutants.
 %
-This grammar-aware mutation technique has shown to be quite useful when fuzzing
-systems accepting structurally complex inputs \cite{holler2012fuzzing,
+High-level mutators avoids wasting time with generic low-level mutators (e.g.,
+at the bit level) that know very little about data structures, thus producing
+syntactically broken mutants most of the time.
+%
+Such a grammar-aware mutation technique has shown to be quite useful when
+fuzzing systems accepting structurally complex inputs \cite{holler2012fuzzing,
   wang2019superion, xsmith}.
 %
 While most of the tools following this itechnique use existing grammars to
@@ -307,10 +308,15 @@ test, external grammars are not required in CGPT.
 %
 %% In CGPT, external grammars are not required.
 %
-The data types used by the inputs of the testing properties already describe the
-structure of the random data one needs to mutate in a concrete manner, and
-specialized mutators can be automatically derived directly from their definition
---- making strongly-typed programming languages an ideal match for CGPT.
+The data types of the inputs to the testing properties already provide a good source
+of information about how data can be mutated, e.g., by changing one data constructor
+by another.
+%
+% The data types used by the inputs of the testing properties already describe the
+% structure of the random data one needs to mutate in a concrete manner, and
+Specialized mutators can be automatically derived directly from data types
+definitions --- making strongly-typed programming languages an ideal match for
+CGPT.
 
 %% In this light, CGPT is likely to preserve the semantic structure of the mutated
 %% data, as mutations are applied directly at the data type level, e.g., the
@@ -525,14 +531,14 @@ fly.
 To validate our ideas, we use two case studies (described in detail in \S
 \ref{sec:casestudies}): the Information-Flow Control (IFC) stack machine used by
 \citeauthor{lampropoulos2019coverage} in their original work, and an existing
-{Web-Assembly} engine of industrial strenght written in Haskell.
+{Web-Assembly} engine of industrial strenght written in the strongly-typed
+programming language Haskell.
 %
 In both case studies, we additionally compare the effect of the heuristics
 implemented on top of the base testing loop of \mutagen.
 %
 In the IFC stack machine case study, we compare \mutagen against \fuzzchick, the
-reference CGPT implementation developed in Coq by
-\citeauthor{lampropoulos2019coverage}.
+reference CGPT implementation developed in Coq \cite{lampropoulos2019coverage}.
 %
 Our results (\S \ref{sec:evaluation}) indicate that \mutagen outperforms
 \fuzzchick both in terms of time to failure and failure rate.
@@ -548,7 +554,8 @@ This case study also help us to compare the performance of our tool against a
 more traditional RPBT approach that does not rely on code instrumentation.
 %
 All in all, our evaluation encompasses more than 600 hours of computing time and
-suggests that testing mutants exhaustively can be an appealing technique for
+suggests that \emph{testing mutants exhaustively together with our heuristics to
+  escape scalability issues} can be an appealing technique for
 finding bugs reliably without sacrificing speed.
 
 %% Last two sections
