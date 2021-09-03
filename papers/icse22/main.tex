@@ -20,9 +20,9 @@
 \usepackage{enumitem}
 \usepackage{titlesec}
 
-\titlespacing*{\section}{0pt}{5pt}{5pt}
-\titlespacing*{\subsection}{0pt}{5pt}{5pt}
-\titlespacing*{\subsubsection}{0pt}{5pt}{5pt}
+%% \titlespacing*{\section}{0pt}{5pt}{5pt}
+%% \titlespacing*{\subsection}{0pt}{5pt}{5pt}
+%% \titlespacing*{\subsubsection}{0pt}{5pt}{5pt}
 \titlespacing*{\paragraph}{10pt}{0pt}{10pt}
 
 \settopmatter{printacmref=false}
@@ -660,12 +660,12 @@ We can write a na\"ive one for trees of integers (simplified to make it more acc
 
 \begin{verbatim}
 genTree(sz) =
-  if sz == 0 then do x <- genInt ; return (Leaf x)
-  else oneof [ do x <- genInt ; return (Leaf x)
-             , do l <- genTree(sz-1) ;
-                  x <- genInt        ;
-                  r <- genTree(sz-1) ;
-                  return (Branch l x r) ]
+  if sz == 0 then do { x <- genInt; return (Leaf x) }
+  else oneof [ do { x <- genInt; return (Leaf x) }
+             , do { l <- genTree(sz-1);
+                    x <- genInt;
+                    r <- genTree(sz-1);
+                    return (Branch l x r) } ]
 \end{verbatim}
 
 \noindent This definition follows a common type-directed generation approach,
@@ -1308,7 +1308,7 @@ avoids introducing unnecessary randomness when ``growing'' mutated expressions.
 %% \vspace{-10pt}
 %% \end{figure}
 
-\begin{figure}[b]
+\begin{figure}[t]
 \begin{verbatim}
 mutate (Leaf x) =
   [ PURE (Branch def x def) ]
@@ -1459,7 +1459,7 @@ respectively.
 %% falling back to random generation.
 
 
-\begin{algorithm}[t]
+\begin{algorithm}[b]
   \SetArgSty{textnormal}
   %% \SetInd{0em}{0.75em}
   \SetKw{KwNot}{not}
@@ -1551,6 +1551,36 @@ For each one of these, there are two possible cases:
 %
 At the end, we simply return the accumulated batch.
 
+\begin{algorithm}[b]
+  \SetArgSty{textnormal}
+  %% \SetInd{0em}{0.75em}
+  \SetKw{KwNot}{not}
+  \SetAlgoLined
+  \DontPrintSemicolon
+  \SetKwFunction{Pick}{Pick}
+  \SetKwProg{Fn}{Function}{:}{}
+  \Fn{\Pick{QValid, QDiscarded, gen}}{
+    \If{\KwNot Empty(QValid)}{
+      batch $\gets$ Deque(QValid)\;
+      \lIf{Empty(batch)}{ Pick(QValid, QDiscarded, gen) }
+      \uElse{
+        PushFront(QValid, Rest(batch))\;
+        \KwRet First(batch)\;
+      }
+    }
+    \If{\KwNot Empty(QDiscarded)}{
+      batch $\gets$ Deque(QDiscarded)\;
+      \lIf{Empty(batch)}{ Pick(QValid, QDiscarded, gen) }
+      \uElse{
+        PushFront(QDiscarded, Rest(batch))\;
+        \KwRet First(batch)\;
+      }
+    }
+    \lElse{\KwRet Sample(gen)}
+  }
+\caption{\label{algo:mutagen:pick}\mutagen Seed Selection}
+\end{algorithm}
+
 
 Finally, the seed selection algorithm (Algorithm \ref{algo:mutagen:pick}) picks
 the next test case using the same criteria as CGPT, prioritizing valid test
@@ -1603,38 +1633,6 @@ mutable test cases.
 %% Moreover, this can potentially lead to \emph{2-step mutations}, where an initial
 %% mutation breaks a valid test case in a small way, it gets enqueued as discarded,
 %% and later a subsequent mutation fixes it by changing a different subexpression.
-
-\begin{algorithm}[t]
-  \SetArgSty{textnormal}
-  %% \SetInd{0em}{0.75em}
-  \SetKw{KwNot}{not}
-  \SetAlgoLined
-  \DontPrintSemicolon
-  \SetKwFunction{Pick}{Pick}
-  \SetKwProg{Fn}{Function}{:}{}
-  \Fn{\Pick{QValid, QDiscarded, gen}}{
-    \If{\KwNot Empty(QValid)}{
-      batch $\gets$ Deque(QValid)\;
-      \If{Empty(batch)}{
-        Pick(QValid, QDiscarded, gen)\;
-      } \uElse{
-        PushFront(QValid, Rest(batch))\;
-        \KwRet First(batch)\;
-      }
-    }
-    \If{\KwNot Empty(QValid)}{
-      batch $\gets$ Deque(QValid)\;
-      \If{Empty(batch)}{
-        Pick(QValid, QDiscarded, gen)\;
-      } \uElse{
-        PushFront(QValid, Rest(batch))\;
-        \KwRet First(batch)\;
-      }
-    }
-    \lElse{\KwRet Sample(gen)}
-  }
-\caption{\label{algo:mutagen:pick}\mutagen Seed Selection}
-\end{algorithm}
 
 
 The next section describes two heuristics we added to \mutagen's testing loop
@@ -1809,8 +1807,8 @@ under test, and hence we want to prioritize them.
 \caption{\label{fig:mutagen:tracelog}Inserting two new execution traces into the
   internal trace log (represented using brackets).}
 \end{figure}
-
 \begin{algorithm}[t]
+  \SetKwComment{Comment}{/* }{}
   \SetArgSty{textnormal}
   %% \SetInd{0em}{0.75em}
   \SetKw{KwNot}{not}
@@ -1838,13 +1836,13 @@ under test, and hence we want to prioritize them.
   \Fn{\Pick{QValid, QDiscarded, gen}}{
     \If{\KwNot Empty(QValid)}{
       {\color{red} (batch, prio) $\gets$ DequeMin(QValid)}\; %%NEW
-      \If{Empty(batch)}{
-        Pick(QValid, QDiscarded, gen)\;
-      } \uElse{
+      \lIf{Empty(batch)}{ Pick(QValid, QDiscarded, gen) }
+      \uElse{
         {\color{red} PushFront(QValid, prio, Rest(batch))}\; %% NEW
         \KwRet First(batch)\;
       }
     }
+    \If{\KwNot Empty(QDiscarded)}{\Comment {Analogous to the case above */} }
     $\cdots$\;
   }
 
@@ -1878,7 +1876,6 @@ These changes are illustrated in Algorithm \ref{algo:mutagen:fifo}.
 Statements in {\color{red} red} indicate important changes to the base
 algorithm, whereas ellipses denote parts of the code that are not relevant for
 the point being made.
-
 
 To pick the next test case, we retrieve the one with the highest priority (the
 smallest branching depth).
