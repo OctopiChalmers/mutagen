@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{47}
+\begin{thebibliography}{42}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -139,19 +139,6 @@
 \newblock
 
 
-\bibitem[\protect\citeauthoryear{Cadar, Dunbar, Engler, et~al\mbox{.}}{Cadar
-  et~al\mbox{.}}{2008}]%
-        {cadar2008klee}
-\bibfield{author}{\bibinfo{person}{Cristian Cadar}, \bibinfo{person}{Daniel
-  Dunbar}, \bibinfo{person}{Dawson~R Engler}, {et~al\mbox{.}}}
-  \bibinfo{year}{2008}\natexlab{}.
-\newblock \showarticletitle{Klee: unassisted and automatic generation of
-  high-coverage tests for complex systems programs.}. In
-  \bibinfo{booktitle}{\emph{OSDI}}, Vol.~\bibinfo{volume}{8}.
-  \bibinfo{pages}{209--224}.
-\newblock
-
-
 \bibitem[\protect\citeauthoryear{Claessen, Dureg{\aa}rd, and Palka}{Claessen
   et~al\mbox{.}}{2014}]%
         {ClaessenDP14}
@@ -193,19 +180,6 @@
   Preston}.} \bibinfo{year}{2017}\natexlab{}.
 \newblock \showarticletitle{Testing with crowbar}. In
   \bibinfo{booktitle}{\emph{OCaml Workshop}}.
-\newblock
-
-
-\bibitem[\protect\citeauthoryear{Duchon, Flajolet, Louchard, and
-  Schaeffer}{Duchon et~al\mbox{.}}{2004}]%
-        {Duchon2004}
-\bibfield{author}{\bibinfo{person}{P. Duchon}, \bibinfo{person}{P. Flajolet},
-  \bibinfo{person}{G. Louchard}, {and} \bibinfo{person}{G. Schaeffer}.}
-  \bibinfo{year}{2004}\natexlab{}.
-\newblock \showarticletitle{Boltzmann Samplers for the Random Generation of
-  Combinatorial Structures}.
-\newblock \bibinfo{journal}{\emph{Combinatorics, Probability and Computing.}}
-  \bibinfo{volume}{13} (\bibinfo{year}{2004}).
 \newblock
 
 
@@ -343,17 +317,6 @@
 \newblock \showarticletitle{Erlang/QuickCheck}. In
   \bibinfo{booktitle}{\emph{Ninth International Erlang/OTP User Conference,
   {\"A}lvsj{\"o}, Sweden. November 2003}}.
-\newblock
-
-
-\bibitem[\protect\citeauthoryear{Jones, Jones, and Meijer}{Jones
-  et~al\mbox{.}}{1997}]%
-        {jones1997type}
-\bibfield{author}{\bibinfo{person}{Simon~Peyton Jones}, \bibinfo{person}{Mark
-  Jones}, {and} \bibinfo{person}{Erik Meijer}.}
-  \bibinfo{year}{1997}\natexlab{}.
-\newblock \showarticletitle{Type classes: an exploration of the design space}.
-  In \bibinfo{booktitle}{\emph{Haskell workshop}}. \bibinfo{pages}{1--16}.
 \newblock
 
 
@@ -531,21 +494,6 @@
 \newblock
 
 
-\bibitem[\protect\citeauthoryear{Stephens, Grosen, Salls, Dutcher, Wang,
-  Corbetta, Shoshitaishvili, Kruegel, and Vigna}{Stephens
-  et~al\mbox{.}}{2016}]%
-        {stephens2016driller}
-\bibfield{author}{\bibinfo{person}{Nick Stephens}, \bibinfo{person}{John
-  Grosen}, \bibinfo{person}{Christopher Salls}, \bibinfo{person}{Andrew
-  Dutcher}, \bibinfo{person}{Ruoyu Wang}, \bibinfo{person}{Jacopo Corbetta},
-  \bibinfo{person}{Yan Shoshitaishvili}, \bibinfo{person}{Christopher Kruegel},
-  {and} \bibinfo{person}{Giovanni Vigna}.} \bibinfo{year}{2016}\natexlab{}.
-\newblock \showarticletitle{Driller: Augmenting Fuzzing Through Selective
-  Symbolic Execution.}. In \bibinfo{booktitle}{\emph{NDSS}},
-  Vol.~\bibinfo{volume}{16}. \bibinfo{pages}{1--16}.
-\newblock
-
-
 \bibitem[\protect\citeauthoryear{Swiecki}{Swiecki}{2010}]%
         {honggfuzz}
 \bibfield{author}{\bibinfo{person}{Robert Swiecki}.}
@@ -591,19 +539,6 @@
 \newblock \showarticletitle{Finding and understanding bugs in C compilers}. In
   \bibinfo{booktitle}{\emph{Proceedings of the 32nd ACM SIGPLAN conference on
   Programming language design and implementation}}. \bibinfo{pages}{283--294}.
-\newblock
-
-
-\bibitem[\protect\citeauthoryear{Yun, Lee, Xu, Jang, and Kim}{Yun
-  et~al\mbox{.}}{2018}]%
-        {yun2018qsym}
-\bibfield{author}{\bibinfo{person}{Insu Yun}, \bibinfo{person}{Sangho Lee},
-  \bibinfo{person}{Meng Xu}, \bibinfo{person}{Yeongjin Jang}, {and}
-  \bibinfo{person}{Taesoo Kim}.} \bibinfo{year}{2018}\natexlab{}.
-\newblock \showarticletitle{$\{$QSYM$\}$: A practical concolic execution engine
-  tailored for hybrid fuzzing}. In \bibinfo{booktitle}{\emph{27th
-  $\{$USENIX$\}$ Security Symposium ($\{$USENIX$\}$ Security 18)}}.
-  \bibinfo{pages}{745--761}.
 \newblock
 
 
