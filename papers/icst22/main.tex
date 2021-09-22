@@ -178,7 +178,7 @@ In this work we present \mutagen, a CGPT framework that overcomes these
 limitations by generating mutants in an \emph{exhaustive} manner.
 %
 This is coupled with heuristics that help to schedule mutants based on their
-novelty and to minimize mutating subexpressions leading to scalability issues of
+novelty and to minimize mutating certain subexpressions leading to scalability issues of
 exhaustiveness.
 %of large enumeration types more
 %than necessary.
@@ -292,8 +292,8 @@ case than generating a new one using a na\"ive generator.
 In addition, high-level, structure-preserving mutators are better suited for
 producing syntactically valid mutants.
 %
-High-level mutators avoids wasting time with generic low-level mutators (e.g.,
-at the bit level) that know very little about data structures, thus producing
+High-level mutators avoid wasting time with generic low-level mutators that work
+at the bit level and know very little about data structures, thus producing
 syntactically broken mutants most of the time.
 %
 Such a grammar-aware mutation technique has shown to be quite useful when
@@ -333,8 +333,8 @@ Mutated test cases are considered interesting for mutation only when they
 produce new execution traces --- any other test case is simply thrown away.
 
 
-Worth mentioning, this technique is not meant to replace sophisticated, manually
-written random generators, but rather to provide an adequate testing solution
+Worth mentioning, this technique is not meant to replace sophisticated manually-written
+random generators, but rather to provide an adequate testing solution
 for early stages of development.
 %, and while a better test suite using manually-written generators is
 %still under construction.
@@ -511,7 +511,7 @@ respect to the ones already seen.
 In this light, interesting test cases that discover new parts of the code
 earlier during execution are given a higher priority.
 %
-Moreover, our scheduling lets the testing loop jump back and forth between
+Moreover, our scheduling allows the testing loop to jump back and forth between
 mutable test cases as soon as a new more interesting one is enqueued for
 mutation, eliminating potential delays when the mutation queues grow large.
 
@@ -1176,7 +1176,7 @@ in general.
 %% Later, \S \ref{sec:heuristics} introduces heuristics that help finding bugs
 %% faster in certain testing scenarios.
 
-In contrast to CGPT and many other popular fuzzing tools, \mutagen works by to
+In contrast to CGPT and many other popular fuzzing tools, \mutagen works by 
 mutating test cases on an exhaustive and precise manner, where
 %
 \begin{inparaenum}
@@ -2010,7 +2010,7 @@ continuously increase the random mutations parameter until that stops happening.
 We evaluated the performance of \mutagen using two case studies.
 %
 The first one is a simple abstract stack machine that enforces
-\emph{noninterference} \cite{goguen1982security} using runtime checks.
+the hyperproperty \emph{noninterference} \cite{goguen1982security} using runtime checks.
 %
 Its implementation was proven correct by \citeauthor{10.1145/2578855.2535839}
 \citeyearpar{10.1145/2578855.2535839} in Coq, and subsequently degraded by
@@ -2154,7 +2154,7 @@ In the rule table, this looks as follows:
 \end{center}
 
 \noindent Where $l_{pc}$, $l_{p}$, $l_{v}$, and $l_{v'}$ represent the labels
-of: the program counter, the memory pointer, and the old a new values stored in
+of: the program counter, the memory pointer, and the old and new values stored in
 that memory cell.
 %
 The symbol $\vee$ simply denotes the join of two labels, i.e., the
@@ -3159,7 +3159,7 @@ subexpressions to avoid producing mutations over their corresponding positions.
 This could improve the overall performance when testing non-strict properties
 that leave parts of their input unevaluated.
 %
-In our case studies, however, we observed that properties we tested
+In our case studies, however, we observed that the properties we tested
 %% their preconditions tend to be
 are quite strict when executing test cases obtained by mutating valid existing ones,
 fully evaluating their input before executing the postcondition.
