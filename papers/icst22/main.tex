@@ -171,7 +171,7 @@ with structure-preserving mutations guided by execution traces.
 %
 Albeit effective, the initial CGPT approach is limited by factors like large
 reliance on randomness and poor mutants scheduling, reducing its applicability
-and bug-finding capacity.
+and bug-finding capacity in existing software.
 
 
 In this work we present \mutagen, a CGPT framework that overcomes these
@@ -333,9 +333,9 @@ Mutated test cases are considered interesting for mutation only when they
 produce new execution traces --- any other test case is simply thrown away.
 
 
-Worth mentioning, this technique is not meant to replace sophisticated manually-written
-random generators, but rather to provide an adequate testing solution
-for early stages of development.
+Worth mentioning, CGPT is not meant to replace sophisticated manually-written
+random generators, but rather to provide an adequate testing solution for early
+stages of development.
 %, and while a better test suite using manually-written generators is
 %still under construction.
 
@@ -499,8 +499,8 @@ other number in the 32 or 64 bits range.
 
 
 %% Heuristics to improve testing loop
-Additionally, the testing loop of \mutagen incorporates two heuristics that help
-finding bugs faster and more reliably (\S \ref{sec:heuristics}).
+Additionally, the testing loop of \mutagen incorporates two novel heuristics
+that help finding bugs faster and more reliably (\S \ref{sec:heuristics}).
 %
 In the first place, our tool uses first-in first-out (FIFO) scheduling with
 priority to enqueue interesting test cases for mutation.
@@ -604,7 +604,7 @@ type \texttt{Tree Int}.
 %% tree.
 %% %
 %
-Then, if we assume existence of a predicate \texttt{balanced} of type
+Then, if we assume existence of a predicate (function) \texttt{balanced} of type
 \texttt{Tree a -> Bool} that asserts that a tree satisfies a certain notion of
 balancedness, we can write testing properties to assert that the operations
 defined over the \texttt{Tree} data type preserve this invariant.
@@ -661,12 +661,12 @@ We can write a na\"ive one for trees of integers (simplified to make it more acc
 %% \end{verbatim}
 
 \begin{verbatim}
-genTree(sz) =
-  if sz == 0 then do { x <- genInt; return (Leaf x) }
+genTree(size) =
+  if size == 0 then do { x <- genInt; return (Leaf x) }
   else oneof [ do { x <- genInt; return (Leaf x) }
-             , do { l <- genTree(sz-1);
+             , do { l <- genTree(size-1);
                     x <- genInt;
-                    r <- genTree(sz-1);
+                    r <- genTree(size-1);
                     return (Branch l x r) } ]
 \end{verbatim}
 
@@ -678,9 +678,9 @@ In esence, this generator randomly picks one data constructor from its
 corresponding data type definition with uniform probability (i.e, either a
 \texttt{Leaf} or a \texttt{Branch}), and then calls itself for every recursive
 subexpression needed to produce a well-typed value, carefully reducing the input
-size limit \texttt{sz} by a unit on each step, ensuring termination by
-restricting itself to generating leaves when it reaches zero (case \texttt{sz ==
-  0}).
+size limit \texttt{size} by a unit on each step, ensuring termination by
+restricting itself to generating leaves when it reaches zero (case \texttt{size
+  == 0}).
 %
 Integers are generated simply by delegating the task to an external random
 generator (\texttt{genInt}) defined elsewhere.
@@ -1150,9 +1150,9 @@ that some bugs cannot be discovered at all --- randomly generating the same test
 case again later does not help, as it becomes uninteresting based on historic
 trace information.
 
-To keep the comparison fair, the authors replicated the same power schedule
-configuration used in AFL, which is tailored to work in tandem with generic
-bit-level mutators.
+To keep the comparison fair, \citeauthor{lampropoulos2019coverage} replicated
+the same power schedule configuration used in AFL, which is tailored to work in
+tandem with generic bit-level mutators.
 %
 It is unclear what the best heuristic configuration is when using a high-level
 mutation approach --- something challenging to characterize in general given the
@@ -1160,7 +1160,7 @@ expressivity of the data types used to drive the mutators.
 \end{itemize}
 
 The next section introduces \mutagen, our revised CGPT that aims to tackle the
-main limitations of CGPT.
+main limitations of CGPT to make it practical in real-world scenarios.
 
 % ----------------------------------------
 
@@ -1176,7 +1176,7 @@ in general.
 %% Later, \S \ref{sec:heuristics} introduces heuristics that help finding bugs
 %% faster in certain testing scenarios.
 
-In contrast to CGPT and many other popular fuzzing tools, \mutagen works by 
+In contrast to CGPT and many other popular fuzzing tools, \mutagen works by
 mutating test cases on an exhaustive and precise manner, where
 %
 \begin{inparaenum}
@@ -1357,7 +1357,7 @@ Now it is time to apply these mutations to every subexpression as well.
 %
 To do so, we use two utility functions that can be automatically synthesized.
 
-In first place, a function \texttt{positions} traverses the input and builds a
+In first place, a function \texttt{Positions} traverses the input and builds a
 Rose tree of \emph{mutable positions}, where positions are lists of indices
 encoding the path from the root to every mutable subexpression.
 %
@@ -1381,7 +1381,7 @@ For instance, the mutable positions of the value \texttt{Branch (Leaf 1) 2
 \begin{equation}
   \nonumber
   \footnotesize
-  \texttt{positions}\quad
+  \texttt{Positions}\quad
   \left(
   \tikz[
     baseline=-6mm,
@@ -1419,8 +1419,9 @@ For instance, the mutable positions of the value \texttt{Branch (Leaf 1) 2
   }
 \end{equation}
 
-Later, we define a function \texttt{inside} that takes a desired
-position within an input test case and mutates its corresponding subexpression.
+Later, we define a function \texttt{MutateInside} that takes a desired position
+within an input test case and mutates its corresponding subexpression, returning
+a list of mutants.
 %
 %% given the desired position to mutate within a test case, we
 %% define another function \texttt{inside} that finds the subexpression
@@ -1442,7 +1443,7 @@ until it reaches the desired subexpression, where a mutation encoded by \texttt{
 applied.
 % locally at the top-level (case \texttt{inside [] t}).
 %
-The rest of the \texttt{inside}'s functionality simply unwraps and rewraps the
+The rest of the \texttt{MutateInside}'s functionality simply unwraps and rewraps the
 intermediate subexpressions and is not particularly relevant for the point being
 made.
 
@@ -1469,7 +1470,7 @@ respectively.
   \DontPrintSemicolon
   \SetKwFunction{MG}{Loop}
   \SetKwProg{Fn}{Function}{:}{}
-  \Fn{\MG{P, N, R, gen, mut}}{
+  \Fn{\MG{P, N, R, gen}}{
     i $\gets$ 0\;
     TLog, QValid, QDiscarded $\gets$ $\varnothing$\;
     \While{i $<$ N}{
@@ -1478,11 +1479,11 @@ respectively.
       \lIf{\KwNot result}{\KwRet Bug(x)}
       \If{Interesting(TLog, trace)}{
         \If{\KwNot Discarded(result)}{
-          batch $\gets$ Mutate(x, mut, R)\;
+          batch $\gets$ CreateMutationBatch(x, R)\;
           Enqueue(QValid, batch)\;
         }
         \uElseIf{\KwNot Discarded(Parent(x))}{
-          batch $\gets$ Mutate(x, mut, R)\;
+          batch $\gets$ CreateMutationBatch(x, R)\;
           Enqueue(QDiscarded, batch)\;
         }
       }
@@ -1501,12 +1502,12 @@ respectively.
   \SetKwFor{KwRepeat}{repeat}{times}
   \SetAlgoLined
   \DontPrintSemicolon
-  \SetKwFunction{Muts}{Mutate}
+  \SetKwFunction{Muts}{CreateMutationBatch}
   \SetKwProg{Fn}{Function}{:}{}
-  \Fn{\Muts{x, mut, R}}{
+  \Fn{\Muts{x, R}}{
     batch $\gets$ $\varnothing$\;
     \For{pos \KwIn Flatten(Positions(x))}{
-      \For{mutant \KwIn Inside(pos, mut, x)}{
+      \For{mutant \KwIn MutateInside(pos, x)}{
         \Switch{mutant}{
           \Case{\texttt{PURE} $\hat{x}$}{
             Enqueue($\hat{x}$, batch)\;
@@ -1522,7 +1523,7 @@ respectively.
     }
     \KwRet batch\;
   }
-\caption{\label{algo:mutagen:init}Mutants Initialization}
+\caption{\label{algo:mutagen:init}Mutation Batch Initialization}
 \end{algorithm}
 
 
@@ -1818,14 +1819,14 @@ under test, and hence we want to prioritize them.
   \DontPrintSemicolon
   \SetKwFunction{MG}{Loop}
   \SetKwProg{Fn}{Function}{:}{}
-  \Fn{\MG{P, N, R, gen, mut}}{
+  \Fn{\MG{P, N, R, gen}}{
     $\cdots$\;
-    x $\gets$ Pick(QValid, QDiscarded, gen, mut)\;
+    x $\gets$ Pick(QValid, QDiscarded, gen)\;
     (result, trace) $\gets$ WithTrace(P(x))\;
     $\cdots$\;
     \If{Interesting(TLog, trace)}{
       \If{\KwNot Discarded(result)}{
-        batch $\gets$ Mutate(x, mut, R)\;
+        batch $\gets$ Mutate(x, R)\;
         {\color{red} prio $\gets$ BranchDepth(TLog, trace)}\; %% NEW
         {\color{red} PushFront(QValid, prio, batch)}\;          %% NEW
       }
@@ -1963,7 +1964,7 @@ continuously increase the random mutations parameter until that stops happening.
   \DontPrintSemicolon
   \SetKwFunction{MG}{Loop}
   \SetKwProg{Fn}{Function}{:}{}
-  \Fn{\MG{P, N, gen, mut}}{
+  \Fn{\MG{P, N, gen}}{
     {\color{red} boring $\gets$ 0}; {\color{red} reset $\gets$ 1000}; {\color{red}R $\gets$ 1}\;
     $\cdots$\;
     \While{i $<$ N}{
@@ -2711,7 +2712,7 @@ more reliably, but also fast!
 18 & 24218.6 & 123401.3 & 0.14 & {\color{red} large} \\ \hline
 19 & 18638.9 & 30682.3 & 0.45 & negligible \\ \hline
 20 & 18883.1 & 15841.9 & 0.60 & {\color{blue} small} \\ \hline
-   & & Mean & 0.67 & {\color{red} medium} \\
+   & & Mean & 0.67 & {\color{blue} medium} \\
 \hline
 \end{tabular}
 %% \end{minipage}
