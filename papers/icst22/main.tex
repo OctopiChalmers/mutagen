@@ -1826,7 +1826,7 @@ under test, and hence we want to prioritize them.
     $\cdots$\;
     \If{Interesting(TLog, trace)}{
       \If{\KwNot Discarded(result)}{
-        batch $\gets$ Mutate(x, R)\;
+        batch $\gets$ CreateMutationBatch(x, R)\;
         {\color{red} prio $\gets$ BranchDepth(TLog, trace)}\; %% NEW
         {\color{red} PushFront(QValid, prio, batch)}\;          %% NEW
       }
