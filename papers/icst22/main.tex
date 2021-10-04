@@ -255,12 +255,13 @@ These techniques, however, are unable to synthesize random generators capable of
 producing data satisfying complex invariants not easily derivable from the
 codebase.
 %
-Randomly generating valid programs is a common example of this problem, where
-developers are forced to put substantial efforts in writing specialized random
-generators by hand \cite{Palka11, perenyi2020stack, yang2011finding}.
+Randomly generating valid programs to test compilers is a common example of this
+problem \cite{chen2020asurvey}, where developers are forced to put substantial
+efforts in writing specialized random generators by hand \cite{Palka11,
+  perenyi2020stack, yang2011finding}.
 %
-Moreover, automatically synthesized random generators offer particularly poor
-results when the testing properties are constrained by sparse preconditions.
+Moreover, automatically synthesized random generators offer poor results when
+the testing properties are constrained by sparse preconditions.
 %
 In this scenario, most of the generated tests are simply thrown away before they
 can be used to test the main components of the system under test.
@@ -3170,7 +3171,6 @@ fully evaluating their input before executing the postcondition.
 Thus, we do not forsee considerable improvements by applying lazy-prunning in
 this scenario --- gathering evidence about lazy pruning in \mutagen is as part
 of our future work.
-
 
 
 % ----------------------------------------

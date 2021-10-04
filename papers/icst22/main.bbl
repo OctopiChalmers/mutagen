@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{42}
+\begin{thebibliography}{44}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -45,6 +45,18 @@
 \newblock
   \bibinfo{howpublished}{\mbox{\url{http://llvm.org/docs/LibFuzzer.html}}}.
 \newblock
+
+
+\bibitem[\protect\citeauthoryear{Anon}{Anon}{2021}]%
+        {anon_2021}
+\bibfield{author}{\bibinfo{person}{Anon}.} \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{MUTAGEN: Coverage-Guided, Property-Based Testing
+  using Exhaustive Structure-Preserving Mutations (Replication package)}.
+\newblock  (\bibinfo{date}{Oct} \bibinfo{year}{2021}).
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.5281/zenodo.5543664}
+\showDOI{\tempurl}
 
 
 \bibitem[\protect\citeauthoryear{Arcuri and Briand}{Arcuri and Briand}{2014}]%
@@ -137,6 +149,24 @@
   \bibinfo{booktitle}{\emph{International Conference on Certified Programs and
   Proofs}}. Springer, \bibinfo{pages}{92--108}.
 \newblock
+
+
+\bibitem[\protect\citeauthoryear{Chen, Patra, Pradel, Xiong, Zhang, Hao, and
+  Zhang}{Chen et~al\mbox{.}}{2020}]%
+        {chen2020asurvey}
+\bibfield{author}{\bibinfo{person}{Junjie Chen}, \bibinfo{person}{Jibesh
+  Patra}, \bibinfo{person}{Michael Pradel}, \bibinfo{person}{Yingfei Xiong},
+  \bibinfo{person}{Hongyu Zhang}, \bibinfo{person}{Dan Hao}, {and}
+  \bibinfo{person}{Lu Zhang}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{A Survey of Compiler Testing}.
+\newblock \bibinfo{journal}{\emph{ACM Comput. Surv.}} \bibinfo{volume}{53},
+  \bibinfo{number}{1}, Article \bibinfo{articleno}{4} (\bibinfo{date}{Feb.}
+  \bibinfo{year}{2020}), \bibinfo{numpages}{36}~pages.
+\newblock
+\showISSN{0360-0300}
+\urldef\tempurl%
+\url{https://doi.org/10.1145/3363562}
+\showDOI{\tempurl}
 
 
 \bibitem[\protect\citeauthoryear{Claessen, Dureg{\aa}rd, and Palka}{Claessen
