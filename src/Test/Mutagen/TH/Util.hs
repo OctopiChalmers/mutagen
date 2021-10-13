@@ -22,7 +22,7 @@ reifyName name = do
     Just info -> return info
     Nothing -> mutagenError "could not reify name" [name]
 
-reifyTypeDef :: Name -> Q ([DTyVarBndr], [DCon])
+reifyTypeDef :: Name -> Q ([DTyVarBndrUnit], [DCon])
 reifyTypeDef name = do
   dinfo <- reifyName name
   case dinfo of
@@ -34,7 +34,7 @@ reifyTypeDef name = do
 
 -- | Simplify a DType removing foralls and signatures
 simplifyDType :: DType -> DType
-simplifyDType (DForallT _ _ t) = simplifyDType t
+simplifyDType (DForallT _ t)   = simplifyDType t
 simplifyDType (DSigT t _)      = simplifyDType t
 simplifyDType (DAppT l r)      = DAppT (simplifyDType l) (simplifyDType r)
 simplifyDType t                = t
@@ -46,7 +46,7 @@ t1 .==. t2 = simplifyDType t1 == simplifyDType t2
 -- | Split a function type into its parameters and return type
 splitSignature :: DType -> [DType]
 splitSignature (DArrowT `DAppT` l `DAppT` r) = l : splitSignature r
-splitSignature (DForallT _ _ t)              = splitSignature t
+splitSignature (DForallT _ t)                = splitSignature t
 splitSignature (DSigT t _)                   = splitSignature t
 splitSignature t                             = [t]
 
@@ -60,7 +60,7 @@ argTypes = init . splitSignature
 unapply :: DType -> (Name, [DType])
 unapply (DConT name) = (name, [])
 unapply (DVarT name) = (name, [])
-unapply (DForallT _ _ t) = unapply t
+unapply (DForallT _ t) = unapply t
 unapply (DSigT t _) = unapply t
 unapply (DAppT l r) = (name, l' ++ [r])
   where (name, l') = unapply l
@@ -85,13 +85,13 @@ isMaybeOf _                                  = Nothing
 ----------------------------------------
 -- | Observations over TyVarBndrs
 
-dTyVarBndrName :: DTyVarBndr -> Name
-dTyVarBndrName (DPlainTV tv) = tv
-dTyVarBndrName (DKindedTV tv _) = tv
+dTyVarBndrName :: DTyVarBndrUnit -> Name
+dTyVarBndrName (DPlainTV tv _)    = tv
+dTyVarBndrName (DKindedTV tv _ _) = tv
 
-dTyVarBndrToDTypeArg :: DTyVarBndr -> DTypeArg
-dTyVarBndrToDTypeArg (DPlainTV tv)    = DTANormal (DVarT tv)
-dTyVarBndrToDTypeArg (DKindedTV tv _) = DTANormal (DVarT tv)
+dTyVarBndrToDTypeArg :: DTyVarBndrUnit -> DTypeArg
+dTyVarBndrToDTypeArg (DPlainTV tv _)    = DTANormal (DVarT tv)
+dTyVarBndrToDTypeArg (DKindedTV tv _ _) = DTANormal (DVarT tv)
 
 ----------------------------------------
 -- | Observations over DCons
@@ -118,7 +118,7 @@ applyDTypes :: Name -> [DTypeArg] -> DType
 applyDTypes name args = DConT name `applyDType` args
 
 -- | Apply a list of type vars to a head constructor
-applyTVs :: Name -> [DTyVarBndr] -> DType
+applyTVs :: Name -> [DTyVarBndrUnit] -> DType
 applyTVs tn vs = applyDTypes tn (fmap dTyVarBndrToDTypeArg vs)
 
 -- | Apply a constructor name to a list of field expressions
