@@ -1,4 +1,4 @@
-module Tracer.Trace where
+module Test.Mutagen.Tracer.Trace where
 
 import Data.IORef
 import System.IO.Unsafe

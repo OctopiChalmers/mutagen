@@ -12,7 +12,7 @@ import System.Console.ANSI
 import Text.Printf
 import Text.Pretty.Simple
 
-import Tracer.Trace
+import Test.Mutagen.Tracer.Trace
 import Test.Mutagen.Property
 import Test.Mutagen.Fragment
 import Test.Mutagen.Test.State
@@ -67,18 +67,19 @@ printBatchStatus mbatch = do
 
 printGlobalStats :: State log -> IO ()
 printGlobalStats st = do
-  let (ne, ngen, nmp, nmd) = stNumExGenMut st
   printf "Statistics:\n"
+  printf "* Executed test cases: %d (%d interesting, %d boring) (last interesting was %d tests ago)\n"
+    (stNumInteresting st + stNumBoring st) (stNumInteresting st) (stNumBoring st) (stNumTestsSinceLastInteresting st)
   printf "* Passed %d tests (%d discarded)\n"
     (stNumPassed st) (stNumDiscarded st)
-  printf "* Tests origin: %d examples, %d generated, %d mutated from passed, %d mutated from discarded\n"
-    ne ngen nmp nmd
+  printf "* Tests origin: %d generated, %d mutated from passed, %d mutated from discarded\n"
+    (stNumGenerated st) (stNumMutatedFromPassed st) (stNumMutatedFromDiscarded st)
   printf "* Enqueued tests for mutation: %d passed, %d discarded\n"
     (PQueue.size (stPassedQueue st)) (PQueue.size (stDiscardedQueue st))
-  printf "* Total interesting test cases: %d\n"
-    (stNumInteresting st)
-  printf "* Tests since last interesting: %d \t(trace log was reset %d times)\n"
-    (stLastInteresting st) (stTraceLogResets st)
+  printf "* Auto-reset is %s, using %d random mutations (after %d trace log resets)\n"
+    (maybe "off" (const "on") (stAutoResetAfter st)) (stRandomMutations st) (stNumTraceLogResets st)
+  printf "* Current generation size: %d\n"
+    (stCurrentGenSize st)
   printf "* Fragment store size: %s\n"
     (show (fragmentStoreSize (stFragmentStore st)))
 

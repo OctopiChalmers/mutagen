@@ -1,6 +1,6 @@
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE DeriveDataTypeable #-}
-module Tracer.Plugin
+module Test.Mutagen.Tracer.Plugin
   ( __trace__
   , TraceAnn(TRACE)
   , plugin
@@ -17,7 +17,7 @@ import GhcPlugins hiding ((<>))
 import GHC.Hs
 import OccName as Name
 
-import Tracer.Trace
+import Test.Mutagen.Tracer.Trace
 
 ----------------------------------------
 -- | Tracing primitive
@@ -135,7 +135,7 @@ annotateTopLevel flags anns match =
 -- | Helpers
 
 message :: String -> Hsc ()
-message str = liftIO $ putStrLn $ "[Tracer] " <> str
+message str = liftIO $ putStrLn $ "[MUTAGEN] " <> str
 
 instrumentedMessage :: DynFlags -> String -> Int -> SrcSpan -> Hsc ()
 instrumentedMessage flags reason n loc = do
@@ -182,7 +182,7 @@ trace_ann_name :: RdrName
 trace_ann_name = mkRdrName "TRACE"
 
 this_module_name :: ModuleName
-this_module_name = mkModuleName "Tracer.Plugin"
+this_module_name = mkModuleName "Test.Mutagen.Tracer.Plugin"
 
 ----------------------------------------
 -- | Builders

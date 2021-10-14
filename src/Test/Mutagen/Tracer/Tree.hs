@@ -1,4 +1,4 @@
-module Tracer.Tree
+module Test.Mutagen.Tracer.Tree
   ( TraceTreeLog
   , emptyTraceTreeLog
   , resetTraceTreeLog
@@ -13,7 +13,7 @@ import Data.Tree.Pretty
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
 
-import Tracer.Trace
+import Test.Mutagen.Tracer.Trace
 
 ----------------------------------------
 -- Tree-based trace logs

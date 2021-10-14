@@ -9,11 +9,11 @@ main :: IO ()
 main = do
   mutagenWith 
     defaultConfig { 
-      maxSize = 5,
-      chatty = True,
+      maxGenSize = 5,
+      -- chatty = True,
       -- stepByStep = True,
       traceMethod = Bitmap,
-      -- , traceMethod = Tree
+      -- useLazyPrunning = False, 
       examples = [ Args ( Types.Star (Types.Atom (Types.ASCII '@')) ) ]
       }
     Spec.prop_optimize 

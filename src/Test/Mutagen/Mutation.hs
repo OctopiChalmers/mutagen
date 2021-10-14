@@ -148,31 +148,31 @@ instance Mutable Int where
 
 instance Mutable Double where
   def = 0
-  mutate _ = [ Rand arbitrary ]
+  mutate n = [ Rand arbitrary, Frag (sampleFragments n) ]
 
 instance Mutable Float where
   def = 0
-  mutate _ = [ Rand arbitrary ]
+  mutate n = [ Rand arbitrary, Frag (sampleFragments n) ]
 
 instance Mutable Word8 where
   def = 0
-  mutate _ = [ Rand arbitrary ]
+  mutate n = [ Rand arbitrary, Frag (sampleFragments n) ]
 
 instance Mutable Word16 where
   def = 0
-  mutate _ = [ Rand arbitrary ]
+  mutate n = [ Rand arbitrary, Frag (sampleFragments n) ]
 
 instance Mutable Word32 where
   def = 0
-  mutate _ = [ Rand arbitrary ]
+  mutate n = [ Rand arbitrary, Frag (sampleFragments n) ]
 
 instance Mutable Word64 where
   def = 0
-  mutate _ = [ Rand arbitrary ]
+  mutate n = [ Rand arbitrary, Frag (sampleFragments n) ]
 
 instance Mutable Char where
   def = chr 0
-  mutate = const [ Rand arbitrary ]
+  mutate c = [ Rand arbitrary, Frag (sampleFragments c) ]
 
 instance Mutable Bool where
   def = False

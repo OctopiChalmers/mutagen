@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -fplugin=Tracer #-}
+{-# OPTIONS_GHC -fplugin=Test.Mutagen.Tracer #-}
 module RE.Match where
 
 import RE.Types

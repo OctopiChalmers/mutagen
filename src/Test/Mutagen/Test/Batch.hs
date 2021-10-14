@@ -53,23 +53,23 @@ nextMutation :: Mutable a => FragmentStore -> MutationBatch a -> IO (Maybe (a, M
 nextMutation _  mb | mb_mut_lim mb == 0 = return Nothing -- too many mutations
 nextMutation fs mb = do
   case mb_curr_queue mb of
-    -- queue is empty, advance to next position
+    -- Queue is empty, advance to next position
     [] -> do
       case mb_next_pos mb of
-        -- no more positions to mutate
+        -- No more positions to mutate
         [] -> return Nothing
-        -- next position available
+        -- Next position available
         (pos:ps) -> do
           let mutants = inside pos mutate (mb_value mb)
           queue <- concatMapM (concretize (mb_rand_num mb, mb_rand_size mb) (mb_rand_num mb, fs)) mutants
           case queue of
-            -- current position admits no mutations: advance to next position
+            -- Current position admits no mutations: advance to next position
             [] -> do
               let mb' = mb { mb_next_pos = ps
                            , mb_past_pos = pos : mb_past_pos mb
                            }
               nextMutation fs mb'
-            -- current position admits some mutations: update the batch queue
+            -- Current position admits some mutations: update the batch queue
             -- and lock the current position
             (a:as) -> do
               let mb' = mb { mb_next_pos = ps
@@ -77,6 +77,6 @@ nextMutation fs mb = do
                            , mb_curr_queue = as
                            }
               return (Just (a, mb'))
-    -- there are some mutants still in the queue for the current position
+    -- There are some mutants still in the queue for the current position
     (a:as) -> do
       return (Just (a, mb { mb_curr_queue = as }))

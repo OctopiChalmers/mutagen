@@ -12,7 +12,7 @@ module Test.Mutagen
   , module Test.Mutagen.Test
   ) where
 
-import Tracer (TraceAnn(TRACE))
+import Test.Mutagen.Tracer (TraceAnn(TRACE))
 
 import Test.QuickCheck.Gen
 import Test.QuickCheck.Arbitrary
