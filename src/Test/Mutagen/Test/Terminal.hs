@@ -14,6 +14,7 @@ import Text.Pretty.Simple
 
 import Tracer.Trace
 import Test.Mutagen.Property
+import Test.Mutagen.Fragment
 import Test.Mutagen.Test.State
 import Test.Mutagen.Test.Batch
 
@@ -54,7 +55,7 @@ printMutatedTestCaseTrace tr = do
 printBatchStatus :: MutationBatch Args -> IO ()
 printBatchStatus mbatch = do
   printf "Current mutation batch: %d tests enqueued, %d mutations left\n"
-    (length (mb_curr_queue mbatch)) (mb_nmuts mbatch)
+    (length (mb_curr_queue mbatch)) (mb_rand_num mbatch)
   printf "\nMutated positions:\n"
   mapM_ (\pos -> putStrLn (show pos <> " *")) (reverse (mb_past_pos mbatch))
   printf "\nNext mutable positions:\n"
@@ -78,6 +79,8 @@ printGlobalStats st = do
     (stNumInteresting st)
   printf "* Tests since last interesting: %d \t(trace log was reset %d times)\n"
     (stLastInteresting st) (stTraceLogResets st)
+  printf "* Fragment store size: %s\n"
+    (show (fragmentStoreSize (stFragmentStore st)))
 
 reportCounterexample :: Args -> Test -> IO ()
 reportCounterexample as res = do

@@ -7,8 +7,6 @@
 {-# LANGUAGE ExistentialQuantification #-}
 module Test.Mutagen.Mutation where
 
-import Control.Monad
-
 import Data.Typeable
 import Data.List
 import Data.Tree
@@ -19,27 +17,13 @@ import Test.QuickCheck
 import Data.Char
 import Data.Word
 
+import Test.Mutagen.Mutant
+import Test.Mutagen.Fragment
+
 ----------------------------------------
 -- | Breadcrumbs used to place mutations inside of values
 
 type Pos = [Int]
-
-----------------------------------------
--- | Mutants
-
-data Mutant a = Pure a | Random (Gen a)
-
-instance Show (Mutant a) where
-  show (Pure _)   = "{PURE}"
-  show (Random _) = "{RANDOM}"
-
-instance Functor Mutant where
-  fmap f (Pure a) = Pure (f a)
-  fmap f (Random gen) = Random (fmap f gen)
-
-concretize :: Int -> Int -> Mutant a -> IO [a]
-concretize _ _ (Pure a)     = return [a]
-concretize n s (Random gen) = replicateM n (generate (resize s gen))
 
 ----------------------------------------
 -- | Mutations as transformations of values into mutants
@@ -52,6 +36,7 @@ type GenericMutation = forall a. Mutable a => Mutation a
 -- | Mutable types
 
 class Typeable a => Mutable a where
+
   -- | Mutable positions
   -- List all the possible positions where we could mutate the value
   positions :: a -> Tree Pos
@@ -61,20 +46,20 @@ class Typeable a => Mutable a where
   -- The default value of the type to be used when mutating
   def :: a
   def = defaultDef
+
   -- Top-level constructor mutations
   mutate :: Mutation a
   mutate = defaultMutate
+
   -- Apply a top-level mutation inside a value
   inside :: Pos -> GenericMutation -> Mutation a
   inside = defaultInside
 
 -- Join all possible mutations, top-level and nested
 mutateEverywhere :: Mutable a => Mutation a
-mutateEverywhere a = mutate a <> mutateInside a
-  where mutateInside =
-          mconcat [ inside pos mutate
-                  | pos <- levelorder (positions a)
-                  ]
+mutateEverywhere a =
+  mutate a <>
+  mconcat [ inside pos mutate a | pos <- levelorder (positions a) ]
 
 ----------------------------------------
 -- Instance declaration helpers
@@ -159,35 +144,35 @@ instance (Typeable a, Arbitrary a) => Mutable (Rigid a)
 
 instance Mutable Int where
   def = 0
-  mutate _ = [ Random arbitrary ]
+  mutate n = [ Rand arbitrary, Frag (sampleFragments n) ]
 
 instance Mutable Double where
   def = 0
-  mutate _ = [ Random arbitrary ]
+  mutate _ = [ Rand arbitrary ]
 
 instance Mutable Float where
   def = 0
-  mutate _ = [ Random arbitrary ]
+  mutate _ = [ Rand arbitrary ]
 
 instance Mutable Word8 where
   def = 0
-  mutate _ = [ Random arbitrary ]
+  mutate _ = [ Rand arbitrary ]
 
 instance Mutable Word16 where
   def = 0
-  mutate _ = [ Random arbitrary ]
+  mutate _ = [ Rand arbitrary ]
 
 instance Mutable Word32 where
   def = 0
-  mutate _ = [ Random arbitrary ]
+  mutate _ = [ Rand arbitrary ]
 
 instance Mutable Word64 where
   def = 0
-  mutate _ = [ Random arbitrary ]
+  mutate _ = [ Rand arbitrary ]
 
 instance Mutable Char where
   def = chr 0
-  mutate = const [ Random arbitrary ]
+  mutate = const [ Rand arbitrary ]
 
 instance Mutable Bool where
   def = False
@@ -228,20 +213,20 @@ instance (Arbitrary a, Mutable a) => Mutable [a] where
 
   mutate [] =
     [ Pure [def]
-    , Random $ sized $ \s -> do
+    , Rand $ sized $ \s -> do
         n <- choose (1,s `div` 2)
         vectorOf n arbitrary
     ]
   mutate [x] =
     [ Pure [], Pure [x,x]
-    , Random $ sized $ \s -> do
+    , Rand $ sized $ \s -> do
         n <- choose (1,s `div` 2)
         y <- vectorOf n arbitrary
         return (x:y)
     ]
   mutate (x:xs) =
     [ Pure [], Pure xs, Pure (x:x:xs)
-    , Random $ sized $ \s -> do
+    , Rand $ sized $ \s -> do
         n <- choose (1,s `div` 2)
         y <- vectorOf n arbitrary
         return (x:y<>xs)

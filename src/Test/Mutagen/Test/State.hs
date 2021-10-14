@@ -11,6 +11,7 @@ import Tracer
 
 import Test.Mutagen.Property
 import Test.Mutagen.Mutation
+import Test.Mutagen.Fragment
 import Test.Mutagen.Test.Config
 import Test.Mutagen.Test.Batch
 
@@ -20,21 +21,22 @@ import Test.Mutagen.Test.Batch
 data State log
   = State
   -- Static
-  { stMaxTests           :: Int
-  , stMaxDiscardRatio    :: Int
-  , stMaxSize            :: Int
-  , stArgsGen            :: Gen Args
-  , stArgsRunner         :: Args -> Result
-  , stDebug              :: Bool
-  , stStepByStep         :: Bool
-  , stTimeout            :: (Maybe Integer)
-  , stStartTime          :: Integer
-  , stRandomMutations    :: Int
-  , stMutationLimit      :: Int
-  , stResetAfter         :: Maybe Int
-  , stMutationOrder      :: MutationOrder
-  , stMaxTraceLength     :: Int
-  , stExamples           :: [Args]
+  { stMaxTests          :: Int
+  , stMaxDiscardRatio   :: Int
+  , stMaxSize           :: Int
+  , stArgsGen           :: Gen Args
+  , stArgsRunner        :: Args -> Result
+  , stDebug             :: Bool
+  , stStepByStep        :: Bool
+  , stTimeout           :: (Maybe Integer)
+  , stStartTime         :: Integer
+  , stRandomMutations   :: Int
+  , stRandomFragments   :: Int
+  , stMutationLimit     :: Int
+  , stResetAfter        :: Maybe Int
+  , stMutationOrder     :: MutationOrder
+  , stMaxTraceLength    :: Int
+  , stUseFragments      :: !Bool
   -- Dynamic
   , stUsedSeed          :: !(Maybe (QCGen, Int))
   , stNextSeed          :: !QCGen
@@ -49,6 +51,7 @@ data State log
   , stDiscardedTraceLog :: !log
   , stDiscardedQueue    :: !MutationQueue
   , stNumTraceNodes     :: !Int
+  , stFragmentStore     :: !FragmentStore
   }
 
 createInitialState :: forall log. TraceLogger log => Config -> Property -> IO (State log)
@@ -59,7 +62,7 @@ createInitialState cfg (Property gen argsRunner) = do
   now <- round <$> getPOSIXTime
   -- the initial internal state
   traceNodes <- read <$> readFile ".tracer"
-  putStrLn ("traceNodesCount: " <> show traceNodes)
+  putStrLn ("Read trace nodes count from .tracer: " <> show traceNodes)
   passedTraceLog <- emptyTraceLog traceNodes
   discardedTraceLog <- emptyTraceLog traceNodes
   return State
@@ -75,8 +78,9 @@ createInitialState cfg (Property gen argsRunner) = do
     , stTimeout = timeout cfg
     , stStartTime = now
     , stMaxTraceLength = maxTraceLength cfg
-    , stExamples = examples cfg
+    , stUseFragments = useFragments cfg
     , stRandomMutations = randomMutations cfg
+    , stRandomFragments = randomFragments cfg
     , stMutationLimit = maybe (maxSize cfg) id (mutationLimit cfg)
     , stResetAfter = resetAfter cfg
     , stMutationOrder = mutationOrder cfg
@@ -91,6 +95,7 @@ createInitialState cfg (Property gen argsRunner) = do
     , stDiscardedTraceLog = discardedTraceLog
     , stDiscardedQueue = mempty
     , stNumTraceNodes = traceNodes
+    , stFragmentStore = foldr storeFragments emptyFragmentStore (examples cfg)
     }
 
 ----------------------------------------
@@ -119,6 +124,7 @@ createOrInheritMutationBatch st args parentbatch pos isPassed =
         (stMutationOrder st)
         (stRandomMutations st)
         (stMaxSize st)
+        (stRandomFragments st)
         (stMutationLimit st)
         pos isPassed args
 

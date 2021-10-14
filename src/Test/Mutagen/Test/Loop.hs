@@ -15,6 +15,7 @@ import Test.QuickCheck.Random (QCGen)
 import Tracer
 import Test.Mutagen.Property
 import Test.Mutagen.Lazy
+import Test.Mutagen.Fragment
 import Test.Mutagen.Test.State
 import Test.Mutagen.Test.Batch
 import Test.Mutagen.Test.Report
@@ -191,6 +192,10 @@ runTestCase_tree st parent args = do
                        if interesting
                        then 0
                        else stLastInteresting st + 1
+                   , stFragmentStore =
+                       if interesting && stUseFragments st
+                       then storeFragments args (stFragmentStore st)
+                       else stFragmentStore st
                    }
       return (Right st')
     -- test discarded, lotta work to do here too
@@ -221,6 +226,10 @@ runTestCase_tree st parent args = do
                        if interesting
                        then 0
                        else stLastInteresting st + 1
+                   , stFragmentStore =
+                       if interesting && stUseFragments st
+                       then storeFragments args (stFragmentStore st)
+                       else stFragmentStore st
                    }
       return (Right st')
 
@@ -275,6 +284,10 @@ runTestCase_bitmap st parent args = do
                        if interesting
                        then 0
                        else stLastInteresting st + 1
+                   , stFragmentStore =
+                       if interesting && stUseFragments st
+                       then storeFragments args (stFragmentStore st)
+                       else stFragmentStore st
                    }
       return (Right st')
     -- test discarded, lotta work to do here too
@@ -305,6 +318,10 @@ runTestCase_bitmap st parent args = do
                        if interesting
                        then 0
                        else stLastInteresting st + 1
+                   , stFragmentStore =
+                       if interesting && stUseFragments st
+                       then storeFragments args (stFragmentStore st)
+                       else stFragmentStore st
                    }
       return (Right st')
 
@@ -315,24 +332,12 @@ runTestCase_bitmap st parent args = do
 -- brand new otherwise.
 pickNextTestCase :: TraceLogger log => State log -> IO (Args, Maybe (MutationBatch Args), State log)
 pickNextTestCase st
-  -- we can run an example provided by the user
-  | not (null (stExamples st)) = useExampleTest st
   -- we can run a mutation of an interesting succesful test case
   | not (null (stPassedQueue st)) = mutateFromPassed st
   -- we can run a mutation of an interesting discarded test case
   | not (null (stDiscardedQueue st)) = mutateFromDiscarded st
   -- only choice left is to generate a brand new test
   | otherwise = generateNewTest st
-
-useExampleTest :: TraceLogger log => State log -> IO (Args, Maybe (MutationBatch Args), State log)
-useExampleTest st = do
-  let (args:rest) = stExamples st
-  printExampleTestCase args
-  let (ne, ng, nmp, nmd) = stNumExGenMut st
-  let st' = st { stExamples = rest
-               , stNumExGenMut = (ne+1, ng, nmp, nmd)
-               }
-  return (args, Nothing, st')
 
 generateNewTest :: TraceLogger log => State log -> IO (Args, Maybe (MutationBatch Args), State log)
 generateNewTest st = do
@@ -353,7 +358,7 @@ generateNewTest st = do
 mutateFromPassed :: TraceLogger log => State log -> IO (Args, Maybe (MutationBatch Args), State log)
 mutateFromPassed st = do
   let ((prio, (args, tr, mbatch)), rest) = PQueue.deleteFindMin (stPassedQueue st)
-  next <- nextMutation mbatch
+  next <- nextMutation (stFragmentStore st) mbatch
   case next of
     Nothing -> do
       let st' = st { stPassedQueue = rest }
@@ -373,7 +378,7 @@ mutateFromPassed st = do
 mutateFromDiscarded :: TraceLogger log => State log -> IO (Args, Maybe (MutationBatch Args), State log)
 mutateFromDiscarded st = do
   let ((prio, (args, tr, mbatch)), rest) = PQueue.deleteFindMin (stDiscardedQueue st)
-  next <- nextMutation mbatch
+  next <- nextMutation (stFragmentStore st) mbatch
   case next of
     Nothing -> do
       let st' = st { stDiscardedQueue = rest }

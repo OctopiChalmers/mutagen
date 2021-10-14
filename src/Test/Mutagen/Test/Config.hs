@@ -21,12 +21,14 @@ data Config
   , stepByStep      :: Bool
   , timeout         :: Maybe Integer
   , randomMutations :: Int
+  , randomFragments :: Int
   , mutationLimit   :: Maybe Int
   , resetAfter      :: Maybe Int
   , mutationOrder   :: MutationOrder
   , maxTraceLength  :: Int
   , examples        :: [Args]
   , traceMethod     :: TraceMethod
+  , useFragments    :: Bool
   }
 
 defaultConfig :: Config
@@ -40,10 +42,12 @@ defaultConfig =
   , stepByStep      = False
   , timeout         = Nothing
   , randomMutations = 1
+  , randomFragments = 10
   , mutationLimit   = Nothing
-  , resetAfter      = Just 1000
+  , resetAfter      = Just 100
   , mutationOrder   = levelorder
   , maxTraceLength  = 100
   , examples        = []
   , traceMethod     = Tree
+  , useFragments    = True
   }

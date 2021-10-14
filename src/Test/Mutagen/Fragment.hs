@@ -7,6 +7,7 @@ module Test.Mutagen.Fragment where
 
 import Control.Monad
 
+import Data.Maybe
 import Data.Typeable
 
 import Data.Map (Map)
@@ -16,7 +17,6 @@ import Data.Set (Set)
 import qualified Data.Set as Set
 
 import Test.QuickCheck
-import Test.Mutagen.Mutation
 
 -- For providing some default Fragmentable instances
 import Data.Word
@@ -43,13 +43,12 @@ instance Ord Fragment where
       -- type at this point. Nonetheless, I hope it works!!
 
 instance Show Fragment where
-  show (Fragment a) = show a
+  show (Fragment a) = "Fragment(" <> show a <> ")"
 
 ----------------------------------------
 -- Storing fragments based on their type
 
 newtype FragmentStore = FragmentStore (Map TypeRep (Set Fragment))
-  deriving Show
 
 fragmentStoreSize :: FragmentStore -> [(TypeRep, Int)]
 fragmentStoreSize (FragmentStore fs) =
@@ -86,11 +85,19 @@ collectFragments a = foldr (uncurry insertFragment) emptyFragmentStore fts
 storeFragments :: Fragmentable a => a -> FragmentStore -> FragmentStore
 storeFragments a fs = fs <> collectFragments a
 
-sampleFragment :: TypeRep -> FragmentStore -> IO (Maybe Fragment)
-sampleFragment tr (FragmentStore fs) = do
-  case Map.lookup tr fs of
-    Nothing -> return Nothing
-    Just frags -> Just <$> generate (elements (Set.toList frags))
+sampleFragments :: Typeable a => a -> FragmentStore -> Gen [a]
+sampleFragments a (FragmentStore fs) = do
+  case Map.lookup (typeOf a) fs of
+    Nothing ->
+      return []
+    Just frags ->
+      catMaybes . fmap (\(Fragment a') -> cast a') <$> shuffle (Set.toList frags)
+
+-- sampleFragment :: TypeRep -> FragmentStore -> IO (Maybe Fragment)
+-- sampleFragment tr (FragmentStore fs) = do
+--   case Map.lookup tr fs of
+--     Nothing -> return Nothing
+--     Just frags -> Just <$> generate (elements (Set.toList frags))
 
 ----------------------------------------
 -- Fragmentizing values
@@ -107,15 +114,15 @@ singleton = Set.singleton . Fragment
 ----------------------------------------
 -- Replacing a subexpression within a value with a random fragmentize
 
-replacePosWithFragment :: (Mutable a, Fragmentable a) => FragmentStore -> Pos -> Mutation a
-replacePosWithFragment (FragmentStore fs) pos = inside pos $ \a ->
-  case Map.lookup (typeOf a) fs of
-    Nothing -> []
-    Just frags ->
-      [ Random $ do
-          Fragment a' <- elements (Set.toList frags)
-          return (maybe a id (cast a'))
-      ]
+-- replacePosWithFragment :: (Mutable a, Fragmentable a) => FragmentStore -> Pos -> Mutation a
+-- replacePosWithFragment (FragmentStore fs) pos = inside pos $ \a ->
+--   case Map.lookup (typeOf a) fs of
+--     Nothing -> []
+--     Just frags ->
+--       [ Random $ do
+--           Fragment a' <- elements (Set.toList frags)
+--           return (maybe a id (cast a'))
+--       ]
 
 
 ----------------------------------------
@@ -137,10 +144,6 @@ instance Fragmentable a => Fragmentable (Maybe a) where
     case x of
       Nothing -> singleton x
       Just v1 -> singleton x <> fragmentize v1
-
-  -- fragmentize Nothing  = singleton @(Maybe a) Nothing
-  -- fragmentize Nothing  = (singleton :: Maybe a -> Set Fragment) Nothing
-  -- fragmentize (Just x) = singleton @(Maybe a) (Just x) <> fragmentize x
 
 instance (Fragmentable a, Fragmentable b) => Fragmentable (Either a b) where
   fragmentize (Left x)  = singleton @(Either a b) (Left x)  <> fragmentize x

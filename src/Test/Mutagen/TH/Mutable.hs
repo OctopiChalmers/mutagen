@@ -9,7 +9,7 @@ import Control.Monad
 import Language.Haskell.TH
 import Language.Haskell.TH.Desugar
 
-import Test.Mutagen (Mutable, def, positions, node, inside, wrap, invalidPosition, mutate, Mutant(..))
+import Test.Mutagen (Mutable, def, positions, node, inside, wrap, invalidPosition, mutate, Mutant(..), sampleFragments)
 
 import Test.Mutagen.TH.Util
 
@@ -89,8 +89,9 @@ deriveMutate cons = do
   clauses <- forM cons $ \con -> do
     (pvs, dpat) <- createDPat con
     let pvsTys = zip pvs (dConFieldsTypes (dConFields con))
-    let clauseBody = mkListDExp [ DConE 'Pure `DAppE` mc
-                                | mc <- mutateCon (dConName con) pvsTys cons ]
+    let fragMut  = DConE 'Frag `DAppE` (DVarE 'sampleFragments `DAppE` dPatToDExp dpat)
+    let pureMuts = [ DConE 'Pure `DAppE` mc | mc <- mutateCon (dConName con) pvsTys cons ]
+    let clauseBody = mkListDExp (fragMut : pureMuts)
     return (DClause [dpat] clauseBody)
   return [ DLetDec (DFunD 'mutate clauses) ]
 
