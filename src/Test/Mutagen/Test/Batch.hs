@@ -14,7 +14,7 @@ data MutationBatch args = MutationBatch
   { mb_value :: args
   , mb_past_pos :: [Pos]
   , mb_next_pos :: [Pos]
-  , mb_curr_queue :: [args]
+  , mb_curr_queue :: [Concretized args]
   , mb_mut_order :: MutationOrder
   , mb_test_passed :: Bool
   , mb_rand_size :: Int
@@ -49,7 +49,7 @@ newMutationBatchFromParent mb pos test_passed args =
   , mb_mut_lim = mb_mut_lim mb - 1
   }
 
-nextMutation :: Mutable a => FragmentStore -> MutationBatch a -> IO (Maybe (a, MutationBatch a))
+nextMutation :: Mutable a => FragmentStore -> MutationBatch a -> IO (Maybe (a, MutantKind, MutationBatch a))
 nextMutation _  mb | mb_mut_lim mb == 0 = return Nothing -- too many mutations
 nextMutation fs mb = do
   case mb_curr_queue mb of
@@ -59,7 +59,7 @@ nextMutation fs mb = do
         -- No more positions to mutate
         [] -> return Nothing
         -- Next position available
-        (pos:ps) -> do
+        pos : ps -> do
           let mutants = inside pos mutate (mb_value mb)
           queue <- concatMapM (concretize (mb_rand_num mb, mb_rand_size mb) (mb_rand_num mb, fs)) mutants
           case queue of
@@ -71,12 +71,12 @@ nextMutation fs mb = do
               nextMutation fs mb'
             -- Current position admits some mutations: update the batch queue
             -- and lock the current position
-            (a:as) -> do
+            Concretized mk a : as -> do
               let mb' = mb { mb_next_pos = ps
                            , mb_past_pos = pos : mb_past_pos mb
                            , mb_curr_queue = as
                            }
-              return (Just (a, mb'))
+              return (Just (a, mk, mb'))
     -- There are some mutants still in the queue for the current position
-    (a:as) -> do
-      return (Just (a, mb { mb_curr_queue = as }))
+    Concretized mk a : as -> do
+      return (Just (a, mk, mb { mb_curr_queue = as }))

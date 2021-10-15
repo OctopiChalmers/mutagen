@@ -10,6 +10,7 @@ import Test.QuickCheck.Random (QCGen, newQCGen)
 import Test.Mutagen.Tracer
 import Test.Mutagen.Property
 import Test.Mutagen.Mutation
+import Test.Mutagen.Mutant
 import Test.Mutagen.Fragment
 import Test.Mutagen.Test.Config
 import Test.Mutagen.Test.Batch
@@ -21,31 +22,31 @@ data State log
   = State
   ----------------------------------------
   -- Mirrored from Config
-  { stMaxSuccess :: Int
-  , stMaxDiscardRatio :: Int
-  , stTimeout :: (Maybe Integer)
-  , stMaxGenSize :: Int
-  , stRandomMutations :: Int
-  , stRandomFragments :: Int
-  , stMutationLimit :: Int
-  , stAutoResetAfter :: Maybe Int
-  , stUseLazyPrunning :: Bool
-  , stMutationOrder :: MutationOrder
-  , stUseFragments :: Bool
-  , stMaxTraceLength :: Maybe Int
-  , stChatty :: Bool
-  , stStepByStep :: Bool
+  { stMaxSuccess :: !Int
+  , stMaxDiscardRatio :: !Int
+  , stTimeout :: !(Maybe Integer)
+  , stMaxGenSize :: !Int
+  , stRandomMutations :: !Int
+  , stRandomFragments :: !Int
+  , stMutationLimit :: !Int
+  , stAutoResetAfter :: !(Maybe Int)
+  , stUseLazyPrunning :: !Bool
+  , stMutationOrder :: !MutationOrder
+  , stUseFragments :: !Bool
+  , stMaxTraceLength :: !(Maybe Int)
+  , stChatty :: !Bool
+  , stStepByStep :: !Bool
 
   ----------------------------------------
   -- Test case generation
-  , stNextSeed :: QCGen
+  , stNextSeed :: !QCGen
   -- ^ The next seed to be used by `stArgsGen`
-  , stArgsGen :: Gen Args
+  , stArgsGen :: !(Gen Args)
   -- ^ The random generator of inputs
 
   ----------------------------------------
   -- Property runner
-  , stArgsRunner :: Args -> Result
+  , stArgsRunner :: !(Args -> Result)
 
   ----------------------------------------
   -- Trace logs
@@ -64,11 +65,14 @@ data State log
 
   ----------------------------------------
   -- Statistics
-  , stStartTime :: Integer
-  , stCurrentGenSize :: Int
+  , stStartTime :: !Integer
+  , stCurrentGenSize :: !Int
   , stNumGenerated :: !Int
   , stNumMutatedFromPassed :: !Int
   , stNumMutatedFromDiscarded :: !Int
+  , stNumPureMutants :: !Int
+  , stNumRandMutants :: !Int
+  , stNumFragMutants :: !Int
   , stNumPassed :: !Int
   , stNumDiscarded :: !Int
   , stNumInteresting :: !Int
@@ -122,6 +126,9 @@ createInitialState cfg (Property gen argsRunner) = do
     , stNumGenerated = 0
     , stNumMutatedFromPassed = 0
     , stNumMutatedFromDiscarded = 0
+    , stNumPureMutants = 0
+    , stNumRandMutants = 0
+    , stNumFragMutants = 0
     , stNumPassed = 0
     , stNumDiscarded = 0
     , stNumInteresting = 0
@@ -129,6 +136,71 @@ createInitialState cfg (Property gen argsRunner) = do
     , stNumTestsSinceLastInteresting = 0
     , stNumTraceLogResets = 0
     }
+
+----------------------------------------
+-- State modifiers
+
+-- Reverse dollar sign
+(!) :: State log -> (State log -> State log) -> State log
+st ! f = f st
+
+infixl 2 !
+
+setNextSeed :: QCGen -> State log -> State log
+setNextSeed val st = st { stNextSeed = val }
+
+setCurrentGenSize :: Int -> State log -> State log
+setCurrentGenSize val st = st { stCurrentGenSize = val }
+
+setAutoResetAfter :: Maybe Int -> State log -> State log
+setAutoResetAfter val st = st { stAutoResetAfter = val }
+
+setRandomMutations :: Int -> State log -> State log
+setRandomMutations val st = st { stRandomMutations = val }
+
+setPassedQueue :: MutationQueue -> State log -> State log
+setPassedQueue    val st = st { stPassedQueue = val }
+
+setDiscardedQueue :: MutationQueue -> State log -> State log
+setDiscardedQueue val st = st { stDiscardedQueue = val }
+
+setFragmentStore :: FragmentStore -> State log -> State log
+setFragmentStore  val st = st { stFragmentStore = val }
+
+increaseNumTraceLogResets :: State log -> State log
+increaseNumTraceLogResets st = st { stNumTraceLogResets = stNumTraceLogResets st + 1 }
+
+increaseNumPassed :: State log -> State log
+increaseNumPassed st = st { stNumPassed = stNumPassed st + 1 }
+
+increaseNumDiscarded :: State log -> State log
+increaseNumDiscarded st = st { stNumDiscarded = stNumDiscarded st + 1 }
+
+increaseNumGenerated :: State log -> State log
+increaseNumGenerated st = st { stNumGenerated = stNumGenerated st + 1 }
+
+increaseNumMutatedFromPassed :: State log -> State log
+increaseNumMutatedFromPassed st = st { stNumMutatedFromPassed = stNumMutatedFromPassed st + 1 }
+
+increaseNumMutatedFromDiscarded :: State log -> State log
+increaseNumMutatedFromDiscarded st = st { stNumMutatedFromDiscarded = stNumMutatedFromDiscarded st + 1 }
+
+increaseNumInteresting :: State log -> State log
+increaseNumInteresting st = st { stNumInteresting = stNumInteresting st + 1 }
+
+increaseNumBoring :: State log -> State log
+increaseNumBoring st = st { stNumBoring = stNumBoring st + 1 }
+
+increaseNumTestsSinceLastInteresting :: State log -> State log
+increaseNumTestsSinceLastInteresting st = st { stNumTestsSinceLastInteresting = stNumTestsSinceLastInteresting st + 1 }
+
+increaseMutantKindCounter :: MutantKind -> State log -> State log
+increaseMutantKindCounter PureMutant st = st { stNumPureMutants = stNumPureMutants st + 1 }
+increaseMutantKindCounter RandMutant st = st { stNumRandMutants = stNumRandMutants st + 1 }
+increaseMutantKindCounter FragMutant st = st { stNumFragMutants = stNumFragMutants st + 1 }
+
+resetNumTestsSinceLastInteresting :: State log -> State log
+resetNumTestsSinceLastInteresting st = st { stNumTestsSinceLastInteresting = 0 }
 
 ----------------------------------------
 -- Mutation priority queues
@@ -142,7 +214,7 @@ type MutationQueue =
     , MutationBatch Args -- The batch of possible mutations
     )
 
--- | Inherit the mutation batch of a parent test case of it exists, otherwise create a new one.
+-- Inherit the mutation batch of a parent test case of it exists, otherwise create a new one.
 createOrInheritMutationBatch :: State log -> Args -> Maybe (MutationBatch Args) -> Maybe [Pos] -> Bool -> MutationBatch Args
 createOrInheritMutationBatch st args parentbatch pos isPassed =
   case parentbatch of
@@ -163,7 +235,7 @@ createOrInheritMutationBatch st args parentbatch pos isPassed =
 ----------------------------------------
 -- State-related utilities
 
--- | Check whether the timeout has passed
+-- Check whether the timeout has passed
 passedTimeout :: State log -> IO Bool
 passedTimeout st
   | Just s <- stTimeout st = do
@@ -171,6 +243,7 @@ passedTimeout st
       return (now >= stStartTime st + s)
   | otherwise = return False
 
+-- Compute the size of the next randomly generated value
 computeSize :: State log -> Int
 computeSize st
   | stNumPassed st `roundTo` stMaxGenSize st + stMaxGenSize st <= stMaxSuccess st

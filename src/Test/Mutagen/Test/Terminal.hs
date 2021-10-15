@@ -74,6 +74,8 @@ printGlobalStats st = do
     (stNumPassed st) (stNumDiscarded st)
   printf "* Tests origin: %d generated, %d mutated from passed, %d mutated from discarded\n"
     (stNumGenerated st) (stNumMutatedFromPassed st) (stNumMutatedFromDiscarded st)
+  printf "* Mutant kinds: %d pure, %d random, %d fragments\n"
+    (stNumPureMutants st) (stNumRandMutants st) (stNumFragMutants st)
   printf "* Enqueued tests for mutation: %d passed, %d discarded\n"
     (PQueue.size (stPassedQueue st)) (PQueue.size (stDiscardedQueue st))
   printf "* Auto-reset is %s, using %d random mutations (after %d trace log resets)\n"
