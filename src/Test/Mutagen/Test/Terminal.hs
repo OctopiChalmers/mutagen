@@ -14,6 +14,7 @@ import Text.Pretty.Simple
 
 import Test.Mutagen.Tracer.Trace
 import Test.Mutagen.Property
+import Test.Mutagen.Mutation
 import Test.Mutagen.Fragment
 import Test.Mutagen.Test.State
 import Test.Mutagen.Test.Batch
@@ -21,44 +22,56 @@ import Test.Mutagen.Test.Batch
 ----------------------------------------
 -- Terminal reporters
 
-printExampleTestCase :: Args -> IO ()
-printExampleTestCase args = do
-  printf "\nUsing provided example test case:\n"
-  prettyPrint args
+printRunningTest :: IO ()
+printRunningTest = do
+  printf ">>> Running test...\n"
+
+printEvaluatedSubexpressions :: [Pos] -> IO ()
+printEvaluatedSubexpressions pos = do
+  printf ">>> Evaluated subexpressions:\n"
+  print pos
+
+printTestCaseWasInteresting :: Int -> Int -> IO ()
+printTestCaseWasInteresting new prio = do
+  printf ">>> Test case was interesting! (new trace nodes=%d, prio=%d)\n" new prio
+
+printTestResult :: String -> IO ()
+printTestResult res = do
+  printf ">>> Test result: %s\n" res
 
 printGeneratedTestCase :: Args -> IO ()
 printGeneratedTestCase args = do
-  printf "\nGenerated new random test case:\n"
+  printf ">>> Generated new random test case:\n"
   prettyPrint args
 
 printOriginalTestCase :: Int -> Args -> Bool -> IO ()
 printOriginalTestCase prio args isPassed = do
-  printf "\nMutating %s test case (prio=%d):\n"
+  printf ">>> Mutating %s test case (prio=%d):\n"
     (if isPassed then "passed" else "discarded") prio
   prettyPrint args
 
 printMutatedTestCase :: Args -> IO ()
 printMutatedTestCase args = do
-  printf "\nMutated test case:\n"
+  printf ">>> Mutated test case:\n"
   prettyPrint args
 
 printOriginalTestCaseTrace :: Trace -> IO ()
 printOriginalTestCaseTrace tr = do
-  printf "\nOriginal trace:\n"
+  printf ">>> Original trace:\n"
   putStrLn (show (unTrace tr))
 
 printMutatedTestCaseTrace :: Trace -> IO ()
 printMutatedTestCaseTrace tr = do
-  printf "\nNew trace:\n"
+  printf ">>> New trace:\n"
   putStrLn (show (unTrace tr))
 
 printBatchStatus :: MutationBatch Args -> IO ()
 printBatchStatus mbatch = do
-  printf "Current mutation batch: %d tests enqueued, %d mutations left\n"
+  printf ">>> Current mutation batch: %d tests enqueued, %d mutations left\n"
     (length (mb_curr_queue mbatch)) (mb_rand_num mbatch)
-  printf "\nMutated positions:\n"
+  printf ">>> Mutated positions:\n"
   mapM_ (\pos -> putStrLn (show pos <> " *")) (reverse (mb_past_pos mbatch))
-  printf "\nNext mutable positions:\n"
+  printf ">>> Next mutable positions:\n"
   case mb_next_pos mbatch of
     [] -> return ()
     (p:ps) -> do
@@ -67,7 +80,8 @@ printBatchStatus mbatch = do
 
 printGlobalStats :: State log -> IO ()
 printGlobalStats st = do
-  printf "Statistics:\n"
+  clear
+  printf ">>> Statistics:\n"
   printf "* Executed test cases: %d (%d interesting, %d boring) (last interesting was %d tests ago)\n"
     (stNumInteresting st + stNumBoring st) (stNumInteresting st) (stNumBoring st) (stNumTestsSinceLastInteresting st)
   printf "* Passed %d tests (%d discarded)\n"
@@ -84,10 +98,25 @@ printGlobalStats st = do
     (stCurrentGenSize st)
   printf "* Fragment store size: %s\n"
     (show (fragmentStoreSize (stFragmentStore st)))
+  now <- round <$> getPOSIXTime
+  let elapsed = now - stStartTime st
+  printf "* Elapsed time: %d seconds (+/- 1 second)\n" elapsed
+  printf "\n"
 
-reportCounterexample :: Args -> Test -> IO ()
-reportCounterexample as res = do
-  printf "Found counterexample!\n"
+reportDoneTesting :: State log -> IO ()
+reportDoneTesting st = do
+  printGlobalStats st
+  printf "\nDone testing\n"
+
+reportGaveUp :: State log -> String -> IO ()
+reportGaveUp st r = do
+  printGlobalStats st
+  printf "\nGave up (%s)\n" r
+
+reportCounterexample :: State log -> Args -> Test -> IO ()
+reportCounterexample st as res = do
+  printGlobalStats st
+  printf "\nFound counterexample!\n"
   printf "* Reason of failure: %s\n"
     (maybe "assertion failed" id (reason res))
   when (isJust (exc res)) $ do
@@ -96,13 +125,6 @@ reportCounterexample as res = do
   prettyPrint as
   printf "\n"
 
-reportFinalStats :: State log -> IO ()
-reportFinalStats st = do
-  printGlobalStats st
-  now <- round <$> getPOSIXTime
-  let elapsed = now - stStartTime st
-  printf "* Elapsed time: %d seconds (+/- 1 second)\n" elapsed
-
 ----------------------------------------
 -- Helpers
 
@@ -110,7 +132,7 @@ put :: String -> IO ()
 put str = putStr str >> hFlush stdout
 
 clear :: IO ()
-clear = clearScreen >> setCursorPosition 0 0 >> cursorUp 1
+clear = clearScreen >> setCursorPosition 0 0 >> cursorUp 1 >> hFlush stdout
 
 prettyPrint :: Show a => a -> IO ()
 prettyPrint a =

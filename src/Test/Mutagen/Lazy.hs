@@ -33,7 +33,7 @@ pos_ref = unsafePerformIO (newIORef [])
 
 -- Add a new position to the ref
 addEvaluatedPos :: Pos -> IO ()
-addEvaluatedPos pos = modifyIORef' pos_ref (reverse pos:)
+addEvaluatedPos pos = modifyIORef' pos_ref (reverse pos : )
 
 -- Reset traces
 resetPosRef :: IO ()

@@ -1,5 +1,10 @@
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 module Test.Mutagen.Test.Config where
+
+import Data.Typeable
 
 import Test.Mutagen.Mutation
 import Test.Mutagen.Property
@@ -41,7 +46,7 @@ data Config
   , mutationLimit :: Maybe Int
   -- ^ The maximum number of ancestors a test case can have before being
   -- discarded. Useful to avoid mutating recursive structures indefinetely.
-  -- Defaults to `2 ^ maxGenSize` if set to `Nothing`.
+  -- Defaults to `maxGenSize` if set to `Nothing`.
   , autoResetAfter :: Maybe Int
   -- ^ Reset the global trace log if no interesting test case is found after a
   -- certain number of tests. If not set to `Nothing`, this will duplicate the
@@ -59,6 +64,9 @@ data Config
   , useFragments :: Bool
   -- ^ Explode the interesting test cases found during the test loop into typed
   -- fragments. These fragments can be used to concretize fragment mutants.
+  , filterFragments :: Maybe [TypeRep]
+  -- ^ If not set to `Nothing`, the loop collect and use fragments of only some
+  -- specific types.
   , examples :: [Args]
   -- ^ Initial inputs examples used to populate the global fragment store before
   -- the testing loop starts.
@@ -77,7 +85,7 @@ data Config
   -- Debug options
   , chatty :: Bool
   -- ^ Print extra info
-  , stepByStep :: Bool
+  , debug :: Bool
   -- ^ Stop after every step and wait for the user to press Enter.
   }
 
@@ -91,13 +99,21 @@ defaultConfig =
   , randomMutations = 1
   , randomFragments = 10
   , mutationLimit   = Nothing
-  , autoResetAfter      = Just 100
+  , autoResetAfter  = Just 100
   , useLazyPrunning = True
   , mutationOrder   = levelorder
   , useFragments    = True
+  , filterFragments = Nothing
   , examples        = []
   , traceMethod     = Tree
   , maxTraceLength  = Nothing
   , chatty          = False
-  , stepByStep      = False
+  , debug           = False
   }
+
+
+allow :: forall a. Typeable a => TypeRep
+allow = typeRep (Proxy @a)
+
+example :: forall a. IsArgs a => a -> Args
+example = Args

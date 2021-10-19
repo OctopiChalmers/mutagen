@@ -1,14 +1,13 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
 module Test.Mutagen.Test.Loop where
 
 import Control.Monad
 import Control.Monad.Extra (ifM)
-import Text.Printf
 
 import Data.Maybe
 
 import qualified Data.PQueue.Prio.Min as PQueue
 
-import System.IO
 import System.Random (split)
 
 import Test.QuickCheck.Gen (unGen)
@@ -61,9 +60,7 @@ loop runner st
 -- Testing is no more
 doneTesting :: TraceLogger log => State log -> IO Report
 doneTesting st = do
-  clear
-  printf "Done testing\n"
-  reportFinalStats st
+  reportDoneTesting st
   return AllPassed
     { numPassed = stNumPassed st
     , numDiscarded = stNumDiscarded st
@@ -72,9 +69,7 @@ doneTesting st = do
 -- Too many discarded tests
 giveUp :: TraceLogger log => State log -> String -> IO Report
 giveUp st r = do
-  clear
-  printf "Gave up (%s)\n" r
-  reportFinalStats st
+  reportGaveUp st r
   return GaveUp
     { why = r
     , numPassed = stNumPassed st
@@ -84,9 +79,7 @@ giveUp st r = do
 -- Found a bug!
 counterexample :: TraceLogger log => State log -> Args -> Test -> IO Report
 counterexample st as test = do
-  clear
-  reportCounterexample as test
-  reportFinalStats st
+  reportCounterexample st as test
   return Counterexample
     { numPassed = stNumPassed st
     , numDiscarded = stNumDiscarded st
@@ -96,82 +89,44 @@ counterexample st as test = do
 -- Generate and run a new test
 newTest :: TraceLogger log => TestCaseRunner log -> State log -> IO Report
 newTest runner st = do
-  -- when we are in deep debug mode stop until the user presses enter
-  when (stStepByStep st) (void getLine)
-  -- print the header
-  clear >> hFlush stdout
-  printGlobalStats st
+  -- print global stats
+  if stChatty st then printGlobalStats st else clear
   -- pick a new test case
   (args, parent, st') <- pickNextTestCase st
   -- run the test case
   runRes <- runner st' parent args
+  -- when we are in deep debug mode stop until the user presses enter
+  when (stDebug st) (putStrLn "Press Enter to continue..." >> void getLine)
   -- check the test result and continue or report a counterexample
   either (counterexample st' args) (loop runner) runRes
 
 ----------------------------------------
 -- Test case runners
 
--- Run the test and check the result, if it passes then continue testing
+-- Run the test and check the result, updating the state as necessary. Here we
+-- have one generic implementation `runTestCase_generic` parameterized by the
+-- register operation of trace log used (either Tree or Bitmap).
+
 runTestCase_tree :: TestCaseRunner TraceTreeLog
-runTestCase_tree st parent args = do
-  when (stChatty st) $ do
-    printf "\nRunning test...\n"
-  -- Run the test case
-  (test, entries, eval_pos) <- execArgsRunner st args
-  when (stChatty st && stUseLazyPrunning st) $ do
-    printf "\nEvaluated subexpressions:\n%s\n" (show (fromJust eval_pos))
-  -- Truncate the trace if it is too long
-  let tr = Trace (maybe entries (flip take entries) (stMaxTraceLength st))
-  when (stChatty st) $ do
-    printMutatedTestCaseTrace tr
-  -- Inspect the test result
-  case test of
-    -- Boom!
-    Failed -> do
-      when (stChatty st) $ do
-        printf "\nTest result: FAILED\n"
-      return (Left test)
-    -- Test passed, lotta work to do now
-    Passed -> do
-      when (stChatty st) $ do
-        printf "\nTest result: PASSED\n"
-      -- Save the trace in the corresponding trace log
-      (new, depth) <- registerTrace tr (stPassedTraceLog st)
-      -- Evaluate whether the test case was interesting or not
-      let interesting = new > 0
-      let prio = depth
-      when (stChatty st && interesting) $ do
-        printf "\nTest case was interesting! (new trace nodes=%d, prio=%d)\n" new prio
-      -- Update the internal state for the next iteration
-      let st' | interesting = updateStateAfterInterestingPassed st args parent tr eval_pos prio
-              | otherwise   = updateStateAfterBoringPassed st
-      return (Right st')
-    -- Test discarded, lotta work to do here too
-    Discarded -> do
-      when (stChatty st) $ do
-        printf "\nTest result: DISCARDED\n"
-      -- Save the trace in the corresponding trace log
-      (new, depth) <- registerTrace tr (stDiscardedTraceLog st)
-      -- Evaluate whether the test case was interesting or not
-      let interesting = new > 0 && maybe False mb_test_passed parent
-      let prio = depth
-      when interesting $ do
-        printf "\nTest case was interesting! (new trace nodes=%d, prio=%d)\n" new prio
-      -- Update the internal state for the next iteration
-      let st' | interesting = updateStateAfterInterestingDiscarded st args parent tr eval_pos prio
-              | otherwise   = updateStateAfterBoringDiscarded st
-      return (Right st')
+runTestCase_tree = runTestCase_generic $ \_ tr tlog -> do
+  (new, depth) <- registerTrace tr tlog
+  let prio = depth
+  return (new, prio)
 
-
--- Run the test and check the result, if it passes then continue testing
 runTestCase_bitmap :: TestCaseRunner TraceBitmapLog
-runTestCase_bitmap st parent args = do
+runTestCase_bitmap = runTestCase_generic $ \st tr tlog -> do
+  new <- registerTrace tr tlog
+  let prio = stGeneratedTraceNodes st - new
+  return (new, prio)
+
+runTestCase_generic :: (State log -> Trace -> log -> IO (Int, Int)) -> TestCaseRunner log
+runTestCase_generic register st parent args = do
   when (stChatty st) $ do
-    printf "\nRunning test...\n"
+    printRunningTest
   -- Run the test case
   (test, entries, eval_pos) <- execArgsRunner st args
   when (stChatty st && stUseLazyPrunning st) $ do
-    printf "\nEvaluated subexpressions:\n%s\n" (show (fromJust eval_pos))
+    printEvaluatedSubexpressions (fromJust eval_pos)
   -- Truncate the trace if it is too long
   let tr = Trace (maybe entries (flip take entries) (stMaxTraceLength st))
   when (stChatty st) $ do
@@ -181,19 +136,18 @@ runTestCase_bitmap st parent args = do
     -- Boom!
     Failed -> do
       when (stChatty st) $ do
-        printf "\nTest result: FAILED\n"
+        printTestResult "FAILED"
       return (Left test)
     -- Test passed, lotta work to do now
     Passed -> do
       when (stChatty st) $ do
-        printf "\nTest result: PASSED\n"
+        printTestResult "PASSED"
       -- Save the trace in the corresponding trace log
-      new <- registerTrace tr (stPassedTraceLog st)
+      (new, prio) <- register st tr (stPassedTraceLog st)
       -- Evaluate whether the test case was interesting or not
       let interesting = new > 0
-      let prio = stGeneratedTraceNodes st - new
       when (stChatty st && interesting) $ do
-        printf "\nTest case was interesting! (new trace nodes=%d, prio=%d)\n" new prio
+        printTestCaseWasInteresting new prio
       -- Update the internal state for the next iteration
       let st' | interesting = updateStateAfterInterestingPassed st args parent tr eval_pos prio
               | otherwise   = updateStateAfterBoringPassed st
@@ -201,14 +155,13 @@ runTestCase_bitmap st parent args = do
     -- Test discarded, lotta work to do here too
     Discarded -> do
       when (stChatty st) $ do
-        printf "\nTest result: DISCARDED\n"
+        printTestResult "DISCARDED"
       -- Save the trace in the corresponding trace log
-      new <- registerTrace tr (stDiscardedTraceLog st)
+      (new, prio) <- register st tr (stDiscardedTraceLog st)
       -- Evaluate whether the test case was interesting or not
       let interesting = new > 0 && maybe False mb_test_passed parent
-      let prio = stGeneratedTraceNodes st - new
       when interesting $ do
-        printf "\nTest case was interesting! (new trace nodes=%d, prio=%d)\n" new prio
+        printTestCaseWasInteresting new prio
       -- Update the internal state for the next iteration
       let st' | interesting = updateStateAfterInterestingDiscarded st args parent tr eval_pos prio
               | otherwise   = updateStateAfterBoringDiscarded st
@@ -244,7 +197,9 @@ updateStateAfterInterestingPassed st args parent tr eval_pos prio =
      ! increaseNumInteresting
      ! resetNumTestsSinceLastInteresting
      ! setPassedQueue (PQueue.insert prio (args, tr, mbatch) (stPassedQueue st))
-     ! setFragmentStore (if stUseFragments st then storeFragments args (stFragmentStore st) else stFragmentStore st)
+     ! setFragmentStore (if stUseFragments st
+                         then storeFragments (stFilterFragments st) args (stFragmentStore st)
+                         else stFragmentStore st)
 
 updateStateAfterInterestingDiscarded :: State log -> Args -> Maybe (MutationBatch Args) -> Trace -> Maybe [Pos] -> Int -> State log
 updateStateAfterInterestingDiscarded st args parent tr eval_pos prio =
@@ -253,7 +208,9 @@ updateStateAfterInterestingDiscarded st args parent tr eval_pos prio =
      ! increaseNumInteresting
      ! resetNumTestsSinceLastInteresting
      ! setDiscardedQueue (PQueue.insert prio (args, tr, mbatch) (stDiscardedQueue st))
-     ! setFragmentStore (if stUseFragments st then storeFragments args (stFragmentStore st) else stFragmentStore st)
+     ! setFragmentStore (if stUseFragments st
+                         then storeFragments (stFilterFragments st) args (stFragmentStore st)
+                         else stFragmentStore st)
 
 updateStateAfterBoringPassed :: State log -> State log
 updateStateAfterBoringPassed st =

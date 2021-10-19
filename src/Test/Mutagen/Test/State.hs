@@ -1,6 +1,8 @@
 {-# LANGUAGE RankNTypes #-}
 module Test.Mutagen.Test.State where
 
+import Data.Typeable
+
 import Data.PQueue.Prio.Min (MinPQueue)
 import Data.Time.Clock.POSIX
 
@@ -33,9 +35,10 @@ data State log
   , stUseLazyPrunning :: !Bool
   , stMutationOrder :: !MutationOrder
   , stUseFragments :: !Bool
+  , stFilterFragments :: !(Maybe [TypeRep])
   , stMaxTraceLength :: !(Maybe Int)
   , stChatty :: !Bool
-  , stStepByStep :: !Bool
+  , stDebug :: !Bool
 
   ----------------------------------------
   -- Test case generation
@@ -93,7 +96,9 @@ createInitialState cfg (Property gen argsRunner) = do
   passedTraceLog <- emptyTraceLog traceNodes
   discardedTraceLog <- emptyTraceLog traceNodes
   -- fragmentize the initial example seeds
-  let initialFragmentStore = foldr storeFragments emptyFragmentStore (examples cfg)
+  let initialFragmentStore = if useFragments cfg
+                             then foldr (storeFragments (filterFragments cfg)) emptyFragmentStore (examples cfg)
+                             else emptyFragmentStore
   -- build the initial state
   return State
     -- From config
@@ -103,14 +108,15 @@ createInitialState cfg (Property gen argsRunner) = do
     , stMaxGenSize = maxGenSize cfg
     , stRandomMutations = randomMutations cfg
     , stRandomFragments = randomFragments cfg
-    , stMutationLimit = maybe (2 ^ maxGenSize cfg) id (mutationLimit cfg)
+    , stMutationLimit = maybe (maxGenSize cfg) id (mutationLimit cfg)
     , stAutoResetAfter = autoResetAfter cfg
     , stUseLazyPrunning = useLazyPrunning cfg
     , stMutationOrder = mutationOrder cfg
     , stUseFragments = useFragments cfg
+    , stFilterFragments = filterFragments cfg
     , stMaxTraceLength = maxTraceLength cfg
-    , stChatty = chatty cfg
-    , stStepByStep = stepByStep cfg
+    , stChatty = chatty cfg || debug cfg
+    , stDebug = debug cfg
     -- Internal
     , stNextSeed = rng
     , stArgsGen = gen

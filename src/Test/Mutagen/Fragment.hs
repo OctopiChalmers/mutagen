@@ -73,17 +73,20 @@ printFragmentStore (FragmentStore fs) = do
 emptyFragmentStore :: FragmentStore
 emptyFragmentStore = FragmentStore mempty
 
-insertFragment :: TypeRep -> Fragment -> FragmentStore -> FragmentStore
-insertFragment tr fr (FragmentStore fs) =
+insertFragment :: Maybe [TypeRep] -> TypeRep -> Fragment -> FragmentStore -> FragmentStore
+insertFragment Nothing tr fr (FragmentStore fs) =
   FragmentStore (Map.insertWith Set.union tr (Set.singleton fr) fs)
+insertFragment (Just trs) tr fr (FragmentStore fs)
+  | tr `elem` trs = FragmentStore (Map.insertWith Set.union tr (Set.singleton fr) fs)
+  | otherwise     = FragmentStore fs
 
-collectFragments :: Fragmentable a => a -> FragmentStore
-collectFragments a = foldr (uncurry insertFragment) emptyFragmentStore fts
+collectFragments :: Fragmentable a => Maybe [TypeRep] -> a -> FragmentStore
+collectFragments allowed a = foldr (uncurry (insertFragment allowed)) emptyFragmentStore fts
   where
     fts = Set.map (\(Fragment x) -> (typeOf x, Fragment x)) (fragmentize a)
 
-storeFragments :: Fragmentable a => a -> FragmentStore -> FragmentStore
-storeFragments a fs = fs <> collectFragments a
+storeFragments :: Fragmentable a => Maybe [TypeRep] -> a -> FragmentStore -> FragmentStore
+storeFragments allowed a fs = fs <> collectFragments allowed a
 
 sampleFragments :: Typeable a => a -> FragmentStore -> Gen [a]
 sampleFragments a (FragmentStore fs) = do

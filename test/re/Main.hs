@@ -1,20 +1,25 @@
+{-# LANGUAGE TypeApplications  #-}
 module Main where
 
 import Test.Mutagen
 
+import RE.Types
 import qualified RE.Spec  as Spec
-import qualified RE.Types as Types
 
 main :: IO ()
 main = do
   mutagenWith 
     defaultConfig { 
       maxGenSize = 5,
-      -- chatty = True,
-      -- stepByStep = True,
+      chatty = True,
+      -- debug = True,
       traceMethod = Bitmap,
-      -- useLazyPrunning = False, 
-      examples = [ Args ( Types.Star (Types.Atom (Types.ASCII '@')) ) ]
-      }
+      examples = [ 
+        example (Star (Atom (ASCII '@'))) 
+      ], 
+      filterFragments = Just [ 
+        allow @(RE ASCII)
+      ]
+    }
     Spec.prop_optimize 
 
