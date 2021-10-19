@@ -22,6 +22,11 @@ import Test.Mutagen.Test.Batch
 ----------------------------------------
 -- Terminal reporters
 
+printDot :: IO ()
+printDot = do
+  printf "."
+  hFlush stdout
+
 printRunningTest :: IO ()
 printRunningTest = do
   printf ">>> Running test...\n"
@@ -80,7 +85,6 @@ printBatchStatus mbatch = do
 
 printGlobalStats :: State log -> IO ()
 printGlobalStats st = do
-  clear
   printf ">>> Statistics:\n"
   printf "* Executed test cases: %d (%d interesting, %d boring) (last interesting was %d tests ago)\n"
     (stNumInteresting st + stNumBoring st) (stNumInteresting st) (stNumBoring st) (stNumTestsSinceLastInteresting st)
@@ -105,18 +109,21 @@ printGlobalStats st = do
 
 reportDoneTesting :: State log -> IO ()
 reportDoneTesting st = do
+  clear
   printGlobalStats st
-  printf "\nDone testing\n"
+  printf ">>> Done testing\n"
 
 reportGaveUp :: State log -> String -> IO ()
 reportGaveUp st r = do
+  clear
   printGlobalStats st
-  printf "\nGave up (%s)\n" r
+  printf ">>> Gave up (%s)\n" r
 
 reportCounterexample :: State log -> Args -> Test -> IO ()
 reportCounterexample st as res = do
+  clear
   printGlobalStats st
-  printf "\nFound counterexample!\n"
+  printf ">>> Found counterexample!\n"
   printf "* Reason of failure: %s\n"
     (maybe "assertion failed" id (reason res))
   when (isJust (exc res)) $ do

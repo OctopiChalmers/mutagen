@@ -11,7 +11,7 @@ main = do
   mutagenWith 
     defaultConfig { 
       maxGenSize = 5,
-      chatty = True,
+      -- chatty = True,
       -- debug = True,
       traceMethod = Bitmap,
       examples = [ 

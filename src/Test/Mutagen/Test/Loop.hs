@@ -90,7 +90,8 @@ counterexample st as test = do
 newTest :: TraceLogger log => TestCaseRunner log -> State log -> IO Report
 newTest runner st = do
   -- print global stats
-  if stChatty st then printGlobalStats st else clear
+  when (stChatty st) $ do
+    clear >> printGlobalStats st
   -- pick a new test case
   (args, parent, st') <- pickNextTestCase st
   -- run the test case
@@ -160,7 +161,7 @@ runTestCase_generic register st parent args = do
       (new, prio) <- register st tr (stDiscardedTraceLog st)
       -- Evaluate whether the test case was interesting or not
       let interesting = new > 0 && maybe False mb_test_passed parent
-      when interesting $ do
+      when (stChatty st && interesting) $ do
         printTestCaseWasInteresting new prio
       -- Update the internal state for the next iteration
       let st' | interesting = updateStateAfterInterestingDiscarded st args parent tr eval_pos prio
@@ -246,7 +247,7 @@ generateNewTest st = do
   -- Then we randomly generate a lazily evaluated test
   let (rnd1, rnd2) = split (stNextSeed st)
   let args = unGen (stArgsGen st) rnd1 size
-  printGeneratedTestCase args
+  if stChatty st then printGeneratedTestCase args else printDot
   -- Put the new random seed in the state
   let st' = st ! setNextSeed rnd2
                ! setCurrentGenSize size
@@ -266,7 +267,7 @@ mutateFromPassed st = do
         printOriginalTestCase prio args True
         printBatchStatus mbatch
         printOriginalTestCaseTrace tr
-      printMutatedTestCase args'
+      if stChatty st then printMutatedTestCase args' else printDot
       let st' = st ! increaseMutantKindCounter mk'
                    ! increaseNumMutatedFromPassed
                    ! setPassedQueue (PQueue.insert prio (args, tr, mbatch') rest)
@@ -285,7 +286,7 @@ mutateFromDiscarded st = do
         printOriginalTestCase prio args False
         printBatchStatus mbatch
         printOriginalTestCaseTrace tr
-      printMutatedTestCase args'
+      if stChatty st then printMutatedTestCase args' else printDot
       let st' = st ! increaseMutantKindCounter mk'
                    ! increaseNumMutatedFromDiscarded
                    ! setDiscardedQueue (PQueue.insert prio (args, tr, mbatch') rest)
