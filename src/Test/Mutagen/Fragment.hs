@@ -129,7 +129,7 @@ singleton = Set.singleton . Fragment
 
 
 ----------------------------------------
--- | Fragmentable instances
+-- Fragmentable instances
 ----------------------------------------
 
 instance Fragmentable Int
