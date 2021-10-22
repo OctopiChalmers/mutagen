@@ -1,0 +1,1 @@
+(1,-0.89057034,Function {funcType = 0, localTypes = [I64,I64], body = [I32Const 0,GetLocal 0,IBinOp BS32 ISub]})

@@ -1,0 +1,1 @@
+(1,0.39596924,Function {funcType = 0, localTypes = [F32,F32,F64], body = [Block {resultType = [], body = [Block {resultType = [], body = [F32Const 0.0,SetLocal 3,Block {resultType = [F64,I64,I64], body = [F64Const 9.687955102806763e-2,F64Const 1.025179170053963,Br 2]},Br 0]}]},I64Const 3,I64Eqz,Return]})

@@ -1,0 +1,1 @@
+(0,0.4300511,Function {funcType = 0, localTypes = [F64,F64], body = [Nop,Loop {resultType = [], body = []},Loop {resultType = [I64,F32,F64], body = [CurrentMemory,Return]},I32Const 0,Return]})

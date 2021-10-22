@@ -1,5 +1,5 @@
 %% The first command in your LaTeX source must be the \documentclass command.
-\documentclass[sigconf, anonymous, review]{acmart}
+\documentclass[conference, anonymous]{IEEEtran}
 
 % ----------------------------------------
 
@@ -19,13 +19,14 @@
 \usepackage{paralist}
 \usepackage{enumitem}
 \usepackage{titlesec}
+\usepackage{amsmath}
 
 %% \titlespacing*{\section}{0pt}{5pt}{5pt}
 %% \titlespacing*{\subsection}{0pt}{5pt}{5pt}
 %% \titlespacing*{\subsubsection}{0pt}{5pt}{5pt}
 \titlespacing*{\paragraph}{10pt}{0pt}{10pt}
 
-\settopmatter{printacmref=false}
+%% \settopmatter{printacmref=false}
 
 \setitemize{noitemsep,nosep,wide,topsep=0pt,parsep=0pt,partopsep=0pt}
 
@@ -46,9 +47,9 @@
 \def\verbatim{\par\setbox0\vbox\bgroup\oldv}
 \def\endverbatim{\oldendv\egroup\fboxsep0pt \noindent\colorbox[gray]{0.95}{\usebox0}\par}
 
-\linepenalty=1000
-\widowpenalty=10000
-\clubpenalty=10000
+%% \linepenalty=1000
+%% \widowpenalty=10000
+%% \clubpenalty=10000
 
 \setlength{\skip\footins}{5pt}
 
@@ -58,44 +59,6 @@
 \SetAlFnt{\small}
 \SetAlCapFnt{\small}
 \SetAlCapNameFnt{\small}
-
-% ----------------------------------------
-
-%% Rights management information. This information is sent to you when you
-%% complete the rights form. These commands have SAMPLE values in them; it is
-%% your responsibility as an author to replace the commands and values with
-%% those provided to you when you complete the rights form.
-\setcopyright{acmcopyright}
-%% \copyrightyear{2021}
-%% \acmYear{2021}
-%% \acmDOI{10.1145/1122445.1122456}
-
-%% These commands are for a JOURNAL article.
-\acmConference[ICST 2022]{15th IEEE International Conference on Software
-  Testing, Verification and Validation}{Apr 4–13, 2022}{}
-
-%% \acmJournal{JACM}
-%% \acmVolume{37}
-%% \acmNumber{4}
-%% \acmArticle{111}
-%% \acmMonth{8}
-
-%% Submission ID.
-%% Use this when submitting an article to a sponsored event. You'll
-%% receive a unique submission ID from the organizers
-%% of the event, and this ID should be used as the parameter to this command.
-%%\acmSubmissionID{123-A56-BU3}
-
-%% The majority of ACM publications use numbered citations and
-%% references.  The command \citestyle{authoryear} switches to the
-%% "author year" style.
-%%
-%% If you are preparing content for an event
-%% sponsored by ACM SIGGRAPH, you must use the "author year" style of
-%% citations and references.
-%% Uncommenting
-%% the next command will enable that style.
-%% \citestyle{authoryear}
 
 % ----------------------------------------
 %% Macros
@@ -111,47 +74,36 @@
 
 \begin{document}
 
-%%
-%% The "title" command has an optional parameter,
-%% allowing the author to define a "short title" to be used in page headers.
-\title[\mutagen]{\mutagen: Coverage-Guided, Property-Based Testing using
-  Exhaustive Structure-Preserving Mutations}
+\title{
+  \mutagen: Coverage-Guided, Property-Based Testing using
+  Exhaustive Structure-Preserving Mutations
+}
 
-%%
-%% The "author" command and its associated commands are used to define
-%% the authors and their affiliations.
-%% Of note is the shared affiliation of the first two authors, and the
-%% "authornote" and "authornotemark" commands
-%% used to denote shared contribution to the research.
-
-%% Hidden authors in the generated PDF.
-
-%% \author{Agust\'in Mista}
-%% \email{mista@chalmers.se}
-%% \affiliation{%
-%%   \institution{Chalmers University of Technology}
-%%   \city{Gothenburg}
-%%   \country{Sweden}
-%% }
-
-%% \author{Alejandro Russo}
-%% \email{russo@chalmers.se}
-%% \affiliation{%
-%%   \institution{Chalmers University of Technology}
-%%   \city{Gothenburg}
-%%   \country{Sweden}
-%% }
-
-%% By default, the full list of authors will be used in the page headers. Often,
-%% this list is too long, and will overlap other information printed in the page
-%% headers. This command allows the author to define a more concise list of
-%% authors' names for this purpose.
-
-%% \renewcommand{\shortauthors}{Mista and Russo}
+\author{\IEEEauthorblockN{1\textsuperscript{st} Agust\'in Mista}
+  \IEEEauthorblockA{
+    \textit{dept. name of organization (of Aff.)} \\
+    \textit{Chalmers University of Technology}\\
+    Gothenburg, Sweden \\
+    mista@chalmers.se}
+\and
+\IEEEauthorblockN{2\textsuperscript{nd} Alejandro Russo}
+\IEEEauthorblockA{
+  \textit{dept. name of organization (of Aff.)} \\
+  \textit{Chalmers University of Technology}\\
+  Gothenburg, Sweden \\
+  russo@chalmers.se}
+}
 
 
 % ----------------------------------------
-%% The abstract is a short summary of the work to be presented in the article.
+
+%% This command processes the author and affiliation and title information and
+%% builds the first part of the formatted document.
+\maketitle
+
+\begin{IEEEkeywords}
+  random testing, mutations, heuristics
+\end{IEEEkeywords}
 
 \begin{abstract}
 Automatically synthesized random data generators are an appealing option when
@@ -186,31 +138,6 @@ exhaustiveness.
 Our results indicate that our approach is capable of outperforming existing CGPT
 tools, as well as finding bugs in real-world scenarios.
 \end{abstract}
-
-% ----------------------------------------
-
-%% The code below is generated by the tool at http://dl.acm.org/ccs.cfm. Please
-%% copy and paste the code instead of the example below.
-\begin{CCSXML}
-% CCS XML here
-\end{CCSXML}
-
-%% \ccsdesc[500]{Computer systems organization~Embedded systems}
-%% \ccsdesc[300]{Computer systems organization~Redundancy}
-%% \ccsdesc{Computer systems organization~Robotics}
-%% \ccsdesc[100]{Networks~Network reliability}
-
-% ----------------------------------------
-
-%% Keywords. The author(s) should pick words that accurately describe the work
-%% being presented. Separate the keywords with commas.
-\keywords{random testing, mutations, heuristics}
-
-% ----------------------------------------
-
-%% This command processes the author and affiliation and title information and
-%% builds the first part of the formatted document.
-\maketitle
 
 % ----------------------------------------
 
@@ -380,7 +307,7 @@ stages of development.
 %%   5 out of the 20 injected bugs with a 100\% efficacy, the hardest one being
 %%   found only around 13\% of the time after an hour of testing.}
 %% %
-%% Despite this limitation, \citeauthor{lampropoulos2019coverage} show that
+%% Despite this limitation, \cite{lampropoulos2019coverage} show that
 %% \fuzzchick is far better than using normal random testing coupled with na\"ive
 %% random generators by comparing the mean-time-to-failure (MTTF) against
 %% \emph{QuickChick}.
@@ -407,9 +334,9 @@ stages of development.
 
 In this work, we establish several aspects%
 \footnote{Some of these were already identified by
-  \citeauthor{lampropoulos2019coverage} in their original work.}
+  \cite{lampropoulos2019coverage} in their original work.}
 %
-of the original CGPT approach by \citeauthor{lampropoulos2019coverage} that
+of the original CGPT approach by \cite{lampropoulos2019coverage} that
 leave considerable room for improvement (see \S \ref{sec:background}).
 %
 In particular:
@@ -434,7 +361,7 @@ In particular:
 %% %% the hardest one being found only around 13\% of the time after an hour of
 %% %% testing.
 %% %
-%% Despite this, \citeauthor{lampropoulos2019coverage} show that \fuzzchick is far
+%% Despite this, \cite{lampropoulos2019coverage} show that \fuzzchick is far
 %% better than using normal random testing coupled with na\"ive random generators
 %% by comparing the mean-time-to-failure (MTTF) against \emph{QuickChick}.
 %% %
@@ -533,7 +460,7 @@ fly.
 %% Validation
 To validate our ideas, we use two case studies (described in detail in \S
 \ref{sec:casestudies}): the Information-Flow Control (IFC) stack machine used by
-\citeauthor{lampropoulos2019coverage} in their original work, and an existing
+\cite{lampropoulos2019coverage} in their original work, and an existing
 {Web-Assembly} engine of industrial strenght written in the strongly-typed
 programming language Haskell.
 %
@@ -737,7 +664,7 @@ having to write specialized generators by hand.
 To alleviate the problem of testing properties with non-trivial preconditions
 while using automatically derived random generators, CGPT
 %
-%% \citeauthor{lampropoulos2019coverage} introduced \emph{coverage-guided,
+%% \cite{lampropoulos2019coverage} introduced \emph{coverage-guided,
 %%   property-based testing} (CGPT), a technique that
 %
 enhances the testing process with two key characteristics:
@@ -754,7 +681,7 @@ Using code instrumentation in tandem with mutations is a well-known technique in
 the fuzzing community.
 %
 Generic fuzzing tools like \emph{AFL} \cite{afl}, \emph{HonggFuzz}
-\cite{honggfuzz}, or \emph{libFuzzer} \citeyearpar{libfuzzer} as well as
+\cite{honggfuzz}, or \emph{libFuzzer} \cite{libfuzzer} as well as
 language-specific ones like Crowbar \cite{dolan2017testing} or \emph{Kelinci}
 \cite{kersten2017poster} use execution traces to recognize interesting test
 cases, e.g, those that exercise previously undiscovered parts of the target
@@ -1005,7 +932,7 @@ it reaches the test limit.
 %
 \paragraph{Limitations of CGPT}
 
-\citeauthor{lampropoulos2019coverage} demonstrated empirically that CGPT lies
+\cite{lampropoulos2019coverage} demonstrated empirically that CGPT lies
 comfortably in the middle ground between using pure random testing with na\"ive
 automatically derived random generators and complex manually-written ones.
 %
@@ -1043,7 +970,7 @@ improved upon:
 %% As mentioned earlier, when we recreated the evaluation of the IFC stack machine
 %% case study (described in detail in \S \ref{sec:casestudies}), we found that
 %% after 30 runs (as opposed to the 5 runs used original by
-%% \citeauthor{lampropoulos2019coverage}), \emph{\fuzzchick was only able to find 5
+%% \cite{lampropoulos2019coverage}), \emph{\fuzzchick was only able to find 5
 %%   out of the 20 injected bugs with a failure rate of 1}, the hardest one being
 %% found only around 13\% of the time after an hour of testing.
 %% %
@@ -1059,7 +986,7 @@ improved upon:
 \item \emph{Mutators distribution:}
 %
 for the sake of simplicity, the mutators proposed by
-\citeauthor{lampropoulos2019coverage} are derived to follow a top-down approach.
+\cite{lampropoulos2019coverage} are derived to follow a top-down approach.
 %% similar to that used by the automatically derived random generators.
 %
 This means that mutations can happen at the top-level or be recursively applied
@@ -1151,7 +1078,7 @@ that some bugs cannot be discovered at all --- randomly generating the same test
 case again later does not help, as it becomes uninteresting based on historic
 trace information.
 
-To keep the comparison fair, \citeauthor{lampropoulos2019coverage} replicated
+To keep the comparison fair, \cite{lampropoulos2019coverage} replicated
 the same power schedule configuration used in AFL, which is tailored to work in
 tandem with generic bit-level mutators.
 %
@@ -1473,7 +1400,7 @@ respectively.
   \SetKwProg{Fn}{Function}{:}{}
   \Fn{\MG{P, N, R, gen}}{
     i $\gets$ 0\;
-    TLog, QValid, QDiscarded $\gets$ $\varnothing$\;
+    TLog, QValid, QDiscarded $\gets$ ${}$\;
     \While{i $<$ N}{
       x $\gets$ Pick(QValid, QDiscarded, gen)\;
       (result, trace) $\gets$ WithTrace(P(x))\;
@@ -1506,7 +1433,7 @@ respectively.
   \SetKwFunction{Muts}{CreateMutationBatch}
   \SetKwProg{Fn}{Function}{:}{}
   \Fn{\Muts{x, R}}{
-    batch $\gets$ $\varnothing$\;
+    batch $\gets$ ${}$\;
     \For{pos \KwIn Flatten(Positions(x))}{
       \For{mutant \KwIn MutateInside(pos, x)}{
         \Switch{mutant}{
@@ -1971,7 +1898,7 @@ continuously increase the random mutations parameter until that stops happening.
     \While{i $<$ N}{
       {\color{red}
       \If{boring $>$ reset}{
-        TLog   $\gets$ $\varnothing$\;
+        TLog   $\gets$ ${}$\;
         reset $\gets$ reset * 2\;
         R     $\gets$ R * 2\;
       }
@@ -2016,11 +1943,11 @@ We evaluated the performance of \mutagen using two case studies.%
 The first one is a simple abstract stack machine that enforces
 the hyperproperty \emph{noninterference} \cite{goguen1982security} using runtime checks.
 %
-Its implementation was proven correct by \citeauthor{10.1145/2578855.2535839}
-\citeyearpar{10.1145/2578855.2535839} in Coq, and subsequently degraded by
+Its implementation was proven correct by \cite{10.1145/2578855.2535839}
+\cite{10.1145/2578855.2535839} in Coq, and subsequently degraded by
 systematically introducing 20 bugs on its enforcing mechanism.
 %
-\citeauthor{lampropoulos2019coverage} used this case study to compare \fuzzchick
+\cite{lampropoulos2019coverage} used this case study to compare \fuzzchick
 against RPBT using na\"ive- and hand-tuned random generators.
 %
 Here, we replicate their results and compare them against our tool.
@@ -2082,8 +2009,8 @@ representing a particular configuration of the program counter, the stack, and
 the data- and instruction memories, respectively.
 %
 To preserve space, we encourage the reader to refer to the work of
-\citeauthor{hritcu2013testing} \citeyearpar{hritcu2013testing,
-  hrictcu2016testing} and \citeauthor{lampropoulos2019coverage} for more details
+\cite{hritcu2013testing} \cite{hritcu2013testing,
+  hrictcu2016testing} and \cite{lampropoulos2019coverage} for more details
 about the implementation and semantics of this case study.
 
 \paragraph{Single-Step Noninterference (SSNI)}
@@ -2106,7 +2033,7 @@ The tricky part about testing this property is to satisfy its sparse
 precondition: we need to generate two valid indistinguishable machine states in
 order to even proceed to execute the next instruction.
 %
-\citeauthor{lampropoulos2019coverage} demonstrated that generating two
+\cite{lampropoulos2019coverage} demonstrated that generating two
 independent machine states using \quickcheck has virtually no chance of
 producing valid indistinguishable ones.
 %
@@ -2588,7 +2515,7 @@ We repeated each experiment 30 times except for the ones testing the WebAssembly
 interpreter, which were run 10 times due to time constraints.
 %
 From there, we followed the approach taken by
-\citeauthor{lampropoulos2019coverage} and collected the mean-time-to-failure
+\cite{lampropoulos2019coverage} and collected the mean-time-to-failure
 (MTTF) of each bug, i.e., how quickly a bug can be found in wall clock time.
 %
 We used a one-hour timeout to stop the execution of both tools if they have not
@@ -2641,7 +2568,7 @@ In turn, our tool manages to find every bug on all runs, and taking less than a
 minute in the worst absolute case.
 %
 While these results are somewhat pessimistic towards \fuzzchick if compared to
-the ones presented originally by \citeauthor{lampropoulos2019coverage}, we
+the ones presented originally by \cite{lampropoulos2019coverage}, we
 remark that our experiments encompass 30 independent runs instead of the 5 used
 in the original study.
 %
@@ -2731,7 +2658,7 @@ Table \ref{table:ifc:tests} shows a comparison between the mean number of tests
 required by both tools to find the first failure \emph{when we only consider
   successful runs.}
 %
-Additionally, as advised by \citeauthor{arcuri2014hitchhiker}
+Additionally, as advised by \cite{arcuri2014hitchhiker}
 \cite{arcuri2014hitchhiker}, we computed the non-parametric Vargha-Delaney
 $A_{12}$ measure \cite{vargha2000critique}.
 %
@@ -3029,19 +2956,19 @@ the generated data must satisfy (often sparse) preconditions.
 %
 % Generating Constrained Random Data with Uniform Distribution
 %
-\citeauthor{ClaessenDP14} \citeyearpar{ClaessenDP14} developed an algorithm for
+\cite{ClaessenDP14} \cite{ClaessenDP14} developed an algorithm for
 generating inputs constrained by boolean preconditions with almost-uniform
 distribution.
 %
 % Luck
 %
-Later, \citeauthor{LampropoulosGHH17} \citeyearpar{LampropoulosGHH17} extended
+Later, \cite{LampropoulosGHH17} \cite{LampropoulosGHH17} extended
 this approach by adding a limited form of constraint solving controllable by the
 user in a domain-specific language called \emph{Luck}.
 %
 % Deriving good generators
 %
-Recently, \citeauthor{Lampropoulos2017} \citeyearpar{Lampropoulos2017} proposed
+Recently, \cite{Lampropoulos2017} \cite{Lampropoulos2017} proposed
 a mechanism to obtain constrained random generators by defining their target
 structure using inductively defined relations in Coq.
 
@@ -3185,7 +3112,7 @@ We presented \mutagen, a coverage-guided, property-based testing framework.
 %
 Our tool extends the CGPT approach
 %introduced by
-%\citeauthor{lampropoulos2019coverage}
+%\cite{lampropoulos2019coverage}
 with an exhaustive mutation mechanism that generates every possible mutant for
 each interesting test case, and schedules it to be tested exactly once.
 
@@ -3245,11 +3172,11 @@ and evaluating the effect of lazy pruning; among others.
 
 % ----------------------------------------
 
-\balance
+%% \balance
 
 %% The next two lines define the bibliography style to be used, and the
 %% bibliography file.
-\bibliographystyle{ACM-Reference-Format}
+\bibliographystyle{IEEEtran}
 %% \bibliographystyle{plainnat}
 \bibliography{references}
 

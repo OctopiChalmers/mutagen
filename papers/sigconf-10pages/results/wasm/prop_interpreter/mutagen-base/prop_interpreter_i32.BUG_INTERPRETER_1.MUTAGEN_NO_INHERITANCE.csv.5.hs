@@ -1,0 +1,1 @@
+(2,0.9365159,Function {funcType = 0, localTypes = [F64], body = [Loop {resultType = [], body = [GetLocal 0,CurrentMemory,IBinOp BS32 ISub,Return]},I32Const 0,Return]})

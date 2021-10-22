@@ -1,0 +1,137 @@
+This is BibTeX, Version 0.99d (TeX Live 2019/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+The style file: ACM-Reference-Format.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Database file #1: references.bib
+Warning--I'm ignoring DBLP:conf/haskell/MistaRH18's extra "year" field
+--line 2542 of file references.bib
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Warning--no key, author in libfuzzer
+Warning--no author, editor, organization, or key in libfuzzer
+Warning--to sort, need author or key in libfuzzer
+Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
+Reallocated global_strs (elt_size=200001) to 20 items from 10.
+Reallocated glb_str_end (elt_size=4) to 20 items from 10.
+Warning--no key, author in libfuzzer
+Warning--no key, author in libfuzzer
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Warning--no key, author in libfuzzer
+Warning--no author, editor, organization, or key in libfuzzer
+Warning--empty author in libfuzzer
+Warning--no journal in anon_2021
+Warning--no number and no volume in anon_2021
+Warning--page numbers missing in both pages and numpages fields in anon_2021
+Warning--empty address in Bendkowski2017
+Warning--page numbers missing in both pages and numpages fields in Bendkowski2017
+Warning--empty publisher in bohme2017directed
+Warning--empty address in bohme2017directed
+Warning--empty publisher in bulwahn2012new
+Warning--empty address in bulwahn2012new
+Warning--empty publisher in ClaessenDP14
+Warning--empty address in ClaessenDP14
+Warning--page numbers missing in both pages and numpages fields in ClaessenDP14
+Warning--empty publisher in ClaessenH00
+Warning--empty address in ClaessenH00
+Warning--page numbers missing in both pages and numpages fields in ClaessenH00
+Warning--empty publisher in denes2014quickchick
+Warning--empty address in denes2014quickchick
+Warning--page numbers missing in both pages and numpages fields in denes2014quickchick
+Warning--empty publisher in dolan2017testing
+Warning--empty address in dolan2017testing
+Warning--page numbers missing in both pages and numpages fields in dolan2017testing
+Warning--empty publisher in DuregardJW12
+Warning--empty address in DuregardJW12
+Warning--page numbers missing in both pages and numpages fields in DuregardJW12
+Warning--empty publisher in gan2018collafl
+Warning--empty address in gan2018collafl
+Warning--empty publisher in goguen1982security
+Warning--empty address in goguen1982security
+Warning--empty publisher in GriecoCB16
+Warning--empty address in GriecoCB16
+Warning--page numbers missing in both pages and numpages fields in GriecoCB16
+Warning--page numbers missing in both pages and numpages fields in grieco2017
+Warning--empty publisher in haas2017bringing
+Warning--empty address in haas2017bringing
+Warning--empty publisher in holler2012fuzzing
+Warning--empty address in holler2012fuzzing
+Warning--page numbers missing in both pages and numpages fields in hrictcu2016testing
+Warning--empty publisher in hughes2003erlang
+Warning--empty address in hughes2003erlang
+Warning--page numbers missing in both pages and numpages fields in hughes2003erlang
+Warning--empty publisher in kersten2017poster
+Warning--empty address in kersten2017poster
+Warning--empty publisher in LampropoulosGHH17
+Warning--empty address in LampropoulosGHH17
+Warning--page numbers missing in both pages and numpages fields in LampropoulosGHH17
+Warning--articleno or eid field, but no numpages field, in Lampropoulos2017
+Warning--page numbers missing in both pages and numpages fields in Lampropoulos2017
+Warning--articleno or eid, but no pages or numpages field in Lampropoulos2017
+Warning--empty publisher in loscher2017targeted
+Warning--empty address in loscher2017targeted
+Warning--empty publisher in loscher2018automating
+Warning--empty address in loscher2018automating
+Warning--empty publisher in Mista2019GeneratingRS
+Warning--empty address in Mista2019GeneratingRS
+Warning--page numbers missing in both pages and numpages fields in Mista2019GeneratingRS
+Warning--empty publisher in DBLP:conf/haskell/MistaRH18
+Warning--empty address in DBLP:conf/haskell/MistaRH18
+Warning--page numbers missing in both pages and numpages fields in DBLP:conf/haskell/MistaRH18
+Warning--empty publisher in Palka11
+Warning--empty address in Palka11
+Warning--page numbers missing in both pages and numpages fields in Palka11
+Warning--empty publisher in papadakis2011proper
+Warning--empty address in papadakis2011proper
+Warning--empty publisher in perenyi2020stack
+Warning--empty address in perenyi2020stack
+Warning--can't use both volume and number fields in runciman2008smallcheck
+Warning--empty publisher in runciman2008smallcheck
+Warning--empty address in runciman2008smallcheck
+Warning--empty publisher in wang2019superion
+Warning--empty address in wang2019superion
+Warning--empty publisher in yang2011finding
+Warning--empty address in yang2011finding
+You've used 44 entries,
+            5897 wiz_defined-function locations,
+            1603 strings with 23815 characters,
+and the built_in function-call counts, 51578 in all, are:
+= -- 5960
+> -- 2013
+< -- 0
++ -- 674
+- -- 684
+* -- 3710
+:= -- 5261
+add.period$ -- 208
+call.type$ -- 44
+change.case$ -- 320
+chr.to.int$ -- 42
+cite$ -- 128
+duplicate$ -- 4684
+empty$ -- 3280
+format.name$ -- 826
+if$ -- 12275
+int.to.chr$ -- 4
+int.to.str$ -- 1
+missing$ -- 180
+newline$ -- 377
+num.names$ -- 342
+pop$ -- 1969
+preamble$ -- 1
+purify$ -- 712
+quote$ -- 0
+skip$ -- 1664
+stack$ -- 0
+substring$ -- 3521
+swap$ -- 421
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 1129
+warning$ -- 80
+while$ -- 304
+width$ -- 0
+write$ -- 764
+(There were 81 warnings)

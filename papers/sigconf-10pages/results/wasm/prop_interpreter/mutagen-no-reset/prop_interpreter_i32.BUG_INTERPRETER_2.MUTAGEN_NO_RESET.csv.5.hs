@@ -1,0 +1,1 @@
+(1,-0.75520164,Function {funcType = 0, localTypes = [F32,F32], body = [Block {resultType = [], body = [Nop]},GetLocal 0,CurrentMemory,FConvertIU BS32 BS32,Drop,I32Const 1,IRelOp BS32 ILtU,Br 0,I32Load (MemArg {offset = 0, align = 2})]})
