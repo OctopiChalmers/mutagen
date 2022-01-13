@@ -332,7 +332,7 @@ known as \emph{coverage-guided fuzzing} and popularized by tools like \emph{AFL}
 %
 Mutated test cases are considered interesting for mutation only when they
 produce new execution traces --- any other test case is simply thrown away.
-%
+
 Worth mentioning, CGPT is not meant to replace sophisticated manually-written
 random generators, but rather to provide an adequate testing solution for early
 stages of development.
@@ -444,9 +444,8 @@ Notably, some of these limitations were already identified
 
 
 %% Our solution
-In this work, we introduce \mutagen, a CGPT framework that tackles the
-aforementioned limitations by applying mutations \emph{exhaustively} (see
-\S \ref{sec:mutagen}).
+To tackle the aforementioned limitations, we introduce \mutagen, a CGPT
+framework that applies mutations \emph{exhaustively} (see \S \ref{sec:mutagen}).
 %
 %% implemented in Haskell
 %% that also builds upon code instrumentation and type-preserving mutations
@@ -534,7 +533,7 @@ fly.
 To validate our ideas, we use two case studies (described in detail in \S
 \ref{sec:casestudies}): the Information-Flow Control (IFC) stack machine used by
 \citeauthor{lampropoulos2019coverage} in their original work, and an existing
-{Web-Assembly} engine of industrial strenght written in the strongly-typed
+{Web-Assembly} engine of industrial strength written in the strongly-typed
 programming language Haskell.
 %
 In both case studies, we additionally compare the effect of the heuristics
@@ -790,9 +789,11 @@ This budget is calculated using a heuristic derived from AFL's power schedule,
 i.e., more budget to test cases that lead to shorter executions, or that
 discover more parts of the code.
 %
-On each iteration, the algorithm selects the next test case by mutating the
-first value on the queue of valid test cases. If that queue is empty, it then
-selects the first one from the queue of discarded test cases.
+Then, on each iteration the algorithm selects the next test case by mutating the
+first value on the queue of valid test cases.
+%
+If that queue is empty, it instead mutates the first test case from the queue of
+discarded test cases.
 %
 If both queues are empty, CGPT generates a new random value from scratch.
 %
@@ -1627,7 +1628,7 @@ To improve this, we resort to mutate discarded tests cases only when we have
 some evidence that they are ``almost valid.''
 %
 For this, each mutated test case remembers whether its parent (the original test
-case they derive from after being mutated) was valid.
+case they derive from before being mutated) was valid.
 %
 Then, we enqueue discarded test cases only if they meet this condition.
 %
@@ -1659,7 +1660,7 @@ testing loop of our tool.
 
 \subsection{Priority LIFO Scheduling}
 
-This heuristic tackles the issue of enqueuing new interesting mutation
+This heuristic first tackles the issue of enqueuing new interesting mutation
 candidates at the end of (possibly) long queues of not-so-interesting previously
 executed ones.
 
@@ -1938,10 +1939,12 @@ The process is simple:
 %
 \begin{inparaenum}
   \item we start the testing loop with the number of random mutations set to
-    one,
+    one, and
   %
   \item each time we find that a test is not interesting (i.e. boring), we
-    increment a counter,
+    increment a counter.
+  %
+  Then,
   \item if we have not produced any interesting test case after a certain
     threshold (1000 tests seems to be a reasonable value in practice), we
     increment the number of random mutations and the threshold by twice the
@@ -1953,10 +1956,17 @@ The process is simple:
     producing random mutations.
 \end{inparaenum}
 
-Then, if the execution of the system under test depends heavily on the values
-stored at randomly mutable subexpressions, starting with a single random
-mutation will quickly saturate the trace space, and this heuristic will
-continuously increase the random mutations parameter until that stops happening.
+Notably, this heuristic can be particularly useful when the execution of the
+system under test depends heavily on some invariant encoded by a subexpression
+of its input that get transformed using a random mutant (e.g, the number of
+pixels declared by the header of an image matching the size of its actual
+payload).
+%
+There, starting with a single random mutation will quickly saturate the trace
+space with discarded (invalid) tests, and this heuristic will continuously
+increase the random mutations parameter until the random mutant is given enough
+chances to randomly generate the value that satisfies the required invariant and
+makes the overall test case valid.
 
 \begin{algorithm}[t]
   \SetArgSty{textnormal}
@@ -2010,10 +2020,10 @@ continuously increase the random mutations parameter until that stops happening.
 \section{Case studies}
 \label{sec:casestudies}
 
-We evaluated the performance of \mutagen using two case studies.%
+We evaluated the performance of \mutagen using two case studies.
 %
-The first one is a simple abstract stack machine that enforces
-the hyperproperty \emph{noninterference} \cite{goguen1982security} using runtime checks.
+The first one is a simple abstract stack machine that enforces the hyperproperty
+\emph{noninterference} \cite{goguen1982security} using runtime checks.
 %
 Its implementation was proven correct by \citeauthor{10.1145/2578855.2535839}
 \citeyearpar{10.1145/2578855.2535839} in Coq, and subsequently degraded by
@@ -2482,12 +2492,12 @@ To achieve this, the generated test cases need to comply a with a common
 interface that can be invoked both by \textit{haskell-wasm} and the reference
 implementation.
 %
-To simplify things, we write a function \texttt{mk\_module} to build a stub
-module which initializes one memory block and exports a single WebAssembly
+To simplify things, we write a helper function \texttt{mk\_module} to build a
+stub WebAssembly module that initializes one memory block and exports a single
 function.
 %
-Such function is parameterized by the definition of the single function, along
-with its name and type signature.
+This helper is parameterized by the definition of the module's single function,
+along with its type signature and name.
 %
 %% In Haskell:
 %
@@ -2510,16 +2520,16 @@ by a function type, along with its definition and invocation arguments:
 
 \begin{verbatim}
 prop_interpreter ty fun args =
-  do let m = mk_module ty "foo" fun
-     resHs   <- invokeHaskellWasm m "foo" args
-     resSpec <- invokeRefImpl     m "foo" args
+  do let m = mk_module fun ty "f"
+     resHs   <- invokeHaskellWasm m "f" args
+     resSpec <- invokeRefImpl     m "f" args
      return (equivalent resHs resSpec)
 \end{verbatim}
 
-This property instantiates a module stub \texttt{m} using the input function
-(\texttt{fun}) and its type signature (\texttt{ty}).
+This testing property instantiates a module stub \texttt{m} with the input
+WebAssembly function (\texttt{fun}) and its type signature (\texttt{ty}).
 %
-Then, it invokes the function \texttt{foo} of the module \texttt{m} both on
+Then, it invokes the function \texttt{f} of the module \texttt{m} both on
 \textit{haskell-wasm} and the reference interpreter with the provided arguments
 (\texttt{args}).
 %
@@ -2764,12 +2774,12 @@ this case study is not strongly affected by using LIFO scheduling.
 %% benchmark takes only roughly 20\% longer to complete when disabling this
 %% heuristic.
 %
-The reason behind this is that the mutation queues remain empty most of the time
-(generation mode), and when a new interesting candidate gets inserted, all its
-mutants (and their descendants) are processed before the next one is enqueued.
+We noticed that when a new interesting test case gets enqueued, all its mutants
+(and their descendants) are quickly processed before new ones start piling up,
+keeping the mutation queues empty most of the time (generation mode).
 %
-Hence, the small proportion of time this heuristic is active tends to be
-inconsequential.
+Hence, the small proportion of time this heuristic is active (when the mutation
+queues are not empty) tends to be inconsequential.
 %% under this case study.
 
 
@@ -2801,7 +2811,7 @@ by the MTTF achieved by \mutagen.
 %% %
 %% Given that we used different properties to test the WebAssembly validator and
 %% interpreter, we will focus on these results independently.
-
+%
 We first focus on the bugs injected in the validator (Fig.
 \ref{fig:results:wasm} left).
 %
@@ -2939,9 +2949,9 @@ and 75x slower when testing \texttt{prop\_validator} and
 %% the instrumentation directly into the Haskell runtime --- a substantial
 %% challenge to tackle in the future.
 %
-Despite this, our tool is still capable of running substantially more tests that
-pass the sparse preconditions than \quickcheck in the same amount of time,
-\emph{and that ultimately leads us to find bugs}.
+However, our tool is capable of running substantially more tests that pass the
+sparse preconditions than \quickcheck in the same amount of time, \emph{which
+  can ultimately lead us to find more bugs}.
 
 % ----------------------------------------
 
