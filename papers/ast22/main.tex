@@ -1463,7 +1463,7 @@ respectively.
 %% falling back to random generation.
 
 
-\begin{algorithm}[b]
+\begin{algorithm}[t]
   \SetArgSty{textnormal}
   %% \SetInd{0em}{0.75em}
   \SetKw{KwNot}{not}
@@ -1555,36 +1555,6 @@ For each one of these, there are two possible cases:
 %
 At the end, we simply return the accumulated batch.
 
-\begin{algorithm}[b]
-  \SetArgSty{textnormal}
-  %% \SetInd{0em}{0.75em}
-  \SetKw{KwNot}{not}
-  \SetAlgoLined
-  \DontPrintSemicolon
-  \SetKwFunction{Pick}{Pick}
-  \SetKwProg{Fn}{Function}{:}{}
-  \Fn{\Pick{QValid, QDiscarded, gen}}{
-    \If{\KwNot Empty(QValid)}{
-      batch $\gets$ Deque(QValid)\;
-      \lIf{Empty(batch)}{ Pick(QValid, QDiscarded, gen) }
-      \uElse{
-        PushFront(QValid, Rest(batch))\;
-        \KwRet First(batch)\;
-      }
-    }
-    \If{\KwNot Empty(QDiscarded)}{
-      batch $\gets$ Deque(QDiscarded)\;
-      \lIf{Empty(batch)}{ Pick(QValid, QDiscarded, gen) }
-      \uElse{
-        PushFront(QDiscarded, Rest(batch))\;
-        \KwRet First(batch)\;
-      }
-    }
-    \lElse{\KwRet Sample(gen)}
-  }
-\caption{\label{algo:mutagen:pick}\mutagen Seed Selection}
-\end{algorithm}
-
 
 Finally, the seed selection algorithm (Algorithm \ref{algo:mutagen:pick}) picks
 the next test case using the same criteria as CGPT, prioritizing valid test
@@ -1615,6 +1585,36 @@ queue.
 This process alternates between generation and mutation until it finds a bug or
 reaches the test limit N.
 
+
+\begin{algorithm}[t]
+  \SetArgSty{textnormal}
+  %% \SetInd{0em}{0.75em}
+  \SetKw{KwNot}{not}
+  \SetAlgoLined
+  \DontPrintSemicolon
+  \SetKwFunction{Pick}{Pick}
+  \SetKwProg{Fn}{Function}{:}{}
+  \Fn{\Pick{QValid, QDiscarded, gen}}{
+    \If{\KwNot Empty(QValid)}{
+      batch $\gets$ Deque(QValid)\;
+      \lIf{Empty(batch)}{ Pick(QValid, QDiscarded, gen) }
+      \uElse{
+        PushFront(QValid, Rest(batch))\;
+        \KwRet First(batch)\;
+      }
+    }
+    \If{\KwNot Empty(QDiscarded)}{
+      batch $\gets$ Deque(QDiscarded)\;
+      \lIf{Empty(batch)}{ Pick(QValid, QDiscarded, gen) }
+      \uElse{
+        PushFront(QDiscarded, Rest(batch))\;
+        \KwRet First(batch)\;
+      }
+    }
+    \lElse{\KwRet Sample(gen)}
+  }
+  \caption{\label{algo:mutagen:pick}\mutagen Seed Selection}
+\end{algorithm}
 
 Another difference with CGPT's testing loop is the criterion for enqueuing
 discarded tests.
@@ -1741,7 +1741,7 @@ under test, and hence we want to prioritize them.
       }
   }
   \right]
-  ,
+  %
   \stacked{{\color{blue} new=1\phantom{x}}}{{\color{red} depth=3}}
   %% \end{equation}
   %% \begin{equation}
@@ -1804,13 +1804,14 @@ under test, and hence we want to prioritize them.
       }
   }
   \right]
-  ,
+  %
   \stacked{{\color{blue} new=2\phantom{x}}}{{\color{red} depth=2}}
 \end{align*}
 \vspace{-10pt}
 \caption{\label{fig:mutagen:tracelog}Inserting two new execution traces into the
-  internal trace log (represented using brackets).}
+  internal execution trace log (represented using brackets).}
 \end{figure}
+
 \begin{algorithm}[t]
   \SetKwComment{Comment}{/* }{}
   \SetArgSty{textnormal}
