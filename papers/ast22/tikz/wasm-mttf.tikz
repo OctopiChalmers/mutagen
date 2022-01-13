@@ -58,7 +58,7 @@
       (10 , 6693.593089)
     };
 
-    % Mutagen (no FIFO)
+    % Mutagen (no LIFO)
     \addplot[fill=green!80!gray, fill opacity=0.75] coordinates {
       (1 ,  9.548645333)
       (2 ,  113.7525438)
@@ -154,7 +154,7 @@
       (15, 391821.6577)
     };
 
-    % Mutagen (no FIFO)
+    % Mutagen (no LIFO)
     \addplot[fill=green!80!gray, fill opacity=0.75] coordinates {
       (11, 265949.1014)
       (12, 50546.13719)
@@ -186,6 +186,6 @@
 
 %\begin{tikzpicture}
 %\begin{axis}
-%\legend{QuickCheck, Mutagen, Mutagen (no FIFO), Mutagen (no reset)} %, Mutagen (no inheritance)}
+%\legend{QuickCheck, Mutagen, Mutagen (no LIFO), Mutagen (no reset)} %, Mutagen (no inheritance)}
 %\end{axis}
 %\end{tikzpicture}

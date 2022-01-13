@@ -78,7 +78,7 @@
       (8  ,  1)
     };
 
-    % Mutagen (no FIFO)
+    % Mutagen (no LIFO)
     \addplot[fill=green!80!gray, fill opacity=0.75] coordinates {
       (3  ,  1)
       (12 ,  1)
@@ -150,7 +150,7 @@
     %   (20, 1)
     % };
 
-    \legend{\fuzzchick, \mutagen, \mutagen (\textit{no FIFO}), \mutagen (\textit{no reset})}
+    \legend{\fuzzchick, \mutagen, \mutagen (\textit{no LIFO}), \mutagen (\textit{no reset})}
   \end{axis}
 
 \end{tikzpicture}

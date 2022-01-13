@@ -77,7 +77,7 @@
       (20 , 2355.01026 )
     };
 
-    % Mutagen (no FIFO)
+    % Mutagen (no LIFO)
     \addplot[fill=green!80!gray, fill opacity=0.75] coordinates {
       (1  , 44.9281764 )
       (2  , 36.0294181 )
@@ -149,7 +149,7 @@
     %   (8  , 1463.119408)
     % };
 
-    % \legend{FuzzChick, Mutagen, Mutagen (no FIFO), Mutagen (no reset), Mutagen (no inheritance) }
+    % \legend{FuzzChick, Mutagen, Mutagen (no LIFO), Mutagen (no reset), Mutagen (no inheritance) }
   \end{axis}
 
 \end{tikzpicture}

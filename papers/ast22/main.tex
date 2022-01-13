@@ -503,7 +503,7 @@ other number in the 32 or 64 bits range.
 Additionally, the testing loop of \mutagen incorporates two novel heuristics
 that help finding bugs faster and more reliably (\S \ref{sec:heuristics}).
 %
-In the first place, our tool uses first-in first-out (FIFO) scheduling with
+In the first place, our tool uses last-in first-out (LIFO) scheduling with
 priority to enqueue interesting test cases for mutation.
 %
 This scheduling algorithm is indexed by the novelty of each new test case with
@@ -1657,7 +1657,7 @@ testing loop of our tool.
 %% \mutagen enables them by default, and can be individually disabled by the user
 %% if needed.
 
-\subsection{Priority FIFO Scheduling}
+\subsection{Priority LIFO Scheduling}
 
 This heuristic tackles the issue of enqueuing new interesting mutation
 candidates at the end of (possibly) long queues of not-so-interesting previously
@@ -1850,7 +1850,7 @@ under test, and hence we want to prioritize them.
     $\cdots$\;
   }
 
-\caption{\label{algo:mutagen:fifo}Priority FIFO Heuristic}
+\caption{\label{algo:mutagen:lifo}Priority LIFO Heuristic}
 \end{algorithm}
 
 
@@ -1875,7 +1875,7 @@ Using this mechanism, we can modify \mutagen's base testing loop by replacing
 each mutation queue with a priority queue indexed by the branching depth of each
 new execution.
 %
-These changes are illustrated in Algorithm \ref{algo:mutagen:fifo}.
+These changes are illustrated in Algorithm \ref{algo:mutagen:lifo}.
 %
 Statements in {\color{red} red} indicate important changes to the base
 algorithm, whereas ellipses denote parts of the code that are not relevant for
@@ -2602,7 +2602,7 @@ In both case studies, we show how the two \mutagen heuristics described in \S
 \ref{sec:heuristics} affect the testing performance by individually disabling
 them.
 %
-We call these variants \textit{no FIFO} and \textit{no reset}, respectively.
+We call these variants \textit{no LIFO} and \textit{no reset}, respectively.
 %
 In the case of \textit{no reset}, the amount of random mutations is no longer
 controlled by this heuristic, so we arbitrarily fixed it to 25 random mutations
@@ -2758,7 +2758,7 @@ In terms of the \mutagen heuristics,
 %% %
 %% Firstly,
 %
-this case study is not strongly affected by using FIFO scheduling.
+this case study is not strongly affected by using LIFO scheduling.
 %% --- the same
 %% benchmark takes only roughly 20\% longer to complete when disabling this
 %% heuristic.
@@ -2826,7 +2826,7 @@ every bug in less than 20 seconds in the absolute worst case.
 
 In terms of the \mutagen heuristics, we observe two clear phenomena.
 %
-On one hand, disabling the FIFO scheduling (case \textit{no FIFO}), the
+On one hand, disabling the LIFO scheduling (case \textit{no LIFO}), the
 hardest-to-find bugs (\#7, \#10, and \#1) are no longer found on every run.
 %
 Moreover, although bugs \#2, \#9, \#8, and \#6 are found with 100\% success rate
@@ -2866,7 +2866,7 @@ investigate this possibility.
 Nonetheless, \mutagen still outperforms \quickcheck on the remaining bugs both
 in terms of failure rate and mean time to failure.
 %
-Moreover, by disabling the FIFO scheduling we observe that the performance of
+Moreover, by disabling the LIFO scheduling we observe that the performance of
 our tool becomes unstable, where bugs \#12 and \#11 take substantially less time
 to be found, whereas bugs \#15 and \#14 cannot be found on every run.
 %

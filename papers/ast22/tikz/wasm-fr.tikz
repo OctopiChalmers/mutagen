@@ -58,7 +58,7 @@
       (10 , 1)
     };
 
-    % Mutagen (no FIFO)
+    % Mutagen (no LIFO)
     \addplot[fill=green!80!gray, fill opacity=0.75] coordinates {
       (1 ,  1)
       (2 ,  1)
@@ -155,7 +155,7 @@
       (15, 1)
     };
 
-    % Mutagen (no FIFO)
+    % Mutagen (no LIFO)
     \addplot[fill=green!80!yellow, fill opacity=0.75] coordinates {
       (11, 1)
       (12, 1)
