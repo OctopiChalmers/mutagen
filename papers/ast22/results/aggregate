@@ -1,0 +1,64 @@
+#!/usr/bin/env Rscript
+
+library(knitr)
+
+options(digits=9)
+ 
+args <- commandArgs(trailingOnly=T)
+
+if (length(args) == 0) {
+  path = "."
+} else if (length(args) == 1) {
+  path = args[1]
+} else {
+  stop("USAGE: aggregate [working path]")
+}
+
+filenames <- list.files(path, pattern="*.csv$", full.names=TRUE)
+filenames <- filenames[order(nchar(filenames), filenames)] 
+
+df <- NULL
+total <- 0
+totaltests <- 0
+totalpassedtests <- 0
+
+for(f in filenames) {
+  data <- read.csv(f, header=T)
+  filtered <- data[which(data$failed == "True"), ]
+  row <- cbind(
+    length(data$passed),                             # runs
+    length(filtered$passed),                         # failed
+    length(filtered$passed)/length(data$passed),     # failure rate
+    sum(data$time)*1000,                             # total time (ms)
+    sum(as.numeric(data$passed + data$discarded)),   # total tests 
+    sum(as.numeric(data$passed)),                    # total passed tests 
+    mean(data$time)*1000,                            # mttf (ms)
+    mean(filtered$passed + filtered$discarded),      # mean tests (when failed)
+    mean(filtered$time)*1000,                        # mean time (when failed) 
+    sub('.*/', '', f)                                # file
+  )
+  rbind(df, row) -> df
+  total <- total + sum(data$time)
+  totaltests <- totaltests + sum(as.numeric(data$passed + data$discarded)) 
+  totalpassedtests <- totalpassedtests + sum(as.numeric(data$passed)) 
+}
+
+hd <- c("runs", "failed", "failure rate", "total time (ms)", "total tests", "total passed tests", "mttf (ms)", "mean tests (failed)", "mean time (failed)", "file")
+colnames(df) <- hd
+knitr::kable(df)
+
+print("Total time (seconds):")
+print(total)
+
+
+print("Total tests:")
+print(totaltests)
+
+print("Total passed tests:")
+print(totalpassedtests)
+
+print("Tests/s")
+print(totaltests / total)
+
+print("Passed tests/s")
+print(totalpassedtests / total)

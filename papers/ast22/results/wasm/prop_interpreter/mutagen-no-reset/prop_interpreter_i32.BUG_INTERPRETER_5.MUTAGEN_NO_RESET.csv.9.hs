@@ -1,0 +1,1 @@
+(0,-2.2908525,Function {funcType = 0, localTypes = [F32,I64,F64], body = [I32Const 0,I64Const 1,I64Store16 (MemArg {offset = 0, align = 0}),Block {resultType = [], body = []},GetLocal 0,I32Load8S (MemArg {offset = 0, align = 0})]})

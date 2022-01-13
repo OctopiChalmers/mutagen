@@ -1,0 +1,1 @@
+(0,-2.3602166,Function {funcType = 0, localTypes = [I32,F32], body = [GetLocal 2]})

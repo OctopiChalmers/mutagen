@@ -1,0 +1,1 @@
+(0,2.2377565,Function {funcType = 0, localTypes = [F32], body = [GetLocal 1,FUnOp BS32 FCeil,Loop {resultType = [], body = []},F32Const 2.8919785,Block {resultType = [F32,I64,F64], body = [CurrentMemory,Return]},F64Const 0.0,I32Const 2,F32Load (MemArg {offset = 3, align = 0}),GetLocal 0,I64Load16S (MemArg {offset = 1, align = 1}),I32Const 0,Br 0]})

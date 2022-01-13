@@ -1,0 +1,1 @@
+(2,1.9046015,Function {funcType = 0, localTypes = [], body = [Block {resultType = [], body = [GetLocal 0,Nop,I64Const 1,FReinterpretI BS64,Block {resultType = [I32,F64,F32], body = [Br 1]},GetLocal 0,BrTable [] 0]},I32Const 0,Return]})
