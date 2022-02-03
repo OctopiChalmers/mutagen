@@ -1,10 +1,10 @@
 {-# OPTIONS_GHC -fplugin=Test.Mutagen.Tracer #-}
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Redundant bracket" #-}
 {-# OPTIONS_GHC -Wno-unused-imports #-}
+{-# HLINT ignore "Redundant bracket" #-}
 module RE.Match where
 
-import RE.Types
+import RE.Types ( RE(..) )
 
 ----------------------------------------
 -- | Regular expressions matcher
