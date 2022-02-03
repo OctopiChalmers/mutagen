@@ -94,7 +94,7 @@ sampleFragments a (FragmentStore fs) = do
     Nothing ->
       return []
     Just frags ->
-      catMaybes . fmap (\(Fragment a') -> cast a') <$> shuffle (Set.toList frags)
+      mapMaybe (\(Fragment a') -> cast a') <$> shuffle (Set.toList frags)
 
 -- sampleFragment :: TypeRep -> FragmentStore -> IO (Maybe Fragment)
 -- sampleFragment tr (FragmentStore fs) = do

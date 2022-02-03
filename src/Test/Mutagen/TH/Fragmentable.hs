@@ -1,4 +1,4 @@
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskellQuotes #-}
 module Test.Mutagen.TH.Fragmentable where
 
 import Control.Monad

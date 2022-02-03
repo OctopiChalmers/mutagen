@@ -1,5 +1,8 @@
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE DeriveDataTypeable #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Redundant $" #-}
+{-# HLINT ignore "Use camelCase" #-}
 module Test.Mutagen.Tracer.Plugin
   ( __trace__
   , TraceAnn(TRACE)
@@ -11,11 +14,11 @@ import Control.Monad
 import Data.IORef
 import Data.Generics (mkM, everywhereM, listify, Data)
 
-import System.IO.Unsafe
+import System.IO.Unsafe ( unsafePerformIO )
 
-import GhcPlugins hiding ((<>))
+import GHC.Plugins hiding ((<>))
 import GHC.Hs
-import OccName as Name
+import GHC.Types.Name.Occurrence as Name
 
 import Test.Mutagen.Tracer.Trace
 
@@ -38,6 +41,7 @@ data TraceAnn = TRACE
 
 -- IORefs
 
+{-# NOINLINE uid #-}
 uid :: IORef Int
 uid = unsafePerformIO (newIORef 0)
 
@@ -83,7 +87,7 @@ tracePlugin _cli summary source = do
       return (source { hpm_module = L loc hsMod' })
 
 -- Include an import to this module, so __trace__ is always in scope
-addTraceImport :: DynFlags -> ModuleName -> HsModule GhcPs -> Hsc (HsModule GhcPs)
+addTraceImport :: DynFlags -> ModuleName -> HsModule -> Hsc HsModule
 addTraceImport flags modName hsMod = do
   message $ "adding tracer import to module " <> showPpr flags (moduleNameFS modName)
   let theNewImport = pluginLoc (simpleImportDecl this_module_name)
@@ -93,20 +97,17 @@ addTraceImport flags modName hsMod = do
 -- Annotate every RHS with a tracer
 -- They come after: function clauses, case statements, multi-way ifs, etc
 annotateGRHS :: DynFlags -> GRHS GhcPs (LHsExpr GhcPs) -> Hsc (GRHS GhcPs (LHsExpr GhcPs))
-annotateGRHS flags grhs =
-  case grhs of
-    GRHS ext guards body -> do
-      nth <- newUID
-      instrumentedMessage flags "rhs" nth (getLoc body)
-      let body' = wrapTracer nth body
-      return (GRHS ext guards body')
-    x -> return x
+annotateGRHS flags (GRHS ext guards body) = do
+  nth <- newUID
+  instrumentedMessage flags "rhs" nth (getLoc body)
+  let body' = wrapTracer nth body
+  return (GRHS ext guards body')
 
 -- Annotate each branch of an if-then-else expression with a tracer
 annotateIfs :: DynFlags -> HsExpr GhcPs -> Hsc (HsExpr GhcPs)
 annotateIfs flags expr =
   case expr of
-    HsIf ext sexpr cond th el -> do
+    HsIf ext cond th el -> do
       -- then branch
       nth <- newUID
       instrumentedMessage flags "then branch" nth (getLoc th)
@@ -116,7 +117,7 @@ annotateIfs flags expr =
       instrumentedMessage flags "else branch" nel (getLoc el)
       let el' = wrapTracer nel el
       -- wrap it up again
-      return (HsIf ext sexpr cond th' el')
+      return (HsIf ext cond th' el')
     x -> return x
 
 -- Annotate top level functions having TRACE annotation pragmas

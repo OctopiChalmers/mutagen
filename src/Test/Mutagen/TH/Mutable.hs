@@ -1,8 +1,7 @@
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskellQuotes #-}
 module Test.Mutagen.TH.Mutable where
 
 import Data.List
-import Data.Ord
 
 import Control.Monad
 
@@ -44,8 +43,8 @@ deriveDef dty mbdef cons = do
       let defValue = DVarE var
       return [ DLetDec (DFunD 'def [ DClause [] defValue ]) ]
     Nothing -> do
-      let terms = filter (\c -> not (any (== dty) (dConFieldsTypes (dConFields c)))) cons
-      let sorted = sortBy (comparing (dConFieldsNum . dConFields)) terms
+      let terms = filter (notElem dty . dConFieldsTypes . dConFields) cons
+      let sorted = sortOn (dConFieldsNum . dConFields) terms
       when (null sorted) $
         mutagenError "could not find a proper constructor to derive def automatically, please a default value manually" [sorted]
       let smallest = head sorted
@@ -69,16 +68,16 @@ deriveInside cons = do
   mut <- newName "mut"
   x <- newName "x"
   -- first clause
-  let firstclause = DClause [DConP '[] [], DVarP mut, DVarP x] (DVarE mut `DAppE` DVarE x)
+  let firstclause = DClause [DConP '[] [] [], DVarP mut, DVarP x] (DVarE mut `DAppE` DVarE x)
   -- recursive constructor clauses
   conclauses <- forM cons $ \con -> do
     (pvs, dpat) <- createDPat con
     forM [0 .. length pvs - 1] $ \idx -> do
-      let posdpat = DConP '(:) [DLitP (IntegerL (fromIntegral idx)), DVarP pos]
+      let posdpat = DConP '(:) [] [DLitP (IntegerL (fromIntegral idx)), DVarP pos]
       let mutdpat = DVarP mut
       let clauseBody = DVarE 'wrap `DAppE`
                        (DVarE 'inside `DAppE` DVarE pos `DAppE` DVarE mut `DAppE` DVarE (pvs !! idx)) `DAppE`
-                       (DLamE [x] (mkConDExp (dConName con) ([ DVarE v | v <- replace idx pvs x ])))
+                       (DLamE [x] (mkConDExp (dConName con) [ DVarE v | v <- replace idx pvs x ]))
       return (DClause [posdpat, mutdpat, dpat] clauseBody)
   -- last clause (error message)
   let lastclause = DClause [DVarP pos, DWildP, DWildP] (DVarE 'invalidPosition `DAppE` DVarE pos)

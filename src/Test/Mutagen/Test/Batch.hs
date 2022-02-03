@@ -1,4 +1,6 @@
 {-# LANGUAGE RankNTypes #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use fromMaybe" #-}
 module Test.Mutagen.Test.Batch where
 
 import Control.Monad.Extra (concatMapM)

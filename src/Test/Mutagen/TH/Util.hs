@@ -1,6 +1,5 @@
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskellQuotes #-}
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE TypeSynonymInstances #-}
 module Test.Mutagen.TH.Util where
 
 import Control.Monad
@@ -123,17 +122,17 @@ applyTVs tn vs = applyDTypes tn (fmap dTyVarBndrToDTypeArg vs)
 
 -- | Apply a constructor name to a list of field expressions
 mkConDExp :: Name -> [DExp] -> DExp
-mkConDExp name fields = foldl DAppE (DConE name) fields
+mkConDExp name = foldl DAppE (DConE name)
 
 -- | Build an applicative expression by chaining `<*>`
 mkApplicativeDExp :: Name -> [DExp] -> DExp
-mkApplicativeDExp headName exps = foldl appExp pureExp exps
+mkApplicativeDExp headName = foldl appExp pureExp
   where pureExp = DVarE 'pure `DAppE` DConE headName
         appExp l r = DVarE '(<*>) `DAppE` l `DAppE` r
 
 -- | Build a list expression by chaining `(:)`
 mkListDExp :: [DExp] -> DExp
-mkListDExp exps = foldr consExp nilExp exps
+mkListDExp = foldr consExp nilExp
   where nilExp = DConE '[]
         consExp l r = DConE '(:) `DAppE` l `DAppE` r
 
@@ -145,7 +144,7 @@ mkListDExp exps = foldr consExp nilExp exps
 createDPat :: DCon -> Q ([Name], DPat)
 createDPat (DCon _ _ cname cfields _) = do
   pvs <- replicateM (dConFieldsNum cfields) (newName "_v")
-  let dpat = DConP cname [DVarP pv | pv <- pvs]
+  let dpat = DConP cname [] [DVarP pv | pv <- pvs]
   return (pvs, dpat)
 
 ----------------------------------------

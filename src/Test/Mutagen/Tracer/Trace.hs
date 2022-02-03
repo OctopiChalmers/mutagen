@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use camelCase" #-}
 module Test.Mutagen.Tracer.Trace where
 
 import Data.IORef
@@ -13,6 +15,7 @@ newtype Trace = Trace { unTrace :: [TraceEntry] }
   deriving Show
 
 -- The dynamic traces are stored into this IORef
+{-# NOINLINE trace_ref #-}
 trace_ref :: IORef Trace
 trace_ref = unsafePerformIO (newIORef (Trace []))
 

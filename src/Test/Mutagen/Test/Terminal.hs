@@ -63,12 +63,12 @@ printMutatedTestCase args = do
 printOriginalTestCaseTrace :: Trace -> IO ()
 printOriginalTestCaseTrace tr = do
   printf ">>> Original trace:\n"
-  putStrLn (show (unTrace tr))
+  print (unTrace tr)
 
 printMutatedTestCaseTrace :: Trace -> IO ()
 printMutatedTestCaseTrace tr = do
   printf ">>> New trace:\n"
-  putStrLn (show (unTrace tr))
+  print (unTrace tr)
 
 printBatchStatus :: MutationBatch Args -> IO ()
 printBatchStatus mbatch = do
@@ -125,7 +125,7 @@ reportCounterexample st as res = do
   printGlobalStats st
   printf ">>> Found counterexample!\n"
   printf "* Reason of failure: %s\n"
-    (maybe "assertion failed" id (reason res))
+    (fromMaybe "assertion failed" (reason res))
   when (isJust (exc res)) $ do
     printf "* The exception was:\n%s\n" (show (fromJust (exc res)))
   printf "* Failing inputs:\n"
@@ -142,7 +142,7 @@ clear :: IO ()
 clear = clearScreen >> setCursorPosition 0 0 >> cursorUp 1 >> hFlush stdout
 
 prettyPrint :: Show a => a -> IO ()
-prettyPrint a =
+prettyPrint =
   pPrintOpt
     CheckColorTty
     defaultOutputOptionsDarkBg
@@ -151,4 +151,3 @@ prettyPrint a =
       , outputOptionsCompact = False
       , outputOptionsCompactParens = True
       }
-    a

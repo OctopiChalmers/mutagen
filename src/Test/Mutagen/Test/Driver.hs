@@ -2,6 +2,7 @@
 {-# LANGUAGE TypeApplications #-}
 module Test.Mutagen.Test.Driver where
 
+import Control.Monad
 import Test.Mutagen.Tracer
 import Test.Mutagen.Property
 import Test.Mutagen.Test.Config
@@ -25,7 +26,7 @@ mutagenReport :: Testable p  => p -> IO Report
 mutagenReport = mutagenWithReport defaultConfig
 
 mutagenWith :: Testable p => Config -> p -> IO ()
-mutagenWith cfg p = mutagenWithReport cfg p >> return ()
+mutagenWith cfg p = void (mutagenWithReport cfg p)
 
 -- The main driver
 mutagenWithReport :: Testable p => Config -> p -> IO Report

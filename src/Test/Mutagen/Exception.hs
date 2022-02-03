@@ -31,7 +31,7 @@ isInterrupt e = Exc.fromException e == Just Exc.UserInterrupt
 discard :: a
 isDiscard :: AnException -> Bool
 (discard, isDiscard) =
-  (Exc.throw (Exc.ErrorCall msg), isDiscard')
+  (error msg, isDiscard')
  where
   msg = "DISCARD. You should not see this exception, it is internal to Mutagen."
   isDiscard' e =

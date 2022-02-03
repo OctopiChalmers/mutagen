@@ -1,3 +1,6 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use camelCase" #-}
+{-# HLINT ignore "Redundant $" #-}
 module Test.Mutagen.Lazy
   ( __evaluated__
   , addEvaluatedPos
@@ -28,6 +31,7 @@ __evaluated__ pos expr =
 ----------------------------------------
 -- IORef too keep track of the evaluated positions
 
+{-# NOINLINE pos_ref #-}
 pos_ref :: IORef [Pos]
 pos_ref = unsafePerformIO (newIORef [])
 
@@ -85,7 +89,7 @@ instance Lazy Bool where
 
 instance Lazy a => Lazy (Maybe a) where
   lazyNode pre Nothing =
-    __evaluated__ pre $
+    __evaluated__ pre
     Nothing
   lazyNode pre (Just a) =
     __evaluated__ pre $
@@ -105,7 +109,7 @@ instance Lazy a => Lazy [a] where
     []
   lazyNode pre (x:xs) =
     __evaluated__ pre $
-    ((lazyNode (0:pre) x) : (lazyNode (1:pre) xs))
+    (lazyNode (0:pre) x : lazyNode (1:pre) xs)
 
 -- Tuple instances
 

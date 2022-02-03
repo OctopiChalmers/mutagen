@@ -1,10 +1,11 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE ExistentialQuantification #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Avoid lambda" #-}
+{-# HLINT ignore "Use tuple-section" #-}
 module Test.Mutagen.Mutation where
 
 import Data.Typeable
@@ -114,7 +115,7 @@ preorder t = squish t []
   where squish (Node x ts) xs = x : foldr squish xs ts
 
 postorder :: MutationOrder
-postorder t = squish [] t
+postorder = squish []
   where squish xs (Node x ts) = x : foldl' squish xs ts
 
 levelorder :: MutationOrder
@@ -233,7 +234,7 @@ instance (Arbitrary a, Mutable a) => Mutable [a] where
     ]
 
   inside []     mut xs     = mut xs
-  inside (0:ps) mut (a:as) = wrap (inside ps mut a) (\x -> x:as)
+  inside (0:ps) mut (a:as) = wrap (inside ps mut a) (: as)
   inside (1:ps) mut (a:as) = wrap (inside ps mut as) (\xs -> a:xs)
   inside pos    _   _      = invalidPosition pos
 
