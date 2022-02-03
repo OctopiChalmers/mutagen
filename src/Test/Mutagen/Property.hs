@@ -22,11 +22,7 @@ import Test.Mutagen.Fragment
 ----------------------------------------
 -- Test arguments hidden behind an existential
 
-
-
-
 type IsArgs a = (Show a, Eq a, Ord a, Typeable a, Arbitrary a, Fragmentable a, Mutable a, Lazy a)
-
 
 data Args = forall a . IsArgs a => Args a
 
@@ -41,11 +37,9 @@ instance Mutable Args where
 
   positions (Args a) = positions a
 
-
 instance Lazy Args where
   lazy (Args a) = Args (lazy a)
   lazyNode pre (Args a) = Args (lazyNode pre a)
-
 
 instance Eq Args where
   Args a == Args b =

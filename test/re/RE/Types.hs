@@ -1,5 +1,4 @@
 {-# LANGUAGE FlexibleInstances #-}
--- {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell #-}
 

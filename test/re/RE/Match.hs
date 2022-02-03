@@ -9,6 +9,7 @@ import RE.Types ( RE(..) )
 ----------------------------------------
 -- | Regular expressions matcher
 
+
 matches :: Eq a => RE a -> [a] -> Bool
 matches re xs = match re (zip [0..] xs) null
 
