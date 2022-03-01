@@ -1,1 +1,0 @@
-(2,-0.81162834,Function {funcType = 0, localTypes = [], body = [GetLocal 0,IUnOp BS32 ICtz,FConvertIS BS64 BS32,Drop,CurrentMemory,FReinterpretI BS32,I32Const 1,I64Load (MemArg {offset = 0, align = 2}),GetLocal 0,I64ExtendSI32,CurrentMemory,Block {resultType = [I32,I64], body = [GetLocal 0,Br 1]},I32Const 0,Return]})

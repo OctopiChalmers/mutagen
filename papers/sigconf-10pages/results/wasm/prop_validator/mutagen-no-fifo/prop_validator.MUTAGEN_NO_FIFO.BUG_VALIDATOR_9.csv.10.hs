@@ -1,1 +1,0 @@
-Module {types = [FuncType {params = [], results = []},FuncType {params = [], results = []},FuncType {params = [], results = []}], functions = [], tables = [], mems = [], globals = [Global {globalType = Mut I32, initializer = [I64Const 3]}], elems = [], datas = [], start = Nothing, imports = [Import {sourceModule = "", name = "", desc = ImportGlobal (Const I32)}], exports = []}

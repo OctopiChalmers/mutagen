@@ -1,1 +1,0 @@
-(2,-0.6366192,Function {funcType = 0, localTypes = [F64,I32], body = [GetLocal 3]})

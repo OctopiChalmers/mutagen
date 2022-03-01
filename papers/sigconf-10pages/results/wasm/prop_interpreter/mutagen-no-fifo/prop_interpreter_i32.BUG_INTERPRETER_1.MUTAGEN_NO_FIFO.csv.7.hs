@@ -1,1 +1,0 @@
-(2,2.34233,Function {funcType = 0, localTypes = [I32,I64], body = [CurrentMemory,CurrentMemory,IBinOp BS32 ISub]})

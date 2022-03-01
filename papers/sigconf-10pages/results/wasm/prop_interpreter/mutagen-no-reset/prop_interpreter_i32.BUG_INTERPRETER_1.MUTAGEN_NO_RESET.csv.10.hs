@@ -1,1 +1,0 @@
-(0,-2.3528986,Function {funcType = 0, localTypes = [], body = [GetLocal 0,I32Const 0,GrowMemory,IBinOp BS32 ISub]})

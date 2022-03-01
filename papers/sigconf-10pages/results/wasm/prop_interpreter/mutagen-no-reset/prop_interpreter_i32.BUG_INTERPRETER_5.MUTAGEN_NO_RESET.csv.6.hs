@@ -1,1 +1,0 @@
-(1,1.64459,Function {funcType = 0, localTypes = [F32,I32], body = [I32Const 0,F64Const (-1.6277245800649232),ITruncFS BS32 BS64,F64Const (-1.6277245800649232),F64Store (MemArg {offset = 3, align = 1}),GetLocal 0,IUnOp BS32 ICtz,I32Const 0,IUnOp BS32 ICtz,I64ExtendSI32,I32WrapI64,FConvertIU BS32 BS32,I32Const 0,Return]})

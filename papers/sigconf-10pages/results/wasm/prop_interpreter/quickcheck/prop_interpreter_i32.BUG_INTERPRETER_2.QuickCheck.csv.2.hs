@@ -1,1 +1,0 @@
-["(0,0.0,Function {funcType = 0, localTypes = [F64,I64,I32,I64,F32,I64,F32,F32,F64,I32], body = [Loop {resultType = [I32,F64,F32], body = [CurrentMemory,I32Const 14,I32Load16S (MemArg {offset = 8, align = 1}),Return]},Return]})"]
