@@ -1,0 +1,29 @@
+File "./Tmp.v", line 369, characters 0-28:
+Warning: The extraction is currently set to bypass opacity, the following
+opaque constant bodies have been accessed
+: find_rect fold_rect ssrnat.eqnP mem_rect equal_rect add_rect
+  StringOT.StringOT.compare ssrbool.iffP ssrbool.idP remove_rect
+  StringOT.AsciiOT.compare.
+ [extraction-opaque-accessed,extraction]
+cat $(opam config var lib)/coq/user-contrib/QuickChick/Stub.ml | cat - /tmp/QuickChick/130351/QuickChickc7debe.ml > temp && mv temp /tmp/QuickChick/130351/QuickChickc7debe.ml
+Extra: 
+Compile Command: ocamlopt unix.cmxa str.cmxa /home/mista/.opam/4.07.1+afl/lib/afl-persistent/afl-persistent.cmxa -unsafe-string -rectypes -w a -I /tmp/QuickChick/130351 -I /home/mista/.opam/4.07.1+afl/lib/afl-persistent/ -I /home/mista/.opam/4.07.1+afl/lib/coq/user-contrib/QuickChick /home/mista/.opam/4.07.1+afl/lib/coq/user-contrib/QuickChick/quickChickLib.cmx  /tmp/QuickChick/130351/QuickChick65f18b.cmx -o /tmp/QuickChick/130351/qc_exec /tmp/QuickChick/130351/QuickChickc7debe.ml /tmp/QuickChick/130351/SHM.c
+/tmp/QuickChick/130351/SHM.c: In function ‘copy_trace_bits’:
+/tmp/QuickChick/130351/SHM.c:110:7: warning: implicit declaration of function ‘caml_modify’; did you mean ‘modify’? [-Wimplicit-function-declaration]
+       caml_modify(&Field(ml_array, i), Val_int (trace_bits[i]));
+       ^~~~~~~~~~~
+       modify
+/tmp/QuickChick/130351/SHM.c: In function ‘copy_trace_bits’:
+/tmp/QuickChick/130351/SHM.c:110:7: warning: implicit declaration of function ‘caml_modify’; did you mean ‘modify’? [-Wimplicit-function-declaration]
+       caml_modify(&Field(ml_array, i), Val_int (trace_bits[i]));
+       ^~~~~~~~~~~
+       modify
+0.35user 0.01system 0:00.37elapsed 99%CPU (0avgtext+0avgdata 9000maxresident)k
+0inputs+0outputs (0major+1916minor)pagefaults 0swaps
+Compile Main Command: ocamlopt unix.cmxa str.cmxa /home/mista/.opam/4.07.1+afl/lib/afl-persistent/afl-persistent.cmxa -unsafe-string -rectypes -w a -I /tmp/QuickChick/130351 -I /home/mista/.opam/4.07.1+afl/lib/afl-persistent/ -I /home/mista/.opam/4.07.1+afl/lib/coq/user-contrib/QuickChick /home/mista/.opam/4.07.1+afl/lib/coq/user-contrib/QuickChick/quickChickLib.cmx  -o /tmp/QuickChick/130351/main_exec /tmp/QuickChick/130351/Main.ml /tmp/QuickChick/130351/SHM.c
+Preparing to setup aux...
+SHM Setup (aux) succesful!
+
+*** Failed after 1014 tests and 0 shrinks. (13846 discards)
+Calling /tmp/QuickChick/130351/qc_exec...
+Found failure!

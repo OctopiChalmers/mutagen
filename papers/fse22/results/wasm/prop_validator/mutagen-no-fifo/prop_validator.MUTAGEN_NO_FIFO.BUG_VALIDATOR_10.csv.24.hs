@@ -1,0 +1,1 @@
+Module {types = [FuncType {params = [], results = [I32]}], functions = [Function {funcType = 0, localTypes = [], body = [Call 0,I32Load (MemArg {offset = 0, align = 0})]}], tables = [], mems = [], globals = [], elems = [], datas = [], start = Nothing, imports = [], exports = []}

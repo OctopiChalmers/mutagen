@@ -1,0 +1,57 @@
+\begin{tikzpicture}
+  \begin{axis}[
+      height=0cm,
+      width=16cm,
+      ybar=0cm,
+      % bar width=0.12cm,
+      % ylabel style={yshift=-5mm},
+      % enlarge x limits=0.25,
+      % axis y line*=left,
+      % axis x line*=bottom,
+      % xmin=11, xmax=15,
+      % ymin=0, ymax=1.05,
+      % xtick={11, 12, ..., 15},
+      % ytick={0.0, 0.5, 1.0},
+      % minor y tick num=1,
+      % xlabel={Injected Bug (\emph{prop\_interpreter\_i32})},
+      % ymajorgrids={true},
+      % yminorgrids={true},
+      xticklabels={,,},
+      xtick style={draw=none},
+      x axis line style= { draw opacity=0 },
+      legend style={
+        legend columns=-1,
+        draw=none,
+        at={ (0.5, 0) },
+        anchor=north
+      },
+      legend style={/tikz/every even column/.append style={column sep=0.2cm}}]
+    ]
+    % MTTF QuickCheck
+    \addplot[fill=purple, fill opacity=0.75] coordinates {
+      (0,0)
+    };
+
+    % MTTF Mutagen (all heuristics)
+    \addplot[fill=cyan, fill opacity=0.75] coordinates {
+      (0,0)
+    };
+
+    % Mutagen (no LIFO)
+    \addplot[fill=green!80!yellow, fill opacity=0.75] coordinates {
+      (0,0)
+    };
+
+    % Mutagen (no reset, 25 random mutations)
+    \addplot[fill=yellow, fill opacity=0.75] coordinates {
+      (0,0)
+    };
+
+    % % Mutagen (no inheritance)
+    % \addplot[fill=lime, fill opacity=0.75] coordinates {
+    %   (0,0)
+    % };
+
+    \legend{\quickcheck, \mutagen, \mutagen (\textit{no LIFO}), \mutagen (\textit{no reset})}
+  \end{axis}
+\end{tikzpicture}

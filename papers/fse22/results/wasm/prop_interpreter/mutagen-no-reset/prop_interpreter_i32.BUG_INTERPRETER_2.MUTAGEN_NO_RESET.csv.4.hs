@@ -1,0 +1,1 @@
+(1,0.4831685,Function {funcType = 0, localTypes = [F64,F32], body = [F64Const 0.0,Loop {resultType = [F32,F64], body = [CurrentMemory,Return]},Block {resultType = [], body = [Block {resultType = [], body = []}]},I32Const 1,I64Load32S (MemArg {offset = 0, align = 1}),CurrentMemory,F64Load (MemArg {offset = 1, align = 3}),I32Const 0,I64ExtendSI32,GetLocal 0,Return,GrowMemory]})
