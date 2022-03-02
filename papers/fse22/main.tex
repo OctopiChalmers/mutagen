@@ -417,10 +417,13 @@ produce new execution traces --- any other test case is simply thrown away.
 %% improvements in several aspects.%
 %
 
-In this work, we establish several aspects of the original CGPT approach by
-\citeauthor{lampropoulos2019coverage} that leave considerable room for
-improvement (see \S \ref{sec:background}).
+In this work, we establish several aspects%
 %
+\footnote{Some of these limitations were already identified by the authors in
+their original work.}
+%
+of the original CGPT approach by \citeauthor{lampropoulos2019coverage} that
+leave considerable room for improvement (see \S \ref{sec:background}).
 %
 In particular:
 %
@@ -435,9 +438,6 @@ In particular:
   and can be hard to generalize.
 %to different kinds of testing properties.
 \end{inparaenum}
-%
-\footnote{Some of these limitations were already identified by the authors in
-their original work.}
 %
 %% Moreover, we replicated the Information-Flow Control (IFC) stack machine case
 %% study bundled with \fuzzchick and observed a surprising limitation:
@@ -552,7 +552,7 @@ This automatically finds a suitable value for this parameter on the fly.
 
 
 %% Validation
-We validate our ideas using two case studies (described in detail in \S
+We validated our ideas using two case studies (described in detail in \S
 \ref{sec:casestudies}): the Information-Flow Control (IFC) stack machine used by
 \citeauthor{lampropoulos2019coverage} in their original work, and an existing
 {Web-Assembly} engine of industrial strength written in Haskell.
@@ -599,11 +599,11 @@ in \S \ref{sec:conclusions}.
 \section{Background}
 \label{sec:background}
 
-In this section, we briefly describe the motivation, ideas and limitations
-behind CGPT \cite{lampropoulos2019coverage}.
+This section briefly introduces the motivation, ideas and limitations behind
+CGPT \cite{lampropoulos2019coverage}.
 %
-To illustrate this technique, let us focus on a simple property defined over
-binary trees.
+To illustrate this technique, we focus on a simple property defined over binary
+trees.
 %
 Such a data structure can be defined in Haskell using a custom algebraic data
 type with two data constructors for leaves and branches respectively:
@@ -613,9 +613,9 @@ data Tree a = Leaf a | Branch (Tree a) a (Tree a)
 \end{verbatim}
 
 \noindent The type parameter \texttt{a} indicates that trees can be instantiated
-using any other type as payload, so the value \texttt{Leaf True} has type
-\texttt{Tree Bool}, whereas the value \texttt{Branch (Leaf 1) 2 (Leaf 3)} has
-type \texttt{Tree Int}.
+using any type as payload, so the value \texttt{Leaf True} has type \texttt{Tree
+Bool}, whereas the value \texttt{Branch (Leaf 1) 2 (Leaf 3)} has type
+\texttt{Tree Int}.
 %
 %% Then, we can define tree reflections using a simple recursive function that
 %% pattern matches against the two possible constructors, inverting the order of
@@ -632,13 +632,13 @@ type \texttt{Tree Int}.
 %% tree.
 %% %
 %
-Then, if we assume existence of a function \texttt{balanced} of type
-\texttt{Tree a -> Bool} that asserts that a tree satisfies a certain notion of
-balancedness, we can write testing properties to assert that the operations
-defined over the \texttt{Tree} data type preserve this invariant.
+If we assume existence of a function \texttt{balanced} of type \texttt{Tree a ->
+Bool} that asserts that a tree satisfies a certain notion of balancedness, we
+can write testing properties to validate that the operations defined over the
+\texttt{Tree} data type preserve this invariant.
 %
-For instance, the following testing property can be used to find bugs in the
-implementation of a given \texttt{insert} function:
+For instance, the following can be used to validate the implementation of an
+\texttt{insert} function:
 
 \begin{verbatim}
 prop_insert_inv :: a -> Tree a -> Property
@@ -652,19 +652,19 @@ balanced tree as output.
 (The implementation details of \texttt{balanced} and \texttt{insert} are not
 important here.)
 %
-Moreover, the arrow operator (\texttt{==>}) indicates that \texttt{balanced t}
-is a precondition of this property, and so attempting to test it using an
-unbalanced tree as input will result in the test case getting \emph{discarded}.
+The arrow operator (\texttt{==>}) indicates that \texttt{balanced t} is a
+precondition of this property, and so using an unbalanced tree as input will
+result in the test case getting \emph{discarded}.
 
 
-The last missing piece is a random generator of trees.
+The only missing piece is a random generator of trees.
+%
+For this, we can define a na\"ive generator for trees of integers as:
 %
 %% In \quickcheck, this is commonly done via the type class mechanism
 %% \cite{jones1997type}, instantiating the \texttt{Arbitrary} type class with a
 %% random generator as the implementation of the overloaded \texttt{arbitrary}
 %% operation:
-We can write a na\"ive generator for trees of integers (simplified here to make it
-more accessible) as follows:
 %% \footnote{In practice, this code will most likely be implemented using Haskell's
 %%   type-class mechanism, hiding the complexity behind the size limit and the
 %%   payload generator.}%
@@ -687,25 +687,26 @@ more accessible) as follows:
 %% \end{verbatim}
 
 \begin{verbatim}
-genTree(size) = if size == 0 then do { x <- genInt; return (Leaf x) }
-                else oneof [ do { x <- genInt; return (Leaf x) }
-                           , do { l <- genTree(size-1);
-                                  x <- genInt;
-                                  r <- genTree(size-1);
-                                  return (Branch l x r) } ]
+genTree(size) = if size == 0 
+  then do { x <- genInt; return (Leaf x) }
+  else oneof [ do { x <- genInt; return (Leaf x) }
+             , do { l <- genTree(size-1);
+                    x <- genInt;
+                    r <- genTree(size-1);
+                    return (Branch l x r) } ]
 \end{verbatim}
 
-\noindent This definition follows a common type-directed generation approach,
-and it is a good example of what to expect from a random generator synthesized
-automatically from the codebase.
+\noindent This definition (simplified to make it more accessible) follows a
+common type-directed approach, and illustrates what to expect from a generator
+synthesized automatically from the codebase.
 %
-In esence, this generator randomly picks one data constructor from its
-corresponding data type definition with uniform probability (i.e, either a
-\texttt{Leaf} or a \texttt{Branch}), and then calls itself for every recursive
-subexpression needed to produce a well-typed value, carefully reducing the input
-size limit \texttt{size} by a unit on each step, ensuring termination by
-restricting itself to generating leaves when it reaches zero (case \texttt{size
-  == 0}).
+At each step, this generator randomly picks a \texttt{Tree} data constructor
+with uniform probability (i.e, either a \texttt{Leaf} or a \texttt{Branch}), and
+calls itself for every recursive subexpression, carefully reducing the input
+size limit \texttt{size} by a unit at a time.
+%
+This enforces termination by generating only leaves when the size reaches zero
+(case \texttt{size == 0}).
 %
 Integers are generated simply by delegating the task to an external random
 generator (\texttt{genInt}) defined elsewhere.
@@ -717,22 +718,22 @@ generator (\texttt{genInt}) defined elsewhere.
 %% inside of the \texttt{Leaf} and \texttt{Branch} constructors.
 
 Readers familiar with RBPT will recognize that using \texttt{genTree} to test
-\texttt{prop\_insert\_inv} with \quickcheck directly does not work well.
+\texttt{prop\_insert\_inv} with \quickcheck directly does not work.
 %
 In practice, \quickcheck gives up if most of the generated test cases get
-discarded due to failed preconditions.
+discarded.
 %
 %because they do not satisfy the balanced precondition.
 %
-Sadly, most of the inputs produced by our na\"ive generator suffer from this
-problem, and the interesting part of the property (\texttt{balanced (insert x
-  t)}) is tested very sporadically as a result.
+Sadly, most of the test cases produced by \texttt{genTree} consist of unbalanced
+trees, thus the interesting part of the property (\texttt{balanced (insert x
+t)}) is rarely exercised.
 %% %
 %% In other words, \emph{the precondition of our testing property becomes very
 %%   sparse when we use simple, automatically derived generators.}
 
-The next subsection shows how GCPT helps overcoming this limitation without
-having to write specialized generators by hand.
+% The next subsection shows how GCPT helps overcoming this limitation without
+% having to write specialized generators by hand.
 
 
 %% At this point it is reasonable to think that, to obtain the best results when
@@ -781,8 +782,10 @@ Generic fuzzing tools like \emph{AFL} \cite{afl}, \emph{HonggFuzz}
 \cite{honggfuzz}, or \emph{libFuzzer} \citeyearpar{libfuzzer} as well as
 language-specific ones like Crowbar \cite{dolan2017testing} or \emph{Kelinci}
 \cite{kersten2017poster} use execution traces to recognize interesting test
-cases, e.g, those that exercise previously undiscovered parts of the target
-code.
+cases, 
+%
+% e.g, those that exercise previously undiscovered parts of the target
+% code.
 %
 Later, such tools use generic mutators to combine and produce new test cases
 from previously executed interesting ones.
