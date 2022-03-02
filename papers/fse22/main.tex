@@ -1719,19 +1719,20 @@ testing loop of \mutagen --- described in \S \ref{sec:mutagen}.
 
 \subsection{Priority LIFO Scheduling}
 
-This heuristic first tackles the issue of enqueuing new interesting mutation
-candidates at the end of (possibly) long queues of not-so-interesting previously
-executed ones.
+This first heuristic tackles the issue of enqueuing new interesting test cases
+at the end of (possibly) long queues of not-so-interesting previously executed
+ones.
 
 %% \fuzzchick uses AFL instrumentation under the hood, which in turn uses an
 %% \emph{edge coverage} criterion to distinguish novel executions and to assign
 %% each mutation candidate a given energy.
 %% %
 Execution traces in \mutagen represent the specific \emph{path} in the code
-taken by the program, as opposed to just the (unordered) set of edges traversed
-in the control-flow graph (CFG) used by default by most coverage-guided fuzzers.
+taken by the system under test, as opposed to just the unordered set of edges
+traversed in the control-flow graph used by default by most coverage-guided
+fuzzers.
 %
-Using this criterion lets us gather precise information from each new execution.
+Using this criterion we can gather precise information from each new execution.
 %
 %% To keep track of the execution path of each test, our tool keeps an internal
 %% prefix tree that records every new entry by traversing this data structure and
@@ -1740,8 +1741,8 @@ Using this criterion lets us gather precise information from each new execution.
 In particular, we are interested in the \emph{depth} where each new execution
 branches from already seen ones.
 %
-Our assumption is that test case executions that branch at shallower depths from
-the ones already executed are more likely to discover new portions of the code
+Our assumption is that test case executions branching at shallower depths from
+already executed ones are more likely to discover new portions of the system
 under test, and hence we want to prioritize them.
 
 \begin{figure}[b]
@@ -1915,13 +1916,13 @@ under test, and hence we want to prioritize them.
 \end{algorithm}
 
 
-In this light, every time we insert a new execution path into the internal trace
-log (TLog), we calculate the number of \emph{new nodes} that were executed, as
-well as the \emph{branching depth} where they got inserted.
+Every time we insert a new execution path into the internal trace log (TLog), we
+calculate the number of \emph{new nodes} that were executed, as well as the
+\emph{branching depth} where they got inserted.
 %
 The former is used to distinguish interesting test cases (whether or not new
-nodes were inserted), whereas the latter is used by this heuristic to schedule
-mutation candidates.
+nodes were inserted), whereas the latter is used by this heuristic to prioritize
+some test cases over others.
 %
 Fig. \ref{fig:mutagen:tracelog} illustrates this idea, inserting two execution
 traces (one after another) into a trace log that initially contains a single
@@ -1942,15 +1943,16 @@ Statements in {\color{red} red} indicate important changes to the base
 algorithm, whereas ellipses denote parts of the code that are not relevant for
 the point being made.
 
-To pick the next test case, we retrieve the one with the highest priority (the
-smallest branching depth).
+
+To pick the next test case, we retrieve the first one with the highest priority
+(the smallest branching depth).
 %
 Then, when we find a new interesting test case, it gets enqueued at the
-\emph{beginning} of the queue at its corresponding priority.
+\emph{beginning} of the queue of its corresponding priority.
 %
 This allows the testing loop to jump immediately onto mutating new interesting
 test cases as soon as they are found (even at the same priority), and to jump
-back to previous test cases as soon as their mutants become less novel.
+back to previous test cases as soon as mutants become less novel.
 
 %% \caption{\label{fig:heuristics} The two main heuristics implemented in \mutagen.
 %%   Statements in {\color{red} red} indicate important changes to the base
@@ -1961,12 +1963,12 @@ back to previous test cases as soon as their mutants become less novel.
 
 \subsection{Detecting Trace Space Saturation And Tuning Random Mutations Parameter}
 
-As introduced in \S \ref{sec:mutagen}, our tool is parameterized by the
-number of random mutations to be generated over each mutable subexpression
-defined using a random mutant, e.g., numeric values.
+As introduced in \S \ref{sec:mutagen}, our tool is parameterized by the number
+of mutated test cases to be generated for each subexpression of the input test
+case associated to random mutant.
 %
-But, how many random mutations should we use? A single one? A few tenths? A few
-hundred?
+But, how many random test cases should we sample? A single one? A few tenths? A
+few hundred?
 %% %
 %% Using too little can put finding bugs at risk.
 %% %
@@ -1981,11 +1983,11 @@ hundred?
 %% are only used as payloads, and their value does not affect the execution in any
 %% way.
 %
-Answering this question precisely is not an easy task, and this second heuristic
-aims to tackle this issue.
+Answering this question precisely can be challenging, so this second heuristic
+aims to alleviate the problem.
 
-We found that, the smaller the number of random mutations we set, the easier it
-is for the trace log that records executions to start getting saturated, i.e.,
+We found that, the smaller the number of random mutations we initially set, the
+easier it is for the trace log that records executions to get saturated, i.e.,
 when interesting test cases stop getting discovered or are discovered very
 sporadically.
 %
@@ -1994,7 +1996,7 @@ number of random mutations used by our tool.
 %
 This idea is described in Algorithm \ref{algo:mutagen:reset}.
 %
-The process is simple:
+The process is as follows:
 %
 \begin{inparaenum}
   \item we start the testing loop with the number of random mutations set to
@@ -2004,27 +2006,25 @@ The process is simple:
     increment a counter.
   %
   Then,
-  \item if we have not produced any interesting test case after a certain
-    threshold (1000 tests seems to be a reasonable value in practice), we
+  \item if we have not produced any interesting test case after a certain number
+    of tests (1000 tests seems to be a reasonable threshold in practice), we
     increment the number of random mutations and the threshold by twice the
     current amount.
     %
-    Additionally, each time this happens we also reset the trace log, so
-    interesting test cases found on a previous iteration can be found and
-    enqueued for mutation again --- this time with a higher effort dedicated to
-    producing random mutations.
+    Additionally, each time this happens we reset the trace log, so interesting
+    test cases found on a previous iteration can be found and enqueued for
+    mutation again with a higher effort dedicated to sampling mutants.
 \end{inparaenum}
 
-Notably, this heuristic can be particularly useful when the execution of the
-system under test depends heavily on some invariant encoded by a subexpression
-of its input that get transformed using a random mutant (e.g, the number of
-pixels declared by the header of an image matching the size of its actual
-payload).
+Notably, this heuristic can be useful when the execution of the system under
+test depends heavily on some invariant encoded by a subexpression of its input
+that get transformed using a random mutant (e.g, the number of pixels declared
+by the header of an image matching the size of its actual payload).
 %
 There, starting with a single random mutation will quickly saturate the trace
 space with discarded (invalid) tests, and this heuristic will continuously
 increase the random mutations parameter until the random mutant is given enough
-chances to randomly generate the value that satisfies the required invariant and
+chances to randomly generate a value that satisfies the required invariant and
 makes the overall test case valid.
 
 \begin{algorithm}[t]
