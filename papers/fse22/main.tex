@@ -157,34 +157,36 @@
 Automatically synthesized random data generators are an appealing option when
 using property-based testing.
 %
-Such generators can be obtained using a variety of techniques that extract
-static information from the codebase in order to produce random test cases.
+There exists a variety of techniques that extract static information from the
+codebase to produce random test cases.
 %
-However, such techniques are not suitable for deriving generators producing
-random values satisfying complex invariants, which in turn complicates testing
-properties with sparse preconditions.
+Sadly, such techniques cannot derive generators capable of producing random
+values satisfying complex invariants, often needed to test properties with
+sparse preconditions.
 
 
-Coverage-guided, property-based testing (CGPT) is a recent technique that
-alleviates this limitation by enhancing automatically synthesized generators
-with structure-preserving mutations guided by execution traces.
+Coverage-guided, property-based testing (CGPT) is a technique that tackles this
+limitation by enhancing synthesized generators with structure-preserving
+mutations guided by execution traces.
 %
-Albeit effective, the initial CGPT approach is limited by factors like large
-reliance on randomness and poor mutants scheduling, reducing its applicability
-and bug-finding capacity in existing software.
+Albeit effective, CGPT relies largely on randomness and exhibits poor
+scheduling, preventing its applicability in real-world software.
 
 
-In this work we present \mutagen, a CGPT framework that overcomes these
-limitations by generating mutants in an \emph{exhaustive} manner.
+This work presents \mutagen, a CGPT framework that overcomes such limitations by
+generating mutants \emph{exhaustively}.
 %
-This is coupled with heuristics that help to schedule mutants based on their
-novelty and to minimize mutating certain subexpressions leading to scalability issues of
-exhaustiveness.
+Our tool incorporates heuristics to help minimizing scalability issues as well
+as covering the search space in a principled manner.   
+%
+% schedule mutants based on their
+% novelty and to minimize mutating certain subexpressions leading to scalability
+% issues of exhaustiveness.
 %of large enumeration types more
 %than necessary.
 %
-Our results indicate that our approach is capable of outperforming existing CGPT
-tools, as well as finding bugs in real-world scenarios.
+Our evaluation show that \mutagen not only outperforms existing CGPT tools, but
+also finds previously unknwown bugs in real-world software.
 \end{abstract}
 
 % ----------------------------------------
@@ -214,7 +216,7 @@ tools, as well as finding bugs in real-world scenarios.
 
 % ----------------------------------------
 
-\vspace{-5pt}
+% \vspace{-5pt}
 
 \section{Introduction}
 \label{sec:intro}
@@ -1312,7 +1314,7 @@ avoids introducing unnecessary randomness when ``growing'' mutated expressions.
 %% \vspace{-10pt}
 %% \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[b]
 \begin{verbatim}
 mutate (Leaf x) =
   [ PURE (Branch def x def) ]
