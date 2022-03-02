@@ -787,16 +787,16 @@ cases,
 % e.g, those that exercise previously undiscovered parts of the target
 % code.
 %
-Later, such tools use generic mutators to combine and produce new test cases
-from previously executed interesting ones.
+% Later, such tools use generic mutators to combine and produce new test cases
+% from previously executed interesting ones.
 %
 %% Instead of mutating any previously executed test case that discovers a new part
 %% of the code, this technique integrates these fuzzing mechanisms into the PBT
 %% testing loop itself.
 %
-In contrast with traditional fuzzing approaches, CGPT can distinguish
-semantically valid test cases from invalid ones, i.e., those passing the testing
-property preconditions as opposed to those that are discarded early.
+In contrast with generic fuzzing approaches, CGPT can distinguish semantically
+valid test cases from invalid ones, i.e., those passing the testing property
+preconditions as opposed to those that are discarded early.
 %
 This information is used to favour mutating valid test cases over discarded
 ones.
@@ -806,36 +806,36 @@ ones.
 %% that are discarded early, CGPT exploits this information to prefer mutating
 %% valid test cases than discarded ones.
 
-The testing loop in CGPT uses two queues to store valid and discarded previously
+The CGPT testing loop uses two queues to store valid and discarded previously
 executed test cases.
 %
-Enqueued test cases are stored along with a given mutation budget that controls
-how many times a given test case can be mutated before being finally thrown
-away.
+Enqueued test cases are stored along with a mutation budget that controls how
+many times they can be mutated before being finally thrown away.
 %
 This budget is calculated using a heuristic derived from AFL's power schedule,
 i.e., more budget to test cases that lead to shorter executions, or that
 discover more parts of the code.
 %
-Then, on each iteration the algorithm selects the next test case by mutating the
-first value on the queue of valid test cases.
+Then, on each iteration the testing loop selects the next test case by mutating
+the first value on the queue of valid test cases.
 %
-If that queue is empty, it instead mutates the first test case from the queue of
+If such queue is empty, it then mutates the first test case from the queue of
 discarded test cases.
 %
 If both queues are empty, CGPT generates a new random value from scratch.
 %
 The algorithm then run this test case and evaluates whether it was interesting
-(i.e., it exercises a new path) based on its trace information.
+based on its trace information.
 %
-If the test case does in fact discover a new path, it is enqueued at the end of
-its corresponding queue, depending on whether it passed the property
-precondition or was discarded.
+If the test case was interesting, it gets enqueued into its corresponding queue
+(either valid or discarded),
+%  depending on whether it passed the property precondition or
+% was discarded.
 %
 %% (i.e., it failed the precondition).
 %
-This process alternates between generation and mutation until a bug is found or
-it reaches the test limit.
+This process alternates between random generation and mutation until a bug is
+found or the test limit is reached.
 
 
 %% %
@@ -1034,38 +1034,38 @@ it reaches the test limit.
 %
 \paragraph{Limitations of CGPT}
 
-\citeauthor{lampropoulos2019coverage} demonstrated empirically that CGPT lies
-comfortably in the middle ground between using pure random testing with na\"ive
-automatically derived random generators and complex manually-written ones.
+\citeauthor{lampropoulos2019coverage} demonstrated that CGPT lies in the middle
+ground between using random testing with na\"ive automatically derived
+generators and complex manually-written ones.
 %
 %% Their results suggest that CGPT is an appealing technique for finding bugs while
 %% still using a mostly automated workflow.
 %
 However, the authors acknowledge that certain parts of its implementation have
-room for improvement, especially when it comes to the mutator's design.
+room for improvement. 
+%, especially when it comes to the mutator's design.
 %
 %% Moreover, we replicated the Information-Flow Control (IFC) stack machine case
 %
-Moreover, we replicated the IFC stack machine case study bundled with \fuzzchick
-and observed a surprising limitation:
+In addition, we observed a notable limitation after replicating the IFC stack
+machine case study bundled with \fuzzchick:
+%  and observed a notable limitation:
 %
 \emph{after repeating each experiment 30 times, \fuzzchick could only find 5 out
-  of the 20 injected bugs with a 100\% efficacy, the hardest one being found
+  of the 20 injected bugs with a 100\% effectivity, the hardest one being found
   only around 13\% of the time after an hour of testing.}
 %
-Despite this, the authors show that CGPT outperforms normal random testing
-coupled with na\"ive random generators by comparing the mean-time-to-failure
-(MTTF) against normal random property-based testing.
+Despite this, the authors show that CGPT outperforms random testing coupled with
+na\"ive generators by comparing their mean-time-to-failure (MTTF).
 %
-In turn, we believe that a more meticulous evaluation ought to take failure to find a
+In turn, we argue that a meticulous evaluation ought to take failure to find a
 counterexample as an important metric when comparing PBT tools, not just mean
 time to failure --- when one is found.
 %
 %% In tandem with the lack of efficacy observed when replicating the evaluation of
 %% the IFC stack machine case study,
 
-All these observations led us to consider three main aspects of CGPT that can be
-improved upon:
+In this work, we consider three aspects of CGPT to improve upon:
 %
 %% --- and that constitute the main goal of this work.
 %
@@ -1087,19 +1087,19 @@ improved upon:
 \begin{itemize}
 \item \emph{Mutators distribution:}
 %
-for the sake of simplicity, the mutators proposed by
-\citeauthor{lampropoulos2019coverage} are derived to follow a top-down approach.
+for simplicity, the mutators proposed by \citeauthor{lampropoulos2019coverage}
+are derived to follow a top-down approach:
 %% similar to that used by the automatically derived random generators.
 %
-This means that mutations can happen at the top-level or be recursively applied
-to an immediate subexpression of the input test case with approximately the same
-probability.
+% This means that
+mutations can happen at the top-level or be recursively applied to an immediate
+subexpression of the input test case with approximately the same probability.
 %
 %%   if we inspect the mutator defined in Fig. \ref{fig:fuzzchick:mutator}, there are
 %% two compromises that the authors of \fuzzchick adopted for the sake of
 %% simplicity.
 %
-This makes deep recursive mutations very unlikely, as their probability
+This approach makes deep recursive mutations very unlikely, as their probability
 decreases multiplicatively with each recursive call.
 %
 %% For instance, mutating a subexpression that lies on the fourth level of a
@@ -1109,14 +1109,13 @@ decreases multiplicatively with each recursive call.
 %
 %% This only worsens as the type of the mutated value becomes more complex.
 %
-Hence, these simple mutators can only be effectively used to transform shallow
-data structures, excluding applications that might require producing deeper
-mutations.
+Hence, these mutators can only effectively transform shallow test cases,
+excluding scenarios involving deeply nested data structures.
 %
 %e.g., programs, network protocol interactions, etc.
 %
-Ideally, \emph{mutations should be able to happen on every subexpression of the
-  input test case on a reasonable basis}.
+\emph{Ideally, mutations should happen on every subexpression of the input test
+  case on a reasonable basis}.
 
 
 %% On the other hand, using random generators inside mutators to produce new
@@ -1136,28 +1135,26 @@ Ideally, \emph{mutations should be able to happen on every subexpression of the
 %% If that mutated test case turns to be interesting, that new subexpression can
 %% always be mutated later.
 
-\item \emph{Enqueuing mutation candidates:}
+\item \emph{Scheduling:}
 %
-the CGPT testing loop uses two single-ended queues for keeping valid and
-discarded interesting test cases.
+the CGPT testing loop uses two single-ended queues to store valid and discarded
+interesting test cases.
 %
 Whenever a new test case is found interesting, it is placed \emph{at the end of
   its corresponding queue}.
 %
-If this test case happens to have discovered a whole new portion of the target
-code, it will not be further mutated until the rest of the queue ahead of it
-gets processed.
+If this test case discovered a whole new portion of the target code, it will not
+be mutated until the rest of the queue ahead of it gets processed.
 %
-This can limit the effectiveness of the testing loop if the queues grow more
+This limits the effectiveness of the testing loop whenever queues grow more
 often than they shrink, as interesting test cases can get ``buried'' at the end
-of a long queue and,
+of long queues and,
 %
 %% that only exercises the same portion of the target code.
 %
 in an extreme case, not get processed at all within the testing budget.
 %
-Ideally, \emph{we need a mechanism that prioritizes mutating test cases that
-  discover new portions of the code right away}.
+\emph{Thus, we should prioritize mutating novel test cases right away}.
 %
 %% , and that is capable of jumping
 %% back and forth from  whenever this happens.
@@ -1168,29 +1165,40 @@ Ideally, \emph{we need a mechanism that prioritizes mutating test cases that
 
 \item \emph{Power schedule:}
 %
-it is not clear how the heuristic used to assign a given budget to each mutable
-test case in CGPT works in the context of high-level structure-preserving
-mutations.
+it is unclear how well the heuristic that assigns a budget to each interesting
+test case in CGPT performs in tandem with structure-preserving mutations derived
+for an arbitrary data type.
 %
-If it assigns too much budget to certain not-so-interesting test cases, some
-bugs might not be discovered on a timely basis.
+On one hand, spending too much budget on not-so-interesting test cases might
+prevent bugs from being discovered on a timely basis.
 %
-Conversely, assigning too little budget to interesting test cases might mean
-that some bugs cannot be discovered at all --- randomly generating the same test
-case again later does not help, as it becomes uninteresting based on historic
-trace information.
+In turn, spending too little budget on interesting test cases might prevent bugs
+from being discovered at all --- randomly generating the same initial test case
+again later does not help, as it will not be considered interesting again
+according to historic trace information.
+%
+Finding a well behaved heuristic between these two scenario can be quite
+challenging in the general case. 
+%
+\emph{Ideally, the scheduling mechanism should be as unbiased as possible.}
 
-To keep the comparison fair, \citeauthor{lampropoulos2019coverage} replicated
-the same power schedule configuration used in AFL, which is tailored to work in
-tandem with generic bit-level mutators.
+% especially considering how expressive the data
+% types used to derive the mutators can be.  
 %
-It is unclear what the best heuristic configuration is when using a high-level
-mutation approach --- something challenging to characterize in general given the
-expressivity of the data types used to drive the mutators.
+
+% To keep the comparison fair, \citeauthor{lampropoulos2019coverage} replicated
+% the same power schedule configuration used in AFL, which is tailored to work in
+% tandem with generic bit-level mutators.
+% %
+% It is unclear what the best heuristic configuration is when using a high-level
+% mutation approach --- something challenging to characterize in general given the
+% % expressivity of the data types used to drive the mutators.
 \end{itemize}
 
-The next section introduces \mutagen, our revised CGPT that aims to tackle the
-main limitations of CGPT to make it practical in real-world scenarios.
+% We now introduce \mutagen, our revised CGPT approach designed to tackle the
+% limitations of CGPT mentioned so far.
+
+% of CGPT to make it practical in real-world scenarios.
 
 % ----------------------------------------
 
@@ -1198,19 +1206,19 @@ main limitations of CGPT to make it practical in real-world scenarios.
 \label{sec:mutagen}
 
 In this section we describe the main ideas behind \mutagen, our CGPT tool
-written in Haskell.
+written in Haskell to tackle the limitations of CGPT described so far.
 %
-Notably, these ideas extend beyond Haskell and functional programming languages
-in general.
+Notably, these ideas can be applied beyond Haskell and functional programming
+languages in general.
 %
 %% Later, \S \ref{sec:heuristics} introduces heuristics that help finding bugs
 %% faster in certain testing scenarios.
 
-In contrast to CGPT and many other popular fuzzing tools, \mutagen works by
-mutating test cases on an exhaustive and precise manner, where
+% In contrast to CGPT and many other popular fuzzing tools,
+\mutagen works by mutating test cases on an exhaustive and precise manner, where
 %
 \begin{inparaenum}
-  \item each subexpression of a mutable test case is associated with a set of
+  \item each subexpression of a test case is associated with a set of
     structure-preserving mutations, and
   \item each one of these mutations is scheduled \emph{exactly once}.
 \end{inparaenum}
@@ -1223,14 +1231,15 @@ needing a heuristic to assign a mutation budget to each mutated test case.
 Moreover, producing mutants exhaustively ensures that no interesting mutation is
 omitted due to randomness, as well a no mutation is evaluated more than once.
 %
-This is inspired by exhaustive bounded testing tools like \emph{SmallCheck}
-\cite{runciman2008smallcheck} or \emph{Korat} \cite{boyapati2002korat}, that
-produce test cases exhaustively --- please refer to \S \ref{sec:related}
-for a detailed discussion.
+This approach is inspired by exhaustive bounded testing tools like
+\emph{SmallCheck} \cite{runciman2008smallcheck} or \emph{Korat}
+\cite{boyapati2002korat} --- refer to \S \ref{sec:related} for a detailed
+discussion.
+%  that
+% produce test cases exhaustively --- 
 
-
-The rest of this section describes our exhaustive mutation mechanism, as well as
-the adapted testing loop used in \mutagen.
+% The rest of this section describes our exhaustive mutation mechanism, as well as
+% the adapted testing loop used in \mutagen.
 
 %% In simple words, such tools work by enumerating all possible values of the data
 %% types used in the testing properties, and then executing them from smaller to
@@ -1268,28 +1277,32 @@ the adapted testing loop used in \mutagen.
 %% In contrast to \fuzzchick, where mutators are parameterized random generators,
 %% in our tool
 
-Mutations in \mutagen are defined as the set of mutants that can be obtained by
-transforming the input test case \emph{at the top-level} (the root).
+In \mutagen, mutations are defined as the set of mutants that can be obtained by
+transforming the input test case \emph{at the top-level} (the root node).
 %
-We define mutations for a value of type \texttt{a} (written \texttt{Mutations
-  a}) as \emph{a function that takes a value of such a type and returns a list of
-mutants} (written \texttt{Mutant a}).
+We define the mutations of a value of type \texttt{a} (written \texttt{Mutations
+  a}) as \emph{a function that takes a value of such a type and returns a list
+  of mutants}.
+% (written \texttt{Mutant a}).
 %
-In Haskell, we introduce the following type synonym:
+In Haskell, we introduce the type synonym:
 %
 \begin{verbatim}
 type Mutations a = a -> [Mutant a]
 \end{verbatim}
 %
-\noindent Where \texttt{Mutant}s come in two flavours, pure and random:
+\noindent As mentioned earlier, concrete mutants can be obtained either from a
+pure or a random mutation:
 
 \begin{verbatim}
 data Mutant a = PURE a | RAND (Gen a)
 \end{verbatim}
 
-Pure mutants are used most of the time, and encode simple deterministic
-transformations over the outermost data constructor of the input --- recursive
-mutations will be introduced soon.
+\paragraph{Pure mutants} 
+% are used most of the time, and 
+%
+encode simple deterministic transformations over the outermost data constructor
+of the input --- recursive mutations will be introduced soon.
 %
 These transformations can:
 %
@@ -1299,18 +1312,44 @@ These transformations can:
   same type, reusing existing subexpressions; and
 \item rearrange and replace fields using existing ones of the same type.
 \end{inparaenum}
-%
+
+
+\setlength{\intextsep}{10pt}%
+\setlength{\columnsep}{10pt}%
+\begin{wrapfigure}{r}{0.2\textwidth}
+\vspace{-10pt}
+\begin{verbatim}
+mutate t = case t of 
+  Leaf x -> [ 
+    PURE (Branch def x def)
+  ]
+  Branch l x r -> [ 
+    PURE l, PURE r, 
+    PURE (Leaf x), 
+    PURE (Branch l x l),
+    PURE (Branch r x r),
+    PURE (Branch r x l)
+  ]
+\end{verbatim}
+\vspace{-10pt}
+\caption{\label{fig:mutagen:mutator}\mutagen mutator for the \texttt{Tree} data
+  type.}
+\vspace{-10pt}
+\end{wrapfigure}
+
+
+
 To illustrate this, Fig. \ref{fig:mutagen:mutator} outlines a mutator for the
 \texttt{Tree} data type.
 %
-Notably, this definition simply enumerates mutants that transform the outermost
+This definition simply needs to enumerate mutants that transform the outermost
 data constructor, hence no recursion is needed here.
 %
-Moreover, notice how a default value (\texttt{def}) used to fill the subtrees
-when transforming a leaf into a branch.
+Moreover, notice how a default value \texttt{def} used to fill the subtrees when
+transforming a leaf into a branch.
 %
-This value corresponds to the simplest expression we can construct for the
-mutant to be type-correct.
+In practice, \texttt{def} corresponds to the simplest expression we can
+construct for the mutant to be type-correct.
 %
 In our example, the default value of a \texttt{Tree} is a leaf containing the
 smallest value of the tree payload type, e.g., in the case of trees with
@@ -1318,12 +1357,13 @@ integers \texttt{def} is defined as \texttt{Leaf 0}.
 %
 %% \texttt{Leaf def}, where
 %% the inner \texttt{def} is the default value of the payload.%
-\footnote{We use the type class system to abstract this complexity away in our
-  implementation.}
+(Our implementation uses the type class system to abstract this complexity
+away.)
 %
 Using a small default value, as oppossed to a randomly generated one (as done by
 the original CGPT), is also inspired by exhaustive bounded testing tools, and
-avoids introducing unnecessary randomness when ``growing'' mutated expressions.
+avoids introducing unnecessary randomness when ``growing'' a data constructor
+into another.
 
 %% \begin{figure}
 %% \begin{verbatim}
@@ -1340,20 +1380,6 @@ avoids introducing unnecessary randomness when ``growing'' mutated expressions.
 %% \vspace{-10pt}
 %% \end{figure}
 
-\begin{figure}[b]
-\begin{verbatim}
-mutate (Leaf x) =
-  [ PURE (Branch def x def) ]
-mutate (Branch l x r) =
-  [ PURE l, PURE r
-  , PURE (Leaf x)
-  , PURE (Branch l x l), PURE (Branch r x r), PURE (Branch r x l) ]
-\end{verbatim}
-\vspace{-5pt}
-\caption{\label{fig:mutagen:mutator}\mutagen mutator for the \texttt{Tree} data
-  type.}
-\vspace{-5pt}
-\end{figure}
 
 %% At this point, the reader might consider:
 %% %
@@ -1363,32 +1389,43 @@ mutate (Branch l x r) =
 %% %
 %% \emph{Certainly not.}
 %
-Random mutants, on the other hand, serve as a way to \emph{selectively avoid
-  exhaustiveness} when mutating values of large enumeration types --- or any
-other type the user might want to use random mutations with.
+\paragraph{Random mutants} let us \emph{selectively avoid exhaustiveness} when
+  mutating values of large enumeration types (e.g. numbers).
+  % 
+  % --- or any
+  % other type the user might want to use random mutations with.
 %
-Instead of mutating every numerical or character subexpression exhaustively, we
-sample a small number of values from a given random generator.
 %
-This amount is a tunable parameter of \mutagen.
+Instead of creating a new \texttt{PURE} mutant for every other numerical
+subexpression exhaustively, we condense them into a generator that can be
+repeatedly sampled to produce new random values.   
 %
-Then, for instance, a mutator for integers becomes:
+% small number of values from a
+% given random generator.
+%
+This way, a mutator for integers simply becomes:
 
 \begin{verbatim}
 mutate n = [ RAND genInt ]
 \end{verbatim}
+
+This approach allows \mutagen to automatically control amount of effort put into
+mutating subexpressions defined using random mutations.
+%
+This can be especially useful to avoid putting unnecessary effort when the
+execution of testing property and the system under test is independent from
+their concrete values. 
 
 
 \paragraph{Mapping top-level mutations everywhere}
 
 So far we have defined mutations that transform only the root of the input.
 %
-Now it is time to apply these mutations to every subexpression as well.
+To apply these mutations to every internal subexpression we use two utility
+functions that can be automatically synthesized.
 %
-To do so, we use two utility functions that can be automatically synthesized.
-
-In first place, a function \texttt{Positions} traverses the input and builds a
-Rose tree of \emph{mutable positions}, where positions are lists of indices
+Firstly, a function \texttt{Positions} traverses the input and builds a Rose
+tree\cite{} of \emph{mutable positions}, where positions are lists of indices
 encoding the path from the root to every mutable subexpression.
 %
 % For instance, the positions of a \texttt{Tree} are computed as follows:
@@ -1449,7 +1486,7 @@ For instance, the mutable positions of the value \texttt{Branch (Leaf 1) 2
   }
 \end{equation}
 
-Later, we define a function \texttt{MutateInside} that takes a desired position
+Then, we define a function \texttt{MutateInside} that takes a desired position
 within an input test case and mutates its corresponding subexpression, returning
 a list of mutants.
 %
@@ -1468,25 +1505,23 @@ a list of mutants.
 % inside (2:ps) (Branch l x r) = [ Branch l x r' | r' <- inside ps r ]
 % \end{verbatim}
 %
-This function simply traverses the desired position, calling itself recursively
-until it reaches the desired subexpression, where a mutation encoded by \texttt{mutate} can be
-applied.
+This function traverses the desired position, calling itself recursively until
+it reaches the desired subexpression, where a mutation encoded by
+\texttt{mutate} can be applied directly.
 % locally at the top-level (case \texttt{inside [] t}).
 %
-The rest of the \texttt{MutateInside}'s functionality simply unwraps and rewraps the
-intermediate subexpressions and is not particularly relevant for the point being
-made.
+% The rest of the \texttt{MutateInside}'s functionality simply unwraps and
+% rewraps the intermediate subexpressions and is not particularly relevant for
+% the point being made.
 
 
 \subsection{Testing loop}
 
-Having the exhaustive mutation mechanism in place, we can now introduce the base
-testing loop used by \mutagen.
+With the exhaustive mutation mechanism in place, we can now introduce the base
+testing loop used by \mutagen --- outlined in Algorithm \ref{algo:mutagen:loop}.
 %
-This is outlined in Algorithm \ref{algo:mutagen:loop}.
-%
-Like in CGPT, we use two queues, QValid and QDiscarded to keep valid and discarded mutable test cases,
-respectively.
+Like in CGPT, we use two queues, QValid and QDiscarded to keep valid and
+discarded mutable test cases, respectively.
 %
 %% The testing loop enqueues and retrieves interesting test cases from them before
 %% falling back to random generation.
@@ -1558,28 +1593,27 @@ respectively.
 
 
 
-In \mutagen, we precompute all the mutations of a given mutable test case before
-enqueueing them.
+\mutagen precomputes all the mutations of a given test case before enqueueing
+them.
 %
-These mutations are put together into lists that we call \emph{mutation batches}
---- one for each mutated test case.
+These mutations are put together into lists we call \emph{mutation batches} ---
+one for each mutated test case.
 %
 To initialize a mutation batch (outlined in Algorithm \ref{algo:mutagen:init}),
-we first flatten all the mutable positions of the input test case in level order
-(recall that positions are stored as a Rose tree).
+we first flatten all the mutable positions of the input test case in level order.
+%(recall that positions are stored as a Rose tree).
 %
-Then, we iterate over all of them and retrieve all the mutants defined for each
-subexpression.
+Then, we iterate over all these positions, retrieving all the mutants associated
+to each corresponding subexpression.
 %
 For each one of these, there are two possible cases:
 %
 \begin{inparaenum}
 \item if it is a pure mutant carrying a concrete mutated value, we enqueue it
   into the mutation batch directly; otherwise
-\item it is a random mutant that carries a random generator with it (e.g.,
-  corresponding to a numeric subexpression), in which case we sample and enqueue
-  \textit{R} random values using this generator, where \textit{R} is a parameter
-  set by the user.
+\item it is a random mutant that carries a random generator with it, in which
+  case we sample and enqueue \textit{R} random values using this generator,
+  where \textit{R} is a parameter set by the user.
 \end{inparaenum}
 %
 At the end, we simply return the accumulated batch.
@@ -1590,29 +1624,27 @@ the next test case using the same criteria as CGPT, prioritizing valid test
 cases over discarded ones, falling back to random generation when both queues
 are empty.
 %
-Since mutations are precomputed, this function simply picks the next test case
-from the current batch, until it becomes empty and can switch to the next
-precomputed one in line.
+This function simply picks the next mutated test case from the current
+precomputed batch, jumping to the next batch in line when the current one it
+becomes empty.
 
 
 Having selected the next test case, the testing loop proceeds to execute it,
-capturing both the result (valid, discarded, or failed) and its execution trace
-over the system under test.
+capturing both the result (valid, discarded, or failed) and its execution trace.
 %
 If the test case fails, it is reported as a bug.
 %
-If not, the algorithm evaluates whether it was interesting (i.e., it exercises a
-new path) based on its trace information and the one from previously executed
-test cases (represented by TLog).
+If not, the algorithm evaluates if it was interesting based on its trace
+information and the one from previously executed test cases (represented by
+TLog).
 %
-If the test case discovers a new path, it is enqueued on its corresponding
-queue.
+If the test case was interesting, its mutants are precomputed and enqueued on its
+corresponding queue.
 % depending on whether it was valid or got discarded.
 %
 %% (i.e., it failed the precondition).
 %
-This process alternates between generation and mutation until it finds a bug or
-reaches the test limit N.
+This process is repeated until finding a bug or reaching the test limit N.
 
 
 \begin{algorithm}[t]
@@ -1645,12 +1677,12 @@ reaches the test limit N.
   \caption{\label{algo:mutagen:pick}\mutagen Seed Selection}
 \end{algorithm}
 
-Another difference with CGPT's testing loop is the criterion for enqueuing
+A notable difference with CGPT's testing loop is the criterion for enqueuing
 discarded tests.
 %
 We found that, especially for large data types, the queue of discarded
 candidates tends to grow disproportionately large during testing, making them
-hardly usable and consuming large amounts of memory.
+hardly usable while consuming large amounts of memory.
 %
 To improve this, we resort to mutate discarded tests cases only when we have
 some evidence that they are ``almost valid.''
@@ -1658,7 +1690,7 @@ some evidence that they are ``almost valid.''
 For this, each mutated test case remembers whether its parent (the original test
 case they derive from before being mutated) was valid.
 %
-Then, we enqueue discarded test cases only if they meet this condition.
+Then, we enqueue discarded test cases only if they descend from a valid parent.
 %
 As a result, we fill the discarded queue with lesser but much more interesting
 mutable test cases.
@@ -1668,8 +1700,8 @@ mutable test cases.
 %% and later a subsequent mutation fixes it by changing a different subexpression.
 
 
-The next section describes two heuristics we added to \mutagen's testing loop
-based on the limitations we found in CGPT.
+% The next section describes two heuristics we added to \mutagen's testing loop
+% based on the limitations we found in CGPT.
 %
 %% These heuristics can that offer a substantial improvement in practice.
 
@@ -1679,9 +1711,8 @@ based on the limitations we found in CGPT.
 \section{\mutagen Heuristics}
 \label{sec:heuristics}
 
-
 In this section we introduce two heuristics implemented on top of the base
-testing loop of our tool.
+testing loop of \mutagen --- described in \S \ref{sec:mutagen}.
 %% %
 %% \mutagen enables them by default, and can be individually disabled by the user
 %% if needed.
