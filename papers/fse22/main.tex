@@ -2081,35 +2081,34 @@ makes the overall test case valid.
 
 We evaluated the performance of \mutagen using two case studies.
 %
-The first one is a simple abstract stack machine that enforces the hyperproperty
+The first one is a simple abstract stack machine that enforces
 \emph{noninterference} \cite{goguen1982security} using runtime checks.
 %
 Its implementation was proven correct by \citeauthor{10.1145/2578855.2535839}
-\citeyearpar{10.1145/2578855.2535839} in Coq, and subsequently degraded by
-systematically introducing 20 bugs on its enforcing mechanism.
+\citeyearpar{10.1145/2578855.2535839} in Coq, and later degraded by
+systematically introducing 20 bugs on its policy enforcing mechanism.
 %
 \citeauthor{lampropoulos2019coverage} used this case study to compare \fuzzchick
 against RPBT using na\"ive- and hand-tuned random generators.
 %
-Here, we replicate their results and compare them against our tool.
+Here, we reproduce their results and compare them against our tool.
 %
-Worth mentioning, we reimplemented this case study from scratch in Haskell in
-order to run \mutagen on its test suite.
+Worth mentioning, we mechanically translated this case study to Haskell in order
+to run \mutagen on its test suite.
 
 
-The second case study aims to evaluate \mutagen in a realistic scenario, and
-targets \textit{haskell-wasm} \cite{haskellwasm}, an existing WebAssembly engine
-of industrial strength.
+The second case study evaluates \mutagen in a realistic scenario, and targets
+\textit{haskell-wasm} \cite{haskellwasm}, an existing WebAssembly engine of
+industrial strength.
 %
 %
-Sadly, comparing \mutagen with \fuzzchick on this case study has been out of the
-scope of this work, since porting \textit{haskell-wasm} into Coq, and later
-adapting our test suite to work with \fuzzchick requires a subtantial effort.
+Unfortunately, comparing \mutagen with \fuzzchick on this case study has been
+out of the scope of this work, since porting \textit{haskell-wasm} into Coq, and
+later adapting our test suite to work with \fuzzchick requires a subtantial
+effort.
 %
-Instead, we compare \mutagen against a traditional RPBT approach, evaluating its
-effectiveness versus the relative overhead of the code instrumentation used by
-our tool.
-
+Instead, we compare \mutagen against \quickcheck, evaluating its effectiveness
+versus the relative overhead of the code instrumentation used by our tool.
 
 
 
@@ -2139,9 +2138,9 @@ instructions, which let the program jump back and forth within the instruction
 memory using specially labeled values in the stack representing memory
 addresses.
 %
-The argument in the \texttt{Push} instruction represents a value to be
-inserted in the stack, whereas the argument of the \texttt{Call} instruction
-encodes the number of elements of the stack to be treated as arguments.
+The argument of the \texttt{Push} instruction represents a value to be inserted
+in the stack, whereas the argument of the \texttt{Call} instruction encodes the
+number of elements of the stack to be treated as arguments.
 %
 Then, programs are simply modeled as sequences of instructions.
 %
@@ -2156,8 +2155,8 @@ about the implementation and semantics of this case study.
 
 \paragraph{Single-Step Noninterference (SSNI)}
 
-This abstract machine is designed to enforce noninterference, which is based on
-the notion of \emph{indistinguishability}.
+This abstract machine enforces noninterference, a hyperproperty based on the
+notion of \emph{indistinguishability}.
 %
 Intuitively, two machine states are indistinguishable if they only differ on
 secret data.
@@ -2170,9 +2169,9 @@ instruction on both machines brings them to resulting states that are also
 indistinguishable.
 
 
-The tricky part about testing this property is to satisfy its sparse
-precondition: we need to generate two valid indistinguishable machine states in
-order to even proceed to execute the next instruction.
+The challenge about testing this property is to satisfy its sparse precondition:
+we need to generate two valid indistinguishable machine states in order to even
+proceed to execute the next instruction.
 %
 \citeauthor{lampropoulos2019coverage} demonstrated that generating two
 independent machine states using \quickcheck has virtually no chance of
@@ -2191,16 +2190,16 @@ pass the sparse precondition.
 The IFC rules enforced by this machine are encoded in a table indexed by its
 different instructions.
 %
-This table contains: the dynamic check that the machine needs to perform to
-enforce the IFC policy, along with the corresponding security label of the
-program counter and the instruction result after the instruction is executed.
+This table stores the dynamic check that the machine performs to enforce the IFC
+policy before running each instruction, along with the corresponding resulting
+security labels of the program counter and the instruction result.
 %
 For instance, to execute the \texttt{Store} instruction (which stores a value in
 a memory pointer) the machine checks that both the labels of the program counter
 and the pointer together can flow to the label of the destination memory cell.
 %
-If this condition is not met, the machine then halts as indication of a
-violation in the IFC policy.
+If this condition is not met, the machine halts to indicate a violation of the
+IFC policy.
 %
 After this check, the machine overwrites the value at the destination cell and
 updates its label with the maximum sensibility of the involved labels.
@@ -2426,24 +2425,27 @@ invalid, and automatically derived random generators cannot satisfy the
 invariants required to produce interesting test cases.
 
 
-In this work, we are interested in using \mutagen to test the two most complex
-subsystems of \textit{haskell-wasm}: the \emph{validator} and the
-\emph{interpreter} --- both being previously tested using a unit test suite.
-
-
-We avoided spending countless hours writing an extensive property-based
-specification to mimic the WebAssembly specification.
+In this work, we apply \mutagen to test the two most complex subsystems of
+\textit{haskell-wasm}: the \emph{validator} and the \emph{interpreter} --- both
+being previously tested using a unit test suite.
 %
-Instead, we used the reference implementation to find discrepancies (that could
-potentially lead to bugs) via differential testing
+% We avoided spending countless hours writing an extensive property-based
+% specification to mimic the WebAssembly specification.
+%
+For this, we took advantage of the reference implementation to find
+discrepancies (that could potentially lead to bugs) via differential testing
 \cite{mckeeman1998differential}.
 %
-In this manner, our testing properties assert that any result produced by
-\textit{haskell-wasm} matches that of the reference implementation.
-
-Notably, this engine had several latent bugs that were not caught by the
-existing unit tests and that we discovered by \mutagen while developing our test
-suite.
+Our testing properties assert that any result produced by \textit{haskell-wasm}
+matches that of the reference implementation.
+%
+Notably, \mutagen discovered three latent bugs 
+% in \textit{haskell-wasm} 
+that the existing test suite was unable to reveal.
+%
+% this engine had several latent bugs that were not caught by the
+% existing testsuite and that we discovered by \mutagen while developing our test
+% suite.
 %
 Moreover, \mutagen exposed two other discrepancies between \textit{haskell-wasm}
 and the reference implementation.
@@ -2453,21 +2455,23 @@ supported by the reference implementation (multi-value blocks), or that produce
 a well-known non-deterministic undefined behavior (NaN reinterpretation)
 \cite{perenyi2020stack}.
 %
-These findings are briefly outlined in Table \ref{table:wasm:bugs}.
+All these findings (outlined in Table \ref{table:wasm:bugs}) where reported and
+later confirmed by the authors of \textit{haskell-wasm}.
 %
-All of them were reported and later confirmed by the authors of
-\textit{haskell-wasm}.
-%
-Having sorted these issues out, we injected 10 new bugs in the validator as well
-as 5 new bugs in the interpreter of this engine (see Table
+% All of them were reported and later confirmed by the authors of
+% \textit{haskell-wasm}.
+
+
+Having sorted these issues out, we mechanically injected 10 new bugs in the
+validator as well as 5 new bugs in the interpreter of this engine (see Table
 \ref{table:wasm:injectedbugs}).
 %
-These bugs were mechanically injected by either
+These bugs either
 %
 \begin{inparaenum}
-\item removing an existing integrity check (to weaken the WebAssembly
-  type-system/validator); or by
-\item simulating a copy-and-paste induced bug,%
+\item remove an existing integrity check (to weaken the WebAssembly
+  type-system/validator); or
+\item simulate a copy-paste bug \cite{CPMiner},%
   \footnote{This kind of bugs was inspired by the real bug \#1 we found prior
     this step.}
   %
@@ -2499,7 +2503,7 @@ These bugs were mechanically injected by either
 %% We begin by designing a property to test the WebAssembly validator implemented
 %% in \textit{haskell-wasm}.
 %% %
-To keep things simple, we assert that, whenever a randomly generated (or
+Our testing approach is to assert that, whenever a randomly generated (or
 mutated) WebAssembly module is valid according to \textit{haskell-wasm}, then
 the reference implementation agrees upon it.
 %
@@ -2544,14 +2548,14 @@ and \textit{haskell-wasm} rejects it.
 \paragraph{Testing the WebAssembly Interpreter}
 
 Testing the WebAssembly interpreter is substantially more complicated than
-testing the validator, since it requires actually running and comparing the
-output of test case programs.
+testing the validator, since it requires running and comparing the output of
+test case programs.
 %
 To achieve this, the generated test cases need to comply a with a common
 interface that can be invoked both by \textit{haskell-wasm} and the reference
 implementation.
 %
-To simplify things, we write a helper function \texttt{mk\_module} to build a
+For simplicity, we write a helper function \texttt{mk\_module} to build a
 stub WebAssembly module that initializes one memory block and exports a single
 function.
 %
@@ -2594,8 +2598,8 @@ Then, it invokes the function \texttt{f} of the module \texttt{m} both on
 %
 Finally, the property asserts whether their results are equivalent.%
 %
-\footnote{In our implementation, we additionally set a short timeout to discard
-  potentially diverging programs with infinite loops.}
+\footnote{We additionally set a short timeout to discard potentially diverging
+  programs.}
 %
 Interestingly, equivalence in does not imply equality.
 %
@@ -2606,31 +2610,31 @@ account.
 %
 
 
-Using this testing property directly might not sound like a great idea, as
-randomly generated lists of input arguments will be very unlikely to match the
-type signature of randomly generated functions.
+Using this testing property directly might not sound wise, as randomly generated
+lists of input arguments will very unlikely match the type signature of randomly
+generated functions.
 %
 However, it lets us test what happens when programs are not properly invoked,
 and it quickly discovered the previously unknown bug \#3 in
 \textit{haskell-wasm} mentioned above.
 %
-Having fixed this issue, we define a more useful specialized version of
+Having fixed this issue, we define a specialized version of
 \texttt{prop\_interpreter} that fixes the type of the generated function to take
 two arguments (of type \texttt{I32} and \texttt{F32}) and return an \texttt{I32}
 as a result:
 
 \begin{verbatim}
-prop_interpreter_i32 fun i f = prop_interpreter
-  (FuncType { params = [I32, F32], result = [I32] }) fun [VI32 i, VF32 f]
+prop_interpreter_i32 f x y = 
+  prop_interpreter (Type {args=[I32,F32], res=[I32]}) f [VI32 x,VF32 y]
 \end{verbatim}
 
-\noindent This property lets us generate functions with a fixed type and invoke
-them with the exact number and type of arguments required.
+\noindent This property lets us generate functions of a fixed type and invoke
+them with randomly generated input of the expected types.
 %
 %% In our experiments (presented in \S \ref{sec:evaluation}),
 %
-We use this property when finding all the injected bugs into the
-\textit{haskell-wasm} interpreter in the next section.
+We use this property to find all the bugs injected into \textit{haskell-wasm}'s
+interpreter in the next section.
 %
 %% As before, we remark that a complete test suite should at least include
 %% different variants of this property testing functions of several different
@@ -2649,13 +2653,13 @@ We use this property when finding all the injected bugs into the
 \section{Evaluation}
 \label{sec:evaluation}
 
-We performed all experiments in a dedicated workstation with 32GB of RAM and an
-Intel Core i7-8700 CPU running at 3.20GHz.
+We performed all experiments in a workstation with 32GB of RAM and an Intel Core
+i7-8700 CPU running at 3.20GHz.
 %
-We repeated each experiment 30 times except for the ones testing the WebAssembly
-interpreter, which were run 10 times due to time constraints.
+Each experiment was repeated 30 times except for the ones testing the
+WebAssembly interpreter, which were run 10 times due to time constraints.
 %
-From there, we followed the approach taken by
+Moreover, we followed the approach taken by
 \citeauthor{lampropoulos2019coverage} and collected the mean-time-to-failure
 (MTTF) of each bug, i.e., how quickly a bug can be found in wall clock time.
 %
@@ -2668,15 +2672,14 @@ proportion of times each tool finds each bug within the one-hour testing budget.
 %% We found this metric crucial to be analyzed when replicating \fuzzchick's
 %% results, as opposed to just paying attention at the MTTF.
 
-In both case studies, we show how the two \mutagen heuristics described in \S
-\ref{sec:heuristics} affect the testing performance by individually disabling
-them.
+In both case studies, we also show the effect of the heuristics described in \S
+\ref{sec:heuristics} by individually disabling them.
 %
-We call these variants \textit{no LIFO} and \textit{no reset}, respectively.
+We call these variants \textit{no LIFO} and \textit{no reset}.
 %
-In the case of \textit{no reset}, the amount of random mutations is no longer
-controlled by this heuristic, so we arbitrarily fixed it to 25 random mutations
-throughout the execution of testing loop.
+For \textit{no reset}, the number of times we sample random mutants (R) is no
+longer controlled by \mutagen, so we arbitrarily fixed it to R=25 throughout the
+execution of testing loop.
 
 \subsection{IFC Stack Machine}
 
@@ -2703,9 +2706,9 @@ Moreover, notice the logarithmic scale used on the MTTF.
 
 
 As introduced earlier, \fuzzchick can only find 5 out of the 20 bugs injected
-with a 100\% success rate within the one hour testing budget.
+with a 100\% failure rate within the one hour testing budget.
 %
-In turn, our tool manages to find every bug on all runs, and taking less than a
+In turn, \mutagen manages to find every bug on all runs, taking less than a
 minute in the worst absolute case.
 %
 While these results are somewhat pessimistic towards \fuzzchick if compared to
@@ -2713,29 +2716,28 @@ the ones presented originally by \citeauthor{lampropoulos2019coverage}, we
 remark that our experiments encompass 30 independent runs instead of the 5 used
 in the original study.
 %
-Moreover, since the MTTF simply aggregates all runs, regardless of if they found
-a bug or timed out, this metric is sensitive to the timeout used on each
-experiment, and will inflate the results as soon as the failure rate goes below
-1.
+Moreover, since the MTTF aggregates all runs regardless of if they found a bug
+or timed out, this metric is sensitive to the timeout used on each experiment,
+and will inflate the results as soon as the failure rate goes below 1.
 %
 For this reason, comparing the failure rate between tools gives a better
-estimation of their reliability, where \mutagen shows a clear improvement.
+estimation of their effectivity, where \mutagen shows a clear improvement.
 
 %% If we only consider the succesfull runs where \fuzzchick does not time out, we
 After carefully analyzing the results obtained using \fuzzchick, we observed a
-peculiarity.
+peculiarity:
 %
-This tool either finds bugs quickly (after a few thousands tests) or does not
+this tool either finds bugs quickly (after a few thousands tests) or does not
 find them at all within the one-hour budget.
 %% , suggesting that its power
 %% scheduler assigns some enqueued test cases too little energy before they become
 %% uninteresting and get ultimately thrown away.
 %
-With this in mind, it is fair to think that \fuzzchick might be a better choice
-if we set a shorter timeout and run it several times in a row.
+With this in mind, it is fair to think that \fuzzchick might still be a better
+choice if we set a shorter timeout and run it several times in a row.
 %
-Thus, to be an improvement over \fuzzchick, our tool must find bugs not only
-more reliably, but also fast!
+Thus, to improve upon \fuzzchick, our tool must find bugs not only more
+reliably, but also fast.
 
 \setlength{\intextsep}{10pt}%
 \setlength{\columnsep}{10pt}%
@@ -2806,8 +2808,8 @@ $A_{12}$ measure \cite{vargha2000critique}.
 Intuitively, this measure encodes the probability of \mutagen to yield better
 results than \fuzzchick.
 %
-The \textit{Estimate} of this measure simply denotes the statistical difference
-between the compared distributions in a categorical manner.
+The \textit{Estimate} column denotes the statistical difference between these
+values in a categorical manner.
 %
 Estimates in {\color{red} red} and {\color{blue} blue} indicate results
 favoring \fuzzchick and \mutagen, respectively.
@@ -2854,11 +2856,11 @@ mutating numeric subexpressions inside the generated machine states.
 %
 However, some of the hardest-to-find bugs cannot be reliably exposed using this
 fixed amount of random mutations (\#4, \#9, \#12, \#18, and \#10), suggesting
-that one should increase this number even further to be able to discover all
-bugs within the time budget.
+that one should increase this number even further to reliably discover all bugs
+within the time budget.
 %
-In consequence, we argue that our heuristic is effective at automatically tuning
-this parameter.
+In consequence, \emph{we argue that our heuristic is effective at automatically
+tuning this parameter}.
 %
 %% , especially when the user is unsure about what the best value for it might be.
 
@@ -2923,9 +2925,9 @@ module stub when defining \texttt{prop\_interpreter} in our test suite.
 %
 Notably, \quickcheck finds counterexamples for the bug \#14 almost instantly.
 %
-The reason behind this is that this bug can be found using a very small
-counterexample, and \quickcheck prefers sampling small test cases at the
-beginning of the testing loop.
+This is because this bug can be found using a very small counterexample, and
+\quickcheck prefers sampling small test cases at the beginning of the testing
+loop.
 %
 Our tool follows this same approach when in generation mode.
 %
@@ -2937,11 +2939,15 @@ Nonetheless, \mutagen still outperforms \quickcheck on the remaining bugs both
 in terms of failure rate and mean time to failure.
 %
 Moreover, by disabling the LIFO scheduling we observe that the performance of
-our tool becomes unstable, where bugs \#12 and \#11 take substantially less time
-to be found, whereas bugs \#15 and \#14 cannot be found on every run.
+\mutagen becomes unstable, where bugs \#12 and \#11 take substantially less time
+to be found, whereas bugs \#15 and \#14 cannot be found on every run. 
 %
-Finding where the best trade-off lies in cases where the heuristics cause mixed
-results like this is another interesting direction to aim our future work.
+This suggests that \emph{our LIFO scheduling heuristic can help to reliably find
+certain bugs at the cost of taking longer (on average) to find some others}.
+
+%
+% Finding where the best trade-off lies in cases where the heuristics cause mixed
+% results like this is another interesting direction to aim our future work.
 
 \begin{figure}[t]
   \centering
@@ -2990,15 +2996,15 @@ results like this is another interesting direction to aim our future work.
 
 
 Finally, this case study allows us to analyze the overhead introduced by the
-code instrumentation and internal processing used in \mutagen versus the
-stateless black-box approach of \quickcheck.
+custom code instrumentation and internal processing used in \mutagen versus the
+stateless black-box approach used by \quickcheck.
 %
 Table \ref{table:wasm:overhead} compares the total number of executed and passed
 tests per second that we observed using each tool.
 %
-\mutagen executes tests several times slower than \quickcheck --- roughly 20x
-and 75x slower when testing \texttt{prop\_validator} and
-\texttt{prop\_interpreter\_i32}, respectively.
+Although \mutagen executes tests several times slower than \quickcheck (roughly
+20x and 75x slower when testing \texttt{prop\_validator} and
+\texttt{prop\_interpreter\_i32} respectively),
 %% %
 %% This slowdown is partly caused because the code instrumentation our tool
 %% currently uses is built upon a superficial transformation that logs traces at
@@ -3008,9 +3014,8 @@ and 75x slower when testing \texttt{prop\_validator} and
 %% the instrumentation directly into the Haskell runtime --- a substantial
 %% challenge to tackle in the future.
 %
-However, our tool is capable of running substantially more tests that pass the
-sparse preconditions than \quickcheck in the same amount of time, \emph{which
-  can ultimately lead us to find more bugs}.
+it runs substantially more valid tests that pass the sparse preconditions in the
+same amount of time, \emph{which can ultimately lead us to find bugs faster}.
 
 % ----------------------------------------
 
