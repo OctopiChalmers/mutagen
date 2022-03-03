@@ -3056,9 +3056,8 @@ same amount of time, \emph{which can ultimately lead us to find bugs faster}.
 \section{Related work}
 \label{sec:related}
 
-There exists a vast literature on fuzzing and property-based testing.
-%
-In this section we focus on three main topics:
+There exists a vast literature on fuzzing and property-based testing, so we
+focus on three main topics:
 %
 automated random data generation using static information,
 %
@@ -3174,10 +3173,11 @@ a challenge for future work.
 
 \paragraph{Exhaustive Bounded Testing}
 
-A popular category of property-based testing tools does not rely on randomness.
+A different category of property-based testing tools does not rely on
+randomness.
 %
-Instead, all possible inputs can be enumerated and tested from smaller to larger
-up to a certain size bound.
+Instead, test cases are exhaustively enumerated and tested from smaller to
+larger up to a certain size bound.
 %
 %
 % Feat
@@ -3188,32 +3188,32 @@ up to a certain size bound.
 For any algebraic type, it synthesizes a bijection between a finite prefix of
 the natural numbers and a set of increasingly larger values of the input type.
 %
-Later, this bijection can be traversed exhaustively or, more interestingly,
-randomly accessed.
+This bijection can be traversed exhaustively or, more interestingly, randomly
+accessed.
 %
-This allows the user to easily generate random values uniformly simply by
+This allows the user to easily generate random test cases uniformly simply by
 sampling natural numbers.
 %
-However, values are enumerated based only on their type definition, so this
+However, test cases are enumerated based only on their type definition, so this
 technique is not suitable for testing properties with sparse preconditions
 expressed elsewhere.
 %
 % SmallCheck and LazySmallCheck
-\emph{SmallCheck} \cite{runciman2008smallcheck} is a Haskell tool that follows
-this idea.
+\emph{SmallCheck} \cite{runciman2008smallcheck} is a Haskell tool that also
+follows this approach.
 %
-It progressively executes the testing properties against all possible input
-values up to a certain size bound.
+It progressively executes the testing properties against all possible input test
+cases of up to a certain depth.
 %
 % Korat
-\emph{Korat} \cite{boyapati2002korat} is a Java tool that uses method
+Similarly, \emph{Korat} \cite{boyapati2002korat} is a Java tool that uses method
 specification predicates to automatically generate all non-isomorphic test cases
 up to a given small size.
 
 
-These approaches rely on pruning mechanisms to avoid populating unevaluated
-subexpresions exhaustively before the computational cost of being exhaustive
-becomes too restrictive.
+These approaches rely on pruning mechanisms to avoid generating too many
+equivalent test cases before the computational cost of their exhaustiveness
+becomes impractical.
 %
 \emph{LazySmallCheck} is a variant of \emph{SmallCheck} that uses lazy
 evaluation to automatically prune the search space by detecting unevaluated
@@ -3224,26 +3224,31 @@ precondition predicates and analyzing which parts of the execution trace
 correspond to each evaluated subexpression.
 
 
-In this work we use exhaustiveness as a way to reliably enforce that all
-possible mutants of an interesting test case are executed.
+\mutagen uses exhaustiveness as a way to reliably enforce that all possible
+mutants of an interesting test case are scheduled.
 %
-In contrast to fully-exhaustive testing tools, \mutagen relies on randomness to
-find initial interesting mutable test cases.
+In contrast to fully-exhaustive testing tools, our tool relies on randomly
+generated test cases as a shortcut to find initial interesting test cases
+without enumerating them exhaustively.
 %
-In terms of pruning, it is possible to instruct \mutagen to detect unused
-subexpressions to avoid producing mutations over their corresponding positions.
+In terms of pruning, \mutagen can detect unused subexpressions and avoid
+producing mutations over their corresponding positions.
 %
-This could improve the overall performance when testing non-strict properties
-that leave parts of their input unevaluated.
+This can improve the overall performance when testing non-strict properties that
+leave parts of their input unevaluated.
 %
-In our case studies, however, we observed that the properties we tested
+In our case studies, however, the testing properties are quite strict:
 %% their preconditions tend to be
-are quite strict when executing test cases obtained by mutating valid existing ones,
-fully evaluating their input before executing the postcondition.
+%are strict when executing test cases obtained by mutating valid existing ones,
 %
-Thus, we do not forsee considerable improvements by applying lazy-prunning in
-this scenario --- gathering evidence about lazy pruning in \mutagen is as part
-of our future work.
+their preconditions fully evaluating their inputs before executing the
+postconditions.
+%
+Thus, we did not see substantial improvements by applying lazy-prunning in this
+scenario. 
+%
+Our future work will inverstigate the effect of \mutagen's lazy-prunning against
+non-strict testing properties. 
 
 
 % ----------------------------------------
@@ -3251,16 +3256,16 @@ of our future work.
 \section{Conclusions}
 \label{sec:conclusions}
 
-We presented \mutagen, a coverage-guided, property-based testing framework.
+We presented \mutagen, a coverage-guided, property-based testing tool that
 %written in Haskell.
 %
 %% Inspired by exhaustive bounded testing tools,
 %
-Our tool extends the CGPT approach
+extends the original CGPT approach
 %introduced by
 %\citeauthor{lampropoulos2019coverage}
 with an exhaustive mutation mechanism that generates every possible mutant for
-each interesting test case, and schedules it to be tested exactly once.
+each interesting test case, scheduling them to be tested exactly once.
 
 %% , our tool uses coverage information
 %% to guide automatically derived mutators producing high-level, type-preserving
@@ -3286,14 +3291,14 @@ approach implemented in \fuzzchick in terms of both failure rate and tests until
 first failure.
 %
 Moreover, we show how our tool can be applied in a real-world testing scenario,
-where it quickly discovers several planted and some previously unknown bugs.
+where it quickly discovers 15 planted and 3 previously unknown bugs.
 
 
-As indicated throughout this work, there are several directions for future work:
+As indicated earlier, there are several directions for future work:
 %
 combining \mutagen with specialized generators; enhancing the code
-instrumentation to be able target mutations towards specific parts of the code;
-and evaluating the effect of lazy pruning; among others.
+instrumentation to target mutations towards specific parts of the code; and
+evaluating the effect of lazy pruning; among others.
 %% %
 %% In addition, we want to investigate how to redefine our automatically
 %% synthesized mutators in a stateful manner.
