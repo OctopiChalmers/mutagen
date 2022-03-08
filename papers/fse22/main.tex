@@ -1531,12 +1531,13 @@ This way, a mutator for integers simply becomes:
 mutate n = [ RAND genInt ]
 \end{verbatim}
 
-This approach allows \mutagen to automatically control amount of effort put into
-mutating subexpressions defined using random mutations.
+\noindent This approach allows \mutagen to selectively control the amount of
+effort put into mutating any subexpression of an input test case whose type is
+associated to a random mutation.
 %
-This can be especially useful to avoid putting unnecessary effort when the
-execution of testing property and the system under test is independent from
-their concrete values. 
+This can be especially useful to avoid putting unnecessary effort into mutating
+data payloads when the execution of testing property and the system under test
+is independent from their concrete values (see \S \ref{sec:heuristics}). 
 
 
 \paragraph{Mapping top-level mutations everywhere}
