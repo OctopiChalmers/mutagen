@@ -787,7 +787,7 @@ Using code instrumentation in tandem with mutations is a well-known technique in
 the fuzzing community.
 %
 Generic fuzzing tools like \emph{AFL} \cite{afl}, \emph{HonggFuzz}
-\cite{honggfuzz}, or \emph{libFuzzer} \citeyearpar{libfuzzer} as well as
+\cite{honggfuzz}, or \emph{libFuzzer} \citeyear{libfuzzer} as well as
 language-specific ones like Crowbar \cite{dolan2017testing} or \emph{Kelinci}
 \cite{kersten2017poster} use execution traces to recognize interesting test
 cases, 
@@ -2216,7 +2216,7 @@ The first one is a simple abstract stack machine that enforces
 \emph{noninterference} \cite{goguen1982security} using runtime checks.
 %
 Its implementation was proven correct by \citeauthor{10.1145/2578855.2535839}
-\citeyearpar{10.1145/2578855.2535839} in Coq, and later degraded by
+\citeyear{10.1145/2578855.2535839} in Coq, and later degraded by
 systematically introducing 20 bugs on its policy enforcing mechanism.
 %
 \citeauthor{lampropoulos2019coverage} used this case study to compare \fuzzchick
@@ -2280,7 +2280,7 @@ representing a particular configuration of the program counter, the stack, and
 the data- and instruction memories, respectively.
 %
 To preserve space, we encourage the reader to refer to the work of
-\citeauthor{hritcu2013testing} \citeyearpar{hritcu2013testing,
+\citeauthor{hritcu2013testing} \citeyear{hritcu2013testing,
   hrictcu2016testing} and \citeauthor{lampropoulos2019coverage} for more details
 about the implementation and semantics of this case study.
 
@@ -3288,20 +3288,20 @@ the generated data must satisfy (often sparse) preconditions.
 %
 % Generating Constrained Random Data with Uniform Distribution
 %
-\citeauthor{ClaessenDP14} \citeyearpar{ClaessenDP14} developed an algorithm for
+\citeauthor{ClaessenDP14} \cite{ClaessenDP14} developed an algorithm for
 generating inputs constrained by boolean preconditions with almost-uniform
 distribution.
 %
 % Luck
 %
-Later, \citeauthor{LampropoulosGHH17} \citeyearpar{LampropoulosGHH17} extended
+Later, \citeauthor{LampropoulosGHH17} \cite{LampropoulosGHH17} extended
 this approach by adding a limited form of constraint solving controllable by the
 user in a domain-specific language called \emph{Luck}.
 %
 % Deriving good generators
 %
-Recently, \citeauthor{Lampropoulos2017} \citeyearpar{Lampropoulos2017} proposed
-a mechanism to obtain constrained random generators by defining their target
+Recently, \citeauthor{Lampropoulos2017} \cite{Lampropoulos2017} proposed a
+mechanism to obtain constrained random generators by defining their target
 structure using inductively defined relations in Coq.
 
 
