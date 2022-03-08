@@ -42,6 +42,12 @@
   {}{}
 \makeatother
 
+\newcommand\mydots{\hbox to 0.75em{.\hss.\hss.}}
+\makeatletter
+\newcommand{\vast}{\bBigg@{4}}
+\newcommand{\Vast}{\bBigg@{5}}
+\makeatother
+
 \let\oldv\verbatim
 \let\oldendv\endverbatim
 
@@ -295,8 +301,8 @@ produce a new interesting test case than generating a new one from scratch.
 
 
 Unlike the generic bit-level mutators often used in the fuzzing community
-\cite{}, structure-preserving mutations specified at the data type level can
-effectively produce syntactically valid mutants. 
+\cite{zzuf,radamsa}, structure-preserving mutations specified at the data type
+level can effectively produce syntactically valid mutants. 
 %
 % %
 % High-level mutators avoid wasting time with generic low-level mutators that work
@@ -512,7 +518,7 @@ This mechanism let us selectively escape the scalability issues of
 exhaustiveness by yielding a random generator that replaces a specific
 subexpression of an input test case with a randomly generated one.
 %
-Such generator is then sampled a \emph{small} number of times. 
+Such generator is later sampled a \emph{relatively small} number of times. 
 %
 This way \mutagen avoids, for instance, mutating every numeric subexpresion of a
 test case into every other possible number.
@@ -545,10 +551,11 @@ mutations
 %
 by monitoring how often we generate interesting test cases.
 %
-If this frequency stalls, \mutagen resets the testing loop and increases the
+Whenever this frequency stalls, \mutagen resets the testing loop and increases the
 effort put into sampling random mutations.
 %
-This automatically finds a suitable value for this parameter on the fly.
+This way, our tools automatically finds a suitable value for this parameter on
+the fly.
 
 
 %% Validation
@@ -589,8 +596,9 @@ reliably without sacrificing speed.%
   purposes.}
 
 %% Last two sections
-Finally, we discuss related work in \S \ref{sec:related} and conclude
-in \S \ref{sec:conclusions}.
+We additonally present threats to validity in \S \ref{sec:threats} and discuss
+related work in \S \ref{sec:related}, to finally conclude in \S
+\ref{sec:conclusions}.
 
 
 % ----------------------------------------
@@ -1174,7 +1182,7 @@ prevent bugs from being discovered on a timely basis.
 %
 In turn, spending too little budget on interesting test cases might prevent bugs
 from being discovered at all --- randomly generating the same initial test case
-again later does not help, as it will not be considered interesting again
+again later does not help, as it will no longer be considered interesting
 according to historic trace information.
 %
 Finding a well behaved heuristic between these two scenario can be quite
@@ -1277,47 +1285,48 @@ discussion.
 %% In contrast to \fuzzchick, where mutators are parameterized random generators,
 %% in our tool
 
-In \mutagen, mutations are defined as the set of mutants that can be obtained by
-transforming the input test case \emph{at the top-level} (the root node).
+In \mutagen, mutators are defined as the set of mutants that can be obtained by
+transforming the input test case \emph{at the top-level} (the root data
+constructor).
 %
-We define the mutations of a value of type \texttt{a} (written \texttt{Mutations
-  a}) as \emph{a function that takes a value of such a type and returns a list
-  of mutants}.
+We define mutators of a value of type \texttt{a} (written \texttt{Mutator a}) as
+\emph{a function that takes a value of such a type and returns a list of
+mutants}.
 % (written \texttt{Mutant a}).
 %
 In Haskell, we introduce the type synonym:
 %
 \begin{verbatim}
-type Mutations a = a -> [Mutant a]
+type Mutator a = a -> [Mutant a]
 \end{verbatim}
 %
 \noindent As mentioned earlier, concrete mutants can be obtained either from a
-pure or a random mutation:
+pure or a random mutation, which we define as follows:
 
 \begin{verbatim}
 data Mutant a = PURE a | RAND (Gen a)
 \end{verbatim}
 
-\paragraph{Pure mutants} 
+We first focus on pure mutants, which 
 % are used most of the time, and 
 %
-encode simple deterministic transformations over the outermost data constructor
+encode deterministic transformations over the \emph{outermost} data constructor
 of the input --- recursive mutations will be introduced soon.
 %
-These transformations can:
+These transformations can either
 %
 \begin{inparaenum}
-\item return an immediate subexpression of the same type as the input;
-\item swap the outermost data constructor with any other constructor of the
-  same type, reusing existing subexpressions; and
-\item rearrange and replace fields using existing ones of the same type.
+\item return an immediate subexpression of the same type as the input, or
+\item swap the outermost data constructor with a (possibly) different one of the
+  same type, reusing the immediate subexpressions of the input in any possible
+  combination that produces a well-typed value.  
 \end{inparaenum}
 
 
 \setlength{\intextsep}{10pt}%
 \setlength{\columnsep}{10pt}%
 \begin{wrapfigure}{r}{0.2\textwidth}
-\vspace{-10pt}
+\vspace{-20pt}
 \begin{verbatim}
 mutate t = case t of 
   Leaf x -> [ 
@@ -1365,6 +1374,119 @@ the original CGPT), is also inspired by exhaustive bounded testing tools, and
 avoids introducing unnecessary randomness when ``growing'' a data constructor
 into another.
 
+% Defining mutations formally
+Formally, for a data type $T$ defined in terms of the data constructors $C_i$,
+each one with fields of (possibly) different types $t_j^i$:
+
+\vspace{-10pt}
+\begin{flalign*}
+T \;:=\; C_1 \; t_1^1 \; t_2^1 \; \mydots  \;|\;
+         C_2 \; t_1^2 \; t_2^2 \; \mydots  \;|\; 
+         \mydots &&
+\end{flalign*}
+\vspace{-7pt}
+
+\noindent Our tool automatically synthesizes \texttt{mutate} to follow the
+equation:   
+
+\vspace{-10pt}
+\begin{flalign*}
+\texttt{mutate}(C_i \, x_1 \, x_2 \, \mydots) = 
+  \mathtt{mut_{r}}(C_i \, x_1 \, x_2 \, \mydots) \cup
+  \mathtt{mut_{s}}(C_i \, x_1 \, x_2 \, \mydots) && 
+      % \setminus
+      %  \{ (C_i \, x_1 \, x_2 \, \mydots) \} &&
+\end{flalign*}
+\vspace{-7pt}
+
+\noindent Firstly, $\mathtt{mut_r}$ computes the set of possible mutations that
+return an immediate subexpresion of the same type as the input:
+
+\vspace{-10pt}
+\begin{flalign*}
+\mathtt{mut_{r}}(C_i \, x_1 \, x_2 \, \mydots) =  
+  \{ 
+    \mathtt{PURE}\, x_k
+    \;|\;
+    x_k \!\in\! \texttt{filter}(T, \{ x_1, \, x_2, \, \mydots \})
+  \} &&
+\end{flalign*}
+\vspace{-7pt}
+
+\noindent And $\mathtt{mut_s}$ builds all the possible mutations that swap the
+root data constructor with a (possibly) different one, reusing (or defaulting)
+compatible subexpresions to instantiate the new data constructor: 
+
+\vspace{-10pt}
+\begin{flalign*}
+\mathtt{mut_{s}}(C_i \, x_1 \, x_2 \, \mydots) \!=\! 
+  \Vast\{ 
+    \mathtt{PURE}(C_j \, x_1^\prime \, x_2^\prime \, \mydots)
+    \,\Vast|\,
+    \begin{aligned}
+      & C_j^T \!\in\! \{ C_1, C_2, \mydots \} \\
+      & x_k^\prime \!\in\! \overline{\mathtt{filter}}(t_k^j, \{x_1, \, x_2, \, \mydots \}) \\  
+      & C_j \, x_1^\prime \, x_2^\prime \, \mydots \;\neq\; C_i \, x_1 \, x_2 \, \mydots
+    \end{aligned}
+  \Vast\} &&
+\end{flalign*}
+\vspace{-7pt}
+
+\noindent Where the helper function $\mathtt{filter}$ simply returns the subset
+of the input values $X$ that match a target type $t$: 
+
+\vspace{-10pt}
+\begin{flalign*}
+\mathtt{filter}(t, X) =  
+  \{
+    x
+    \;|\;
+    x \!\in\! X,
+    \texttt{typeof}(x) = t
+  \} &&
+\end{flalign*}
+\vspace{-7pt}
+
+\noindent And the function $\overline{\mathtt{filter}}$ is a wrapper over
+$\mathtt{filter}$ that returns the default value of the target type $t$ if there
+are no compatible subexpressions available to reuse: 
+
+\vspace{-10pt}
+\begin{flalign*}
+\overline{\mathtt{filter}}(t, X) =
+\Bigg\{
+  \begin{aligned}
+    & \mathtt{filter}(t, X) 
+      &&\mathtt{if}\; \mathtt{filter}(t, X) \neq \emptyset \\
+    & \{ \mathtt{def} \}
+      &&\mathtt{otherwise}
+  \end{aligned} &&
+\end{flalign*}
+\vspace{-7pt}
+
+\noindent This ensures that a small constructor can always be grown into a
+larger one by inserting default subexpresions whenever needed.
+%
+(Our previous example defined in Fig. \ref{fig:mutagen:mutator} show this in
+practice for the case of mutating a \texttt{Leaf} into a \texttt{Branch}.)  
+
+
+% \begin{align*}
+% \mathtt{mut_{r}}(C_i \; x_1 \; x_2 \; \mydots) = 
+%   \{ \texttt{PURE}\, x_j \, | \, 
+%   x_j \!\in\! \{ x_1, x_2, \mydots \}, \; 
+%   \texttt{typeof}(x_j) = T \}
+% \end{align*}
+
+% \begin{align*}
+% \mathtt{mut_{s}}(C_i \; x_1 \; x_2 \; \mydots) = 
+%   \{ \texttt{PURE}\, (C_j \, x_1^\prime \, x_2^\prime \, \mydots) \, | \,
+%   &C_j \!\in\! \{ C_1, C_2, \mydots \}, \, \\
+%   &x_k^\prime \!\in\! \{ x_k \, | \, x_k \!\in\! \{ x_1, x_2, \mydots \}, \mathtt{typeof}(x_k) = t_k^j \}) \}
+% \end{align*}
+
+
+
 %% \begin{figure}
 %% \begin{verbatim}
 %% mutate (Leaf x)       = [ PURE (Branch def x def) ]   -- Swap constructor
@@ -1389,8 +1511,8 @@ into another.
 %% %
 %% \emph{Certainly not.}
 %
-\paragraph{Random mutants} let us \emph{selectively avoid exhaustiveness} when
-  mutating values of large enumeration types (e.g. numbers).
+We can now focus on random mutants, which let us \emph{selectively avoid
+exhaustiveness} when mutating values of large enumeration types (e.g. numbers).
   % 
   % --- or any
   % other type the user might want to use random mutations with.
@@ -1422,11 +1544,12 @@ their concrete values.
 So far we have defined mutations that transform only the root of the input.
 %
 To apply these mutations to every internal subexpression we use two utility
-functions that can be automatically synthesized.
+functions.
+% that can be automatically synthesized.
 %
 Firstly, a function \texttt{Positions} traverses the input and builds a Rose
-tree\cite{} of \emph{mutable positions}, where positions are lists of indices
-encoding the path from the root to every mutable subexpression.
+tree\cite{meertens1988first} of \emph{mutable positions}, where positions are
+lists of indices encoding the path from the root to every mutable subexpression.
 %
 % For instance, the positions of a \texttt{Tree} are computed as follows:
 %
@@ -1485,10 +1608,11 @@ For instance, the mutable positions of the value \texttt{Branch (Leaf 1) 2
       };
   }
 \end{equation}
+\vspace{-5pt}
 
-Then, we define a function \texttt{MutateInside} that takes a desired position
-within an input test case and mutates its corresponding subexpression, returning
-a list of mutants.
+\noindent Then, we define a function \texttt{MutateInside} that takes a desired
+position within an input test case and mutates its corresponding subexpression,
+returning a list of mutants.
 %
 %% given the desired position to mutate within a test case, we
 %% define another function \texttt{inside} that finds the subexpression
@@ -1508,6 +1632,12 @@ a list of mutants.
 This function traverses the desired position, calling itself recursively until
 it reaches the desired subexpression, where a mutation encoded by
 \texttt{mutate} can be applied directly.
+%
+The implementation of these two functions consists mostly of boilerplate code
+that our tool automatically synthesizes, thus we avoid diving into details to
+preserve space.    
+
+
 % locally at the top-level (case \texttt{inside [] t}).
 %
 % The rest of the \texttt{MutateInside}'s functionality simply unwraps and
@@ -1961,7 +2091,8 @@ back to previous test cases as soon as mutants become less novel.
 
 
 
-\subsection{Detecting Trace Space Saturation And Tuning Random Mutations Parameter}
+% \subsection{Detecting Trace Space Saturation And Tuning Random Mutations Parameter}
+\subsection{Tuning Random Mutations Parameter}
 
 As introduced in \S \ref{sec:mutagen}, our tool is parameterized by the number
 of mutated test cases to be generated for each subexpression of the input test
@@ -2211,15 +2342,10 @@ In the rule table, this looks as follows:
 \scriptsize
 \begin{tabular}{|c|c|c|c|}
 \hline
-\textbf{Instruction}
-& \textbf{Precondition Check}
-& \textbf{Final PC Label}
-& \textbf{Final Result Label} \\
+\textbf{Instruction} & \textbf{Precondition Check} & \textbf{Final PC Label} & \textbf{Final Result Label} \\
 \hline
 \texttt{Store}
-& $l_{pc} \vee l_{p} \sqsubseteq l_{v}$
-& $l_{pc}$
-& $l_{v'} \vee l_{pc} \vee l_{p}$ \\
+& $l_{pc} \vee l_{p} \sqsubseteq l_{v}$ & $l_{pc}$ & $l_{v'} \vee l_{pc} \vee l_{p}$ \\
 \hline
 \end{tabular}
 \end{center}
@@ -2233,7 +2359,28 @@ The symbol $\vee$ simply denotes the join of two labels, i.e., the
 %
 Later, bugs are systematically introduced in the IFC enforcing mechanism by
 removing or weakening the checks stored in this rule table.
+%
+For instance, the following constitute the buggy variations of the
+\texttt{Store} instruction:
 
+%% \vspace{-10pt}
+\begin{center}
+\scriptsize
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Instruction} & \textbf{Precondition Check} & \textbf{Final PC Label} & \textbf{Final Result Label} \\
+\hline
+\texttt{Store} & $l_{pc} \sqsubseteq l_{v}$ & $l_{pc}$ & $l_{v'} \vee l_{pc} \vee l_{p}$ \\
+\texttt{Store} & $l_{p} \sqsubseteq l_{v}$ & $l_{pc}$ & $l_{v'} \vee l_{pc} \vee l_{p}$ \\
+\hline
+\texttt{Store} & $l_{pc} \vee l_{p} \sqsubseteq l_{v}$ & $\bot$ & $l_{v'} \vee l_{pc} \vee l_{p}$ \\
+\hline
+\texttt{Store} & $l_{pc} \vee l_{p} \sqsubseteq l_{v}$ & $l_{pc}$ & $l_{pc} \vee l_{p}$ \\
+\texttt{Store} & $l_{pc} \vee l_{p} \sqsubseteq l_{v}$ & $l_{pc}$ & $l_{v'} \vee l_{p}$ \\
+\texttt{Store} & $l_{pc} \vee l_{p} \sqsubseteq l_{v}$ & $l_{pc}$ & $l_{v'} \vee l_{pc}$ \\
+\hline
+\end{tabular}
+\end{center}
 
 
 \subsection{WebAssembly Engine}
@@ -2472,7 +2619,7 @@ These bugs either
 \item remove an existing integrity check (to weaken the WebAssembly
   type-system/validator); or
 \item simulate a copy-paste bug \cite{CPMiner},%
-  \footnote{This kind of bugs was inspired by the real bug \#1 we found prior
+  \footnote{This kind of bugs was inspired by the real bug \#1 we found prior to
     this step.}
   %
   replacing the implementation of an instruction with a compatible one
@@ -2503,9 +2650,9 @@ These bugs either
 %% We begin by designing a property to test the WebAssembly validator implemented
 %% in \textit{haskell-wasm}.
 %% %
-Our testing approach is to assert that, whenever a randomly generated (or
-mutated) WebAssembly module is valid according to \textit{haskell-wasm}, then
-the reference implementation agrees upon it.
+Our approach is to assert that, whenever a randomly generated (or mutated)
+WebAssembly module is valid according to \textit{haskell-wasm}, then the
+reference implementation agrees upon it.
 %
 %% In other words, we are testing for false negatives.
 %
@@ -2516,9 +2663,10 @@ prop_validator m = isValidHaskellWasm m ==> isValidRefImpl m
 \end{verbatim}
 
 \noindent The precondition (\texttt{isValidHaskellWasm m}) runs the input
-WebAssembly module \texttt{m} against \textit{haskell-wasm}'s validator, whereas
-the postcondition (\texttt{isValidRefImpl m}) serializes \texttt{m}, runs it
-against the reference implementation and checks that no errors are produced.
+{Web-Assembly} module \texttt{m} against \textit{haskell-wasm}'s validator,
+whereas the postcondition (\texttt{isValidRefImpl m}) serializes \texttt{m},
+runs it against the reference implementation and checks that no errors are
+produced.
 
 We note that, although we only focus on finding false negatives, a comprehensive
 test suite should also test for false positives, i.e., when a module is valid
@@ -2584,9 +2732,9 @@ by a function type, along with its definition and invocation arguments:
 \begin{verbatim}
 prop_interpreter ty fun args =
   do let m = mk_module fun ty "f"
-     resHs   <- invokeHaskellWasm m "f" args
-     resSpec <- invokeRefImpl     m "f" args
-     return (equivalent resHs resSpec)
+     resHaskellWasm <- invokeHaskellWasm m "f" args
+     resRefImpl     <- invokeRefImpl     m "f" args
+     return (resHaskellWasm === resRefImpl)
 \end{verbatim}
 
 This testing property instantiates a module stub \texttt{m} with the input
@@ -2737,14 +2885,61 @@ With this in mind, it is fair to think that \fuzzchick might still be a better
 choice if we set a shorter timeout and run it several times in a row.
 %
 Thus, to improve upon \fuzzchick, our tool must find bugs not only more
-reliably, but also fast.
+reliably, but also rapidly.
+
+
+Table \ref{table:ifc:tests} shows a comparison between the mean number of tests
+required by both tools to find the first failure \emph{when we only consider
+  successful runs.}
+%
+Additionally, as advised by \citeauthor{arcuri2014hitchhiker}
+\cite{arcuri2014hitchhiker}, we computed the non-parametric Vargha-Delaney
+$A_{12}$ measure \cite{vargha2000critique}.
+%
+Intuitively, this measure encodes the probability of \mutagen to yield better
+results than \fuzzchick.
+%
+The \textit{Estimate} column denotes the statistical difference between these
+values in a categorical manner.
+%
+Estimates in {\color{red} red} and {\color{blue} blue} indicate results
+favoring \fuzzchick and \mutagen, respectively.
+%
+As it can be observed,
+%
+%% using an exhaustive mutation approach can be not only
+%% more reliable, but also faster.
+%
+\mutagen is likely to find bugs faster than \fuzzchick in 14 of the 20 bugs
+injected into the abstract machine, being substantially slower in only 2 cases.
+
+
+
+In terms of the \mutagen heuristics,
+%
+%% we can also arrive to some conclusions.
+%% %
+%% Firstly,
+%
+this case study is not strongly affected by using LIFO scheduling.
+%% --- the same
+%% benchmark takes only roughly 20\% longer to complete when disabling this
+%% heuristic.
+%
+We noticed that when a new interesting test case gets enqueued, all its mutants
+(and their descendants) are quickly processed before new ones start piling up,
+keeping the mutation queues empty most of the time (generation mode).
+%
+Hence, the small proportion of time this heuristic is active (when the mutation
+queues are not empty) tends to be inconsequential.
+%% under this case study.
 
 \setlength{\intextsep}{10pt}%
 \setlength{\columnsep}{10pt}%
 \begin{wrapfigure}{r}{0.5\linewidth}
 %% \begin{wrapfigure}{r}{0.5\textwidth}
 %% \centering
-\vspace{-10pt}
+\vspace{-5pt}
 \scriptsize
 
 \setlength{\tabcolsep}{2pt}
@@ -2793,56 +2988,9 @@ reliably, but also fast.
 \captionof{table}{\label{table:ifc:tests} Mean tests until first failure and effect size
   comparison between \fuzzchick and \mutagen when considering only successful
   runs.}
-\vspace{-20pt}
+\vspace{-15pt}
 %% \end{wrapfigure}
 \end{wrapfigure}
-
-Table \ref{table:ifc:tests} shows a comparison between the mean number of tests
-required by both tools to find the first failure \emph{when we only consider
-  successful runs.}
-%
-Additionally, as advised by \citeauthor{arcuri2014hitchhiker}
-\cite{arcuri2014hitchhiker}, we computed the non-parametric Vargha-Delaney
-$A_{12}$ measure \cite{vargha2000critique}.
-%
-Intuitively, this measure encodes the probability of \mutagen to yield better
-results than \fuzzchick.
-%
-The \textit{Estimate} column denotes the statistical difference between these
-values in a categorical manner.
-%
-Estimates in {\color{red} red} and {\color{blue} blue} indicate results
-favoring \fuzzchick and \mutagen, respectively.
-%
-As it can be observed,
-%
-%% using an exhaustive mutation approach can be not only
-%% more reliable, but also faster.
-%
-\mutagen is likely to find bugs faster than \fuzzchick in 14 of the 20 bugs
-injected into the abstract machine, being substantially slower in only 2 cases.
-
-
-
-In terms of the \mutagen heuristics,
-%
-%% we can also arrive to some conclusions.
-%% %
-%% Firstly,
-%
-this case study is not strongly affected by using LIFO scheduling.
-%% --- the same
-%% benchmark takes only roughly 20\% longer to complete when disabling this
-%% heuristic.
-%
-We noticed that when a new interesting test case gets enqueued, all its mutants
-(and their descendants) are quickly processed before new ones start piling up,
-keeping the mutation queues empty most of the time (generation mode).
-%
-Hence, the small proportion of time this heuristic is active (when the mutation
-queues are not empty) tends to be inconsequential.
-%% under this case study.
-
 
 Moreover, disabling the trace saturation heuristic (\textit{no reset}) we
 observed two effects:
@@ -2860,7 +3008,7 @@ that one should increase this number even further to reliably discover all bugs
 within the time budget.
 %
 In consequence, \emph{we argue that our heuristic is effective at automatically
-tuning this parameter}.
+tuning this parameter on the fly}.
 %
 %% , especially when the user is unsure about what the best value for it might be.
 
@@ -3057,14 +3205,15 @@ same amount of time, \emph{which can ultimately lead us to find bugs faster}.
 
 % Limited evaluation
 Our experiments cover generating test cases in two substantially different
-scenarios (valid IFC machine states and WebAssembly programs). 
+scenarios (valid IFC machine states and WebAssembly programs), which are able to
+find several planted and real previously-unknown bugs. 
 %
 Nonetheless, we cannot generalize that \mutagen will be effective at finding
 bugs in other systems or testing properties. 
 %
-However, our tool can automatically synthesize all the boilerplate code required
-to operate, becoming a drop-in replacement of \quickcheck (the most ubiquitous
-RPBT tool in Haskell). 
+To compensate, our tool automatically synthesizes all the boilerplate code
+required to operate using Template Haskell \cite{SheardJ02}, becoming an almost
+drop-in replacement of \quickcheck (the most ubiquitous RPBT tool in Haskell). 
 %     
 This makes it an appealing alternative whenever \quickcheck is unable to
 penetrate some sparse precondition and simply gives up. 
@@ -3075,9 +3224,13 @@ As mentioned in \S \ref{sec:casestudies}, our evaluation required us to
 translate the IFC state machine used by \citeauthor{lampropoulos2019coverage}
 from Coq to Haskell. 
 %
-Although this translation could be done quite mechanically (this process was
-partially aided by Coq's code extraction mechanism), we cannot guarantee that
-our Haskell version of the code behaves exactly as the original one. 
+Although this translation was performed mechanically (the process was partially
+aided by Coq's code extraction mechanism), we cannot formally guarantee that our
+Haskell version of the code behaves exactly as the original one. 
+%
+
+
+% However, we are highly confident that 
 %
 % In addition, one should also consider some  
 % that the specific performance the

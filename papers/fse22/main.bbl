@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{44}
+\begin{thebibliography}{48}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -137,6 +137,16 @@
 \newblock \showarticletitle{The new quickcheck for Isabelle}. In
   \bibinfo{booktitle}{\emph{International Conference on Certified Programs and
   Proofs}}. Springer, \bibinfo{pages}{92--108}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{{CACA Labs}}{{CACA Labs}}{2010}]%
+        {zzuf}
+\bibfield{author}{\bibinfo{person}{{CACA Labs}}.}
+  \bibinfo{year}{2010}\natexlab{}.
+\newblock \bibinfo{title}{{zzuf - multi-purpose fuzzer}}.
+\newblock \bibinfo{howpublished}{\mbox{\url{http://caca.zoy.org/wiki/zzuf}}}.
+  (\bibinfo{year}{2010}).
 \newblock
 
 
@@ -435,6 +445,15 @@
 \newblock
 
 
+\bibitem[\protect\citeauthoryear{Meertens}{Meertens}{1988}]%
+        {meertens1988first}
+\bibfield{author}{\bibinfo{person}{Lambert Meertens}.}
+  \bibinfo{year}{1988}\natexlab{}.
+\newblock \showarticletitle{First steps towards the theory of rose trees}.
+\newblock \bibinfo{journal}{\emph{CWI, Amsterdam}} (\bibinfo{year}{1988}).
+\newblock
+
+
 \bibitem[\protect\citeauthoryear{Mista and Russo}{Mista and Russo}{2019}]%
         {Mista2019GeneratingRS}
 \bibfield{author}{\bibinfo{person}{Agust\'in Mista} {and}
@@ -467,6 +486,17 @@
 \newblock \showarticletitle{Branching processes for QuickCheck generators}. In
   \bibinfo{booktitle}{\emph{Proc. of the {ACM} {SIGPLAN} Int. Symp. on
   Haskell}}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{{Oulu University Secure Programming
+  Group}}{{Oulu University Secure Programming Group}}{2010}]%
+        {radamsa}
+\bibfield{author}{\bibinfo{person}{{Oulu University Secure Programming
+  Group}}.} \bibinfo{year}{2010}\natexlab{}.
+\newblock \bibinfo{title}{{A Crash Course to Radamsa}}.
+\newblock \bibinfo{howpublished}{\mbox{\url{https://github.com/aoh/radamsa}}}.
+   (\bibinfo{year}{2010}).
 \newblock
 
 
@@ -526,6 +556,16 @@
 \newblock \showarticletitle{Smallcheck and lazy smallcheck: automatic
   exhaustive testing for small values}. In \bibinfo{booktitle}{\emph{Acm
   sigplan notices}}, Vol.~\bibinfo{volume}{44}. ACM, \bibinfo{pages}{37--48}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Sheard and Jones}{Sheard and Jones}{2002}]%
+        {SheardJ02}
+\bibfield{author}{\bibinfo{person}{T. Sheard} {and} \bibinfo{person}{Simon
+  L.~Peyton Jones}.} \bibinfo{year}{2002}\natexlab{}.
+\newblock \showarticletitle{Template meta-programming for {Haskell}}.
+\newblock \bibinfo{journal}{\emph{{SIGPLAN} Notices}} \bibinfo{volume}{37},
+  \bibinfo{number}{12} (\bibinfo{year}{2002}), \bibinfo{pages}{60--75}.
 \newblock
 
 
