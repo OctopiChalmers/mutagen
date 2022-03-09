@@ -79,7 +79,9 @@
 %% \acmDOI{10.1145/1122445.1122456}
 
 %% These commands are for a JOURNAL article.
-\acmConference[ESEC/FSE 2022]{The 30th ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering}{14 - 18 November, 2022}{Singapore}
+\acmConference[ESEC/FSE 2022]{The 30th ACM Joint European Software Engineering
+Conference and Symposium on the Foundations of Software Engineering}{14 - 18
+November, 2022}{Singapore}
 %% \acmJournal{JACM}
 %% \acmVolume{37}
 %% \acmNumber{4}
@@ -167,8 +169,8 @@ There exists a variety of techniques that extract static information from the
 codebase to produce random test cases.
 %
 Sadly, such techniques cannot derive generators capable of producing random
-values satisfying complex invariants, often needed to test properties with
-sparse preconditions.
+values satisfying complex invariants often needed to test properties with sparse
+preconditions.
 
 
 Coverage-guided, property-based testing (CGPT) is a technique that tackles this
@@ -182,7 +184,7 @@ scheduling, preventing its applicability in real-world software.
 This work presents \mutagen, a CGPT framework that overcomes such limitations by
 generating mutants \emph{exhaustively}.
 %
-Our tool incorporates heuristics to help minimizing scalability issues as well
+Our tool incorporates heuristics that help to minimize scalability issues as well
 as covering the search space in a principled manner.   
 %
 % schedule mutants based on their
@@ -191,8 +193,8 @@ as covering the search space in a principled manner.
 %of large enumeration types more
 %than necessary.
 %
-Our evaluation show that \mutagen not only outperforms existing CGPT tools, but
-also finds previously unknwown bugs in real-world software.
+Our evaluation shows that \mutagen not only outperforms existing CGPT tools but
+also finds previously unknown bugs in real-world software.
 \end{abstract}
 
 % ----------------------------------------
@@ -249,16 +251,16 @@ the expected behavior of the system under test.
 % However, users of RPBT in general) are well aware that one of the biggest
 % challenges while using RPBT is to provide suitable random data generators
 % needed to instantiate the testing properties.
-However, a limiting factor of RPBT is having to provide the random data
-generators used to instantiate the testing properties. 
+However, a limiting factor of RPBT is the need for the random data generators
+used to instantiate the testing properties. 
 %
 Writing highly-tuned generators capable of exercising every part of a complex
 system on a reasonable basis can take several thousand person-hours of trial and
 error \cite{lampropoulos2019coverage}.
 %
-Luckily, there exist several approaches to automatically synthesize random data
-generators by reifying the static information present in the codebase, e.g.,
-data type definitions, application public interfaces (APIs), etc.
+Luckily, there exist several approaches that automatically synthesize random
+data generators by reifying the static information present in the codebase,
+e.g., data type definitions, application public interfaces (APIs), etc.
 \cite{GriecoCB16, DBLP:conf/haskell/MistaRH18, Mista2019GeneratingRS,
 DuregardJW12, Lampropoulos2017, Bendkowski2017}.
 %
@@ -268,7 +270,7 @@ codebase.
 %
 Randomly generating valid programs to test compilers is an example of this
 limitation \cite{chen2020asurvey}, where developers are forced to put
-substantial efforts in writing specialized generators by hand \cite{Palka11,
+substantial efforts into writing specialized generators by hand \cite{Palka11,
 perenyi2020stack, yang2011finding}.
 %
 Moreover, automatically synthesized generators behave poorly when used to test
@@ -324,7 +326,7 @@ structure used by the system under test.
 %
 % In CGPT, external grammars are not required.
 %
-In contast, CGPT relies on the data type information of the inputs to the
+In contrast, CGPT relies on the data type information of the inputs to the
 testing properties to derive specialized structure-preserving mutators directly
 --- making strongly-typed programming languages an ideal match for this
 technique.
@@ -479,11 +481,12 @@ applies mutations \emph{exhaustively} (see \S \ref{sec:mutagen}).
 %% Unlike \fuzzchick, mutations in \mutagen are applied \emph{exhaustively}.
 %
 That is, given an interesting test case, our tool precomputes and schedules
-every structure-preserving mutation that can be applied to it exactly once.
+every structure-preserving mutation that can be applied to it to be evaluated
+exactly once.
 %
 This approach has two inherent advantages. %when compared to \fuzzchick.
 %
-On one hand,
+Firstly,
 %  mutations do not rely on randomness to be generated.
 %
 every subexpression of the input test case is mutated on the same basis,
@@ -492,7 +495,7 @@ guaranteeing that no interesting transformation is omitted due to randomness.
 %% On the other hand, scheduling mutations exhaustively eliminates the need for a
 %% power schedule to assign a given mutation energy to each input test case.
 %
-On the other hand, scheduling mutations exhaustively eliminates the need for a
+Moreover, scheduling mutations exhaustively eliminates the need for a
 power schedule to assign a mutation budget to every interesting test case.
 
 
@@ -1185,8 +1188,8 @@ from being discovered at all --- randomly generating the same initial test case
 again later does not help, as it will no longer be considered interesting
 according to historic trace information.
 %
-Finding a well behaved heuristic between these two scenario can be quite
-challenging in the general case. 
+Finding a well-behaved heuristic that lies between these two scenarios can be
+quite challenging in the general case. 
 %
 \emph{Ideally, the scheduling mechanism should be as unbiased as possible.}
 
@@ -1213,8 +1216,8 @@ challenging in the general case.
 \section{\mutagen: No Mutant Left Behind}
 \label{sec:mutagen}
 
-In this section we describe the main ideas behind \mutagen, our CGPT tool
-written in Haskell to tackle the limitations of CGPT described so far.
+In this section we describe the main ideas behind \mutagen, our revised CGPT
+tool written in Haskell that tackles the limitations of CGPT described so far.
 %
 Notably, these ideas can be applied beyond Haskell and functional programming
 languages in general.
@@ -1343,7 +1346,7 @@ mutate t = case t of
 \vspace{-10pt}
 \caption{\label{fig:mutagen:mutator}\mutagen mutator for the \texttt{Tree} data
   type.}
-\vspace{-10pt}
+\vspace{-20pt}
 \end{wrapfigure}
 
 
@@ -1369,7 +1372,7 @@ integers \texttt{def} is defined as \texttt{Leaf 0}.
 (Our implementation uses the type class system to abstract this complexity
 away.)
 %
-Using a small default value, as oppossed to a randomly generated one (as done by
+Using a small default value, as opposed to a randomly generated one (as done by
 the original CGPT), is also inspired by exhaustive bounded testing tools, and
 avoids introducing unnecessary randomness when ``growing'' a data constructor
 into another.
@@ -1386,8 +1389,10 @@ T \;:=\; C_1 \; t_1^1 \; t_2^1 \; \mydots  \;|\;
 \end{flalign*}
 \vspace{-7pt}
 
-\noindent Our tool automatically synthesizes \texttt{mutate} to follow the
-equation:   
+\noindent Our tool automatically synthesizes \texttt{mutate} by pattern matching
+on the root data constructor of the input. 
+%
+On each case, \texttt{mutate} follows:   
 
 \vspace{-10pt}
 \begin{flalign*}
@@ -1413,7 +1418,7 @@ return an immediate subexpresion of the same type as the input:
 \end{flalign*}
 \vspace{-7pt}
 
-\noindent And $\mathtt{mut_s}$ builds all the possible mutations that swap the
+\noindent Then, $\mathtt{mut_s}$ builds all the possible mutations that swap the
 root data constructor with a (possibly) different one, reusing (or defaulting)
 compatible subexpresions to instantiate the new data constructor: 
 
@@ -1424,7 +1429,7 @@ compatible subexpresions to instantiate the new data constructor:
     \mathtt{PURE}(C_j \, x_1^\prime \, x_2^\prime \, \mydots)
     \,\Vast|\,
     \begin{aligned}
-      & C_j^T \!\in\! \{ C_1, C_2, \mydots \} \\
+      & C_j \!\in\! \{ C_1, C_2, \mydots \} \\
       & x_k^\prime \!\in\! \overline{\mathtt{filter}}(t_k^j, \{x_1, \, x_2, \, \mydots \}) \\  
       & C_j \, x_1^\prime \, x_2^\prime \, \mydots \;\neq\; C_i \, x_1 \, x_2 \, \mydots
     \end{aligned}
@@ -1432,8 +1437,8 @@ compatible subexpresions to instantiate the new data constructor:
 \end{flalign*}
 \vspace{-7pt}
 
-\noindent Where the helper function $\mathtt{filter}$ simply returns the subset
-of the input values $X$ that match a target type $t$: 
+\noindent In the previous definitions, the helper function $\mathtt{filter}$
+simply returns the subset of the input values $X$ that match a target type $t$: 
 
 \vspace{-10pt}
 \begin{flalign*}
@@ -1447,7 +1452,7 @@ of the input values $X$ that match a target type $t$:
 \end{flalign*}
 \vspace{-7pt}
 
-\noindent And the function $\overline{\mathtt{filter}}$ is a wrapper over
+\noindent Whereas the function $\overline{\mathtt{filter}}$ is a wrapper over
 $\mathtt{filter}$ that returns the default value of the target type $t$ if there
 are no compatible subexpressions available to reuse: 
 
@@ -1652,7 +1657,7 @@ With the exhaustive mutation mechanism in place, we can now introduce the base
 testing loop used by \mutagen --- outlined in Algorithm \ref{algo:mutagen:loop}.
 %
 Like in CGPT, we use two queues, QValid and QDiscarded to keep valid and
-discarded mutable test cases, respectively.
+discarded interesting test cases, respectively.
 %
 %% The testing loop enqueues and retrieves interesting test cases from them before
 %% falling back to random generation.
@@ -1750,7 +1755,7 @@ For each one of these, there are two possible cases:
 At the end, we simply return the accumulated batch.
 
 
-Finally, the seed selection algorithm (Algorithm \ref{algo:mutagen:pick}) picks
+Then, the seed selection algorithm (Algorithm \ref{algo:mutagen:pick}) picks
 the next test case using the same criteria as CGPT, prioritizing valid test
 cases over discarded ones, falling back to random generation when both queues
 are empty.
@@ -2004,6 +2009,52 @@ under test, and hence we want to prioritize them.
   internal execution trace log (represented using brackets).}
 \end{figure}
 
+
+
+Every time we insert a new execution path into the internal trace log (TLog), we
+calculate the number of \emph{new nodes} that were executed, as well as the
+\emph{branching depth} where they got inserted.
+%
+The former is used to distinguish interesting test cases (whether or not new
+nodes were inserted), whereas the latter is used by this heuristic to prioritize
+some test cases over others.
+%
+Fig. \ref{fig:mutagen:tracelog} illustrates this idea, inserting two execution
+traces (one after another) into a trace log that initially contains a single
+execution path.
+%
+Both executions are considered interesting, but the second one (with trace $1
+\rightarrow 2 \rightarrow 6 \rightarrow 7$) branches at a shallower depth than
+the first one (2 vs. 3), and so its corresponding test case is given a higher
+priority.
+
+
+Using this mechanism, we can modify \mutagen's base testing loop by replacing
+each mutation queue with a priority queue indexed by the branching depth of each
+new execution.
+%
+These changes are illustrated in Algorithm \ref{algo:mutagen:lifo}.
+%
+Statements in {\color{red} red} indicate important changes to the base
+algorithm, whereas ellipses denote unchaged parts of the code that are not
+relevant for the point being made.
+
+
+To pick the next test case, we retrieve the first one with the highest priority
+(the smallest branching depth).
+%
+Then, when we find a new interesting test case, it gets enqueued at the
+\emph{beginning} of the queue of its corresponding priority.
+%
+This allows the testing loop to jump immediately onto mutating new interesting
+test cases as soon as they are found (even at the same priority), and to jump
+back to previous test cases as soon as mutants become less novel.
+
+%% \caption{\label{fig:heuristics} The two main heuristics implemented in \mutagen.
+%%   Statements in {\color{red} red} indicate important changes to the base
+%%   algorithm. Ellipses denote parts of the code that are not relevant for the
+%%   point being made. }
+
 \begin{algorithm}[t]
   \SetKwComment{Comment}{/* }{}
   \SetArgSty{textnormal}
@@ -2047,57 +2098,12 @@ under test, and hence we want to prioritize them.
 \end{algorithm}
 
 
-Every time we insert a new execution path into the internal trace log (TLog), we
-calculate the number of \emph{new nodes} that were executed, as well as the
-\emph{branching depth} where they got inserted.
-%
-The former is used to distinguish interesting test cases (whether or not new
-nodes were inserted), whereas the latter is used by this heuristic to prioritize
-some test cases over others.
-%
-Fig. \ref{fig:mutagen:tracelog} illustrates this idea, inserting two execution
-traces (one after another) into a trace log that initially contains a single
-execution path.
-%
-The second insertion (with trace $1 \rightarrow 2 \rightarrow 6 \rightarrow 7$)
-branches at a shallower depth than the first one (2 vs. 3), and so its
-corresponding test case is given a higher priority.
-
-
-Using this mechanism, we can modify \mutagen's base testing loop by replacing
-each mutation queue with a priority queue indexed by the branching depth of each
-new execution.
-%
-These changes are illustrated in Algorithm \ref{algo:mutagen:lifo}.
-%
-Statements in {\color{red} red} indicate important changes to the base
-algorithm, whereas ellipses denote parts of the code that are not relevant for
-the point being made.
-
-
-To pick the next test case, we retrieve the first one with the highest priority
-(the smallest branching depth).
-%
-Then, when we find a new interesting test case, it gets enqueued at the
-\emph{beginning} of the queue of its corresponding priority.
-%
-This allows the testing loop to jump immediately onto mutating new interesting
-test cases as soon as they are found (even at the same priority), and to jump
-back to previous test cases as soon as mutants become less novel.
-
-%% \caption{\label{fig:heuristics} The two main heuristics implemented in \mutagen.
-%%   Statements in {\color{red} red} indicate important changes to the base
-%%   algorithm. Ellipses denote parts of the code that are not relevant for the
-%%   point being made. }
-
-
-
 % \subsection{Detecting Trace Space Saturation And Tuning Random Mutations Parameter}
 \subsection{Tuning Random Mutations Parameter}
 
 As introduced in \S \ref{sec:mutagen}, our tool is parameterized by the number
 of mutated test cases to be generated for each subexpression of the input test
-case associated to random mutant.
+case associated to a random mutation.
 %
 But, how many random test cases should we sample? A single one? A few tenths? A
 few hundred?
@@ -2145,12 +2151,12 @@ The process is as follows:
     %
     Additionally, each time this happens we reset the trace log, so interesting
     test cases found on a previous iteration can be found and enqueued for
-    mutation again with a higher effort dedicated to sampling mutants.
+    mutation again with a higher effort dedicated to random mutations.
 \end{inparaenum}
 
 Notably, this heuristic can be useful when the execution of the system under
 test depends heavily on some invariant encoded by a subexpression of its input
-that get transformed using a random mutant (e.g, the number of pixels declared
+that get transformed using a random mutation (e.g, the number of pixels declared
 by the header of an image matching the size of its actual payload).
 %
 There, starting with a single random mutation will quickly saturate the trace
@@ -2281,9 +2287,9 @@ representing a particular configuration of the program counter, the stack, and
 the data- and instruction memories, respectively.
 %
 To preserve space, we encourage the reader to refer to the work of
-\citeauthor{hritcu2013testing} \citeyear{hritcu2013testing,
-  hrictcu2016testing} and \citeauthor{lampropoulos2019coverage} for more details
-about the implementation and semantics of this case study.
+\citeauthor{hritcu2013testing} \cite{hritcu2013testing, hrictcu2016testing} and
+\citeauthor{lampropoulos2019coverage} \cite{lampropoulos2019coverage} for more
+details about the implementation and semantics of this case study.
 
 \paragraph{Single-Step Noninterference (SSNI)}
 
@@ -2323,8 +2329,8 @@ The IFC rules enforced by this machine are encoded in a table indexed by its
 different instructions.
 %
 This table stores the dynamic check that the machine performs to enforce the IFC
-policy before running each instruction, along with the corresponding resulting
-security labels of the program counter and the instruction result.
+policy before running each instruction, along with the resulting security labels
+corresponding to the program counter and the instruction result.
 %
 For instance, to execute the \texttt{Store} instruction (which stores a value in
 a memory pointer) the machine checks that both the labels of the program counter
@@ -2619,12 +2625,12 @@ These bugs either
 \begin{inparaenum}
 \item remove an existing integrity check (to weaken the WebAssembly
   type-system/validator); or
-\item simulate a copy-paste bug \cite{CPMiner},%
-  \footnote{This kind of bugs was inspired by the real bug \#1 we found prior to
-    this step.}
+\item simulate a copy-paste bug \cite{chou2001empirical},
   %
   replacing the implementation of an instruction with a compatible one
-  (e.g., \texttt{i32.add} by \texttt{i32.sub}).
+  (e.g., \texttt{i32.add} by \texttt{i32.sub}).%
+  \footnote{This kind of bugs was inspired by the real bug \#1 we found prior to
+    this step.}
 \end{inparaenum}
 
 
@@ -2750,7 +2756,7 @@ Finally, the property asserts whether their results are equivalent.%
 \footnote{We additionally set a short timeout to discard potentially diverging
   programs.}
 %
-Interestingly, equivalence in does not imply equality.
+Interestingly, equivalence does not imply equality.
 %
 Non-deterministic operations in WebAssembly like NaN reinterpretations can
 produce different equivalent results (as exposed by the discrepancy \#5 in Table
@@ -2769,8 +2775,8 @@ and it quickly discovered the previously unknown bug \#3 in
 %
 Having fixed this issue, we define a specialized version of
 \texttt{prop\_interpreter} that fixes the type of the generated function to take
-two arguments (of type \texttt{I32} and \texttt{F32}) and return an \texttt{I32}
-as a result:
+two arguments \texttt{x} and \texttt{y} (of type \texttt{I32} and \texttt{F32},
+respectively) and return an \texttt{I32} as a result:
 
 \begin{verbatim}
 prop_interpreter_i32 f x y = 
@@ -2778,7 +2784,7 @@ prop_interpreter_i32 f x y =
 \end{verbatim}
 
 \noindent This property lets us generate functions of a fixed type and invoke
-them with randomly generated input of the expected types.
+them with randomly generated inputs of the expected types.
 %
 %% In our experiments (presented in \S \ref{sec:evaluation}),
 %
@@ -2806,13 +2812,13 @@ We performed all experiments in a workstation with 32GB of RAM and an Intel Core
 i7-8700 CPU running at 3.20GHz.
 %
 Each experiment was repeated 30 times except for the ones testing the
-WebAssembly interpreter, which were run 10 times due to time constraints.
+{Web-Assembly} interpreter, which were run 10 times due to time constraints.
 %
 Moreover, we followed the approach taken by
 \citeauthor{lampropoulos2019coverage} and collected the mean-time-to-failure
 (MTTF) of each bug, i.e., how quickly a bug can be found in wall clock time.
 %
-We used a one-hour timeout to stop the execution of both tools if they have not
+We used a one-hour timeout to stop the execution of both tools if they had not
 yet found a counterexample.
 %
 In addition, we collected the failure rate (FR) observed for each bug, i.e. the
@@ -2993,7 +2999,7 @@ queues are not empty) tends to be inconsequential.
 %% \end{wrapfigure}
 \end{wrapfigure}
 
-Moreover, disabling the trace saturation heuristic (\textit{no reset}) we
+Moreover, by disabling the trace saturation heuristic (\textit{no reset}) we
 observed two effects:
 %
 fixing the number of random mutations to 25 adds a constant overhead when
@@ -3146,7 +3152,7 @@ certain bugs at the cost of taking longer (on average) to find some others}.
 
 Finally, this case study allows us to analyze the overhead introduced by the
 custom code instrumentation and internal processing used in \mutagen versus the
-stateless black-box approach used by \quickcheck.
+black-box approach used by \quickcheck.
 %
 Table \ref{table:wasm:overhead} compares the total number of executed and passed
 tests per second that we observed using each tool.
@@ -3206,8 +3212,10 @@ same amount of time, \emph{which can ultimately lead us to find bugs faster}.
 
 % Limited evaluation
 Our experiments cover generating test cases in two substantially different
-scenarios (valid IFC machine states and WebAssembly programs), which are able to
-find several planted and real previously-unknown bugs. 
+scenarios (valid IFC machine states and WebAssembly programs). 
+%
+There, our tool was able to find several planted and real previously-unknown
+bugs. 
 %
 Nonetheless, we cannot generalize that \mutagen will be effective at finding
 bugs in other systems or testing properties. 
@@ -3216,8 +3224,8 @@ To compensate, our tool automatically synthesizes all the boilerplate code
 required to operate using Template Haskell \cite{SheardJ02}, becoming an almost
 drop-in replacement of \quickcheck (the most ubiquitous RPBT tool in Haskell). 
 %     
-This makes it an appealing alternative whenever \quickcheck is unable to
-penetrate some sparse precondition and simply gives up. 
+This makes it an appealing alternative to consider whenever \quickcheck is
+unable to penetrate some sparse precondition and simply gives up. 
 
 
 % Coq -> Haskell translation
@@ -3245,7 +3253,7 @@ Haskell version of the code behaves exactly as the original one.
 \label{sec:related}
 
 There exists a vast literature on fuzzing and property-based testing, so we
-focus on three main topics:
+focus on three main relevant topics:
 %
 automated random data generation using static information,
 %

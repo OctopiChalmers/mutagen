@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{48}
+\begin{thebibliography}{49}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -46,6 +46,19 @@
   \bibinfo{howpublished}{\mbox{\url{http://llvm.org/docs/LibFuzzer.html}}}.
   (\bibinfo{year}{2019}).
 \newblock
+
+
+\bibitem[\protect\citeauthoryear{Anonymous}{Anonymous}{2022}]%
+        {anon_2021}
+\bibfield{author}{\bibinfo{person}{Anonymous}.}
+  \bibinfo{year}{2022}\natexlab{}.
+\newblock \showarticletitle{MUTAGEN: Coverage-Guided, Property-Based Testing
+  using Exhaustive Structure-Preserving Mutations (Replication package)}.
+\newblock  (\bibinfo{year}{2022}).
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.5281/zenodo.5846272}
+\showDOI{\tempurl}
 
 
 \bibitem[\protect\citeauthoryear{Arcuri and Briand}{Arcuri and Briand}{2014}]%
@@ -165,6 +178,24 @@
 \showISSN{0360-0300}
 \urldef\tempurl%
 \url{https://doi.org/10.1145/3363562}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Chou, Yang, Chelf, Hallem, and Engler}{Chou
+  et~al\mbox{.}}{2001}]%
+        {chou2001empirical}
+\bibfield{author}{\bibinfo{person}{Andy Chou}, \bibinfo{person}{Junfeng Yang},
+  \bibinfo{person}{Benjamin Chelf}, \bibinfo{person}{Seth Hallem}, {and}
+  \bibinfo{person}{Dawson Engler}.} \bibinfo{year}{2001}\natexlab{}.
+\newblock \showarticletitle{An Empirical Study of Operating Systems Errors}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the Eighteenth ACM Symposium on
+  Operating Systems Principles}} \emph{(\bibinfo{series}{SOSP '01})}.
+  \bibinfo{publisher}{Association for Computing Machinery},
+  \bibinfo{address}{New York, NY, USA}, \bibinfo{pages}{73–88}.
+\newblock
+\showISBNx{1581133898}
+\urldef\tempurl%
+\url{https://doi.org/10.1145/502034.502042}
 \showDOI{\tempurl}
 
 
@@ -462,19 +493,6 @@
   Type Values}. In \bibinfo{booktitle}{\emph{Proceedings of the 14th
   International Workshop on Automation of Software Test}}.
 \newblock
-
-
-\bibitem[\protect\citeauthoryear{Mista and Russo}{Mista and Russo}{2022}]%
-        {anon_2021}
-\bibfield{author}{\bibinfo{person}{Agust\'in Mista} {and}
-  \bibinfo{person}{Alejandro Russo}.} \bibinfo{year}{2022}\natexlab{}.
-\newblock \showarticletitle{MUTAGEN: Coverage-Guided, Property-Based Testing
-  using Exhaustive Structure-Preserving Mutations (Replication package)}.
-\newblock  (\bibinfo{date}{Jan} \bibinfo{year}{2022}).
-\newblock
-\urldef\tempurl%
-\url{https://doi.org/10.5281/zenodo.5846272}
-\showDOI{\tempurl}
 
 
 \bibitem[\protect\citeauthoryear{Mista, Russo, and Hughes}{Mista
