@@ -168,9 +168,11 @@ using property-based testing.
 There exists a variety of techniques that extract static information from the
 codebase to produce random test cases.
 %
-Sadly, such techniques cannot derive generators capable of producing random
-values satisfying complex invariants often needed to test properties with sparse
-preconditions.
+% Sadly, such techniques cannot derive generators capable of producing random
+%
+Unfortunately, such techniques suffer from severe limitations when used to
+produce random test cases satisfying complex invariants, which are often needed
+to test properties with sparse preconditions.
 
 
 Coverage-guided, property-based testing (CGPT) is a technique that tackles this
@@ -224,17 +226,18 @@ also finds previously unknown bugs in real-world software.
 
 % ----------------------------------------
 
-% \vspace{-5pt}
+% \vspace{-10pt}
 
 \section{Introduction}
 \label{sec:intro}
 
 %% PBT and generation of interesting data for free
 %
-Popularized by \quickcheck \cite{ClaessenH00}, Random Property-Based Testing
-(RPBT) is a popular technique for finding bugs
+% Popularized by \quickcheck \cite{ClaessenH00},
+%
+Random Property-Based Testing (RPBT) is a popular technique for finding bugs
 \cite{ClaessenH00,hughes2003erlang, papadakis2011proper, bulwahn2012new,
-  denes2014quickchick}.
+denes2014quickchick}.
 %
 % This is achieved by using randomly generated inputs to instantiate executable
 It uses randomly generated inputs to instantiate executable properties encoding
@@ -260,7 +263,7 @@ error \cite{lampropoulos2019coverage}.
 %
 Luckily, there exist several approaches that automatically synthesize random
 data generators by reifying the static information present in the codebase,
-e.g., data type definitions, application public interfaces (APIs), etc.
+e.g., data type definitions and application public interfaces (APIs).
 \cite{GriecoCB16, DBLP:conf/haskell/MistaRH18, Mista2019GeneratingRS,
 DuregardJW12, Lampropoulos2017, Bendkowski2017}.
 %
@@ -427,8 +430,8 @@ produce new execution traces --- any other test case is simply thrown away.
 
 In this work, we establish several aspects%
 %
-\footnote{Some of these limitations were already identified by the authors in
-their original work.}
+% \footnote{Some of these limitations were already identified by the authors in
+% their original work.}
 %
 of the original CGPT approach by \citeauthor{lampropoulos2019coverage} that
 leave considerable room for improvement (see \S \ref{sec:background}).
@@ -446,7 +449,8 @@ In particular:
   and can be hard to generalize.
 %to different kinds of testing properties.
 \end{inparaenum}
-%
+
+
 %% Moreover, we replicated the Information-Flow Control (IFC) stack machine case
 %% study bundled with \fuzzchick and observed a surprising limitation:
 %% %
@@ -562,16 +566,19 @@ the fly.
 
 
 %% Validation
-We validated our ideas using two case studies (described in detail in \S
-\ref{sec:casestudies}): the Information-Flow Control (IFC) stack machine used by
+We validated our ideas using two case studies which require generating
+highly-structured inputs (described in detail in \S \ref{sec:casestudies}): the
+Information-Flow Control (IFC) stack machine used by
 \citeauthor{lampropoulos2019coverage} in their original work, and an existing
-{Web-Assembly} engine of industrial strength written in Haskell.
+{Web-Assembly} engine of industrial strength written in the Haskell programming
+language.
 %
 In both case studies, we compare the effect of the heuristics implemented on top
 of the base testing loop of \mutagen.
 %
 In the IFC stack machine case study, we compare \mutagen against \fuzzchick, the
-reference CGPT implementation developed in Coq \cite{lampropoulos2019coverage}.
+reference CGPT implementation developed for the Coq proof assistant
+\cite{lampropoulos2019coverage}.
 %
 Our results (\S \ref{sec:evaluation}) indicate that \mutagen outperforms
 \fuzzchick both in terms of time to failure and failure rate.
@@ -586,9 +593,9 @@ and interpreter, as well as 3 previously unknown ones.
 %
 % This case study also help us to compare the performance of our tool against a
 % more traditional RPBT approach that does not rely on code instrumentation.
-In this case study we also compare the performance versus the overhead of our
+In this case study we also evaluate the performance versus the overhead of our
 tool (and our custom code instrumentation mechanism) by comparing it against
-\quickcheck (black-box).  
+\quickcheck \cite{ClaessenH00}, the most widely used RPBT tool in Haskell.  
 %
 All in all, our evaluation encompasses more than 600 hours of computing time and
 indicates that \emph{testing mutants exhaustively together with our heuristics
@@ -652,8 +659,8 @@ For instance, the following can be used to validate the implementation of an
 \texttt{insert} function:
 
 \begin{verbatim}
-prop_insert_inv :: a -> Tree a -> Property
-prop_insert_inv x t = balanced t ==> balanced (insert x t)
+prop_insert :: a -> Tree a -> Property
+prop_insert x t = balanced t ==> balanced (insert x t)
 \end{verbatim}
 
 \noindent This property asserts that, given an element \texttt{x} and a balanced
@@ -728,8 +735,9 @@ generator (\texttt{genInt}) defined elsewhere.
 %% --- as noted by the use of \texttt{arbitrary} when generating random payloads
 %% inside of the \texttt{Leaf} and \texttt{Branch} constructors.
 
-Readers familiar with RBPT will recognize that using \texttt{genTree} to test
-\texttt{prop\_insert\_inv} with \quickcheck directly does not work.
+Readers familiar with RBPT will recognize that using \texttt{genTree} to
+generate test cases to test \texttt{prop\_insert} with \quickcheck directly does
+not work.
 %
 In practice, \quickcheck gives up if most of the generated test cases get
 discarded.
@@ -1052,13 +1060,14 @@ generators and complex manually-written ones.
 %% Their results suggest that CGPT is an appealing technique for finding bugs while
 %% still using a mostly automated workflow.
 %
-However, the authors acknowledge that certain parts of its implementation have
-room for improvement. 
+% However, the authors acknowledge that certain parts of its implementation have
+% room for improvement. 
 %, especially when it comes to the mutator's design.
 %
 %% Moreover, we replicated the Information-Flow Control (IFC) stack machine case
 %
-In addition, we observed a notable limitation after replicating the IFC stack
+% In addition, 
+However, we observed a notable limitation after replicating the IFC stack
 machine case study bundled with \fuzzchick:
 %  and observed a notable limitation:
 %
@@ -1071,7 +1080,8 @@ na\"ive generators by comparing their mean-time-to-failure (MTTF).
 %
 In turn, we argue that a meticulous evaluation ought to take failure to find a
 counterexample as an important metric when comparing PBT tools, not just mean
-time to failure --- when one is found.
+time to failure.
+% --- when one is found.
 %
 %% In tandem with the lack of efficacy observed when replicating the evaluation of
 %% the IFC stack machine case study,
@@ -1213,7 +1223,7 @@ quite challenging in the general case.
 
 % ----------------------------------------
 
-\section{\mutagen: No Mutant Left Behind}
+\section{\mutagen}
 \label{sec:mutagen}
 
 In this section we describe the main ideas behind \mutagen, our revised CGPT
@@ -1369,8 +1379,8 @@ integers \texttt{def} is defined as \texttt{Leaf 0}.
 %
 %% \texttt{Leaf def}, where
 %% the inner \texttt{def} is the default value of the payload.%
-(Our implementation uses the type class system to abstract this complexity
-away.)
+% (Our implementation uses the type class system to abstract this complexity
+% away.)
 %
 Using a small default value, as opposed to a randomly generated one (as done by
 the original CGPT), is also inspired by exhaustive bounded testing tools, and
@@ -1427,13 +1437,13 @@ compatible subexpresions to instantiate the new data constructor:
 \mathtt{mut_{s}}(C_i \, x_1 \, x_2 \, \mydots) \!=\! 
   \Vast\{ 
     \mathtt{PURE}(C_j \, x_1^\prime \, x_2^\prime \, \mydots)
-    \,\Vast|\,
+    \Vast|\,
     \begin{aligned}
       & C_j \!\in\! \{ C_1, C_2, \mydots \} \\
       & x_k^\prime \!\in\! \overline{\mathtt{filter}}(t_k^j, \{x_1, \, x_2, \, \mydots \}) \\  
       & C_j \, x_1^\prime \, x_2^\prime \, \mydots \;\neq\; C_i \, x_1 \, x_2 \, \mydots
     \end{aligned}
-  \Vast\} &&
+  \!\Vast\} &&
 \end{flalign*}
 \vspace{-7pt}
 
@@ -1882,7 +1892,7 @@ already executed ones are more likely to discover new portions of the system
 under test, and hence we want to prioritize them.
 
 \begin{figure}[b]
-%% \vspace{-15pt}
+\vspace{-5pt}
 \scriptsize
 \newcommand\stacked[2]{\underset{\textstyle #2\mathstrut}{#1}}
 \begin{align*}
@@ -2004,7 +2014,7 @@ under test, and hence we want to prioritize them.
   %
   \stacked{{\color{blue} new=2\phantom{x}}}{{\color{red} depth=2}}
 \end{align*}
-\vspace{-10pt}
+\vspace{-15pt}
 \caption{\label{fig:mutagen:tracelog}Inserting two new execution traces into the
   internal execution trace log (represented using brackets).}
 \end{figure}
@@ -2246,7 +2256,7 @@ later adapting our test suite to work with \fuzzchick requires a subtantial
 effort.
 %
 Instead, we compare \mutagen against \quickcheck, evaluating its effectiveness
-versus the relative overhead of the code instrumentation used by our tool.
+versus the relative overhead of our custom code instrumentation.
 
 
 
@@ -2266,7 +2276,8 @@ Security labels are propagated throughout the execution of the program whenever
 the machine executes an instruction.
 %
 These instructions are defined as:
-%
+
+\vspace{5pt}
 \begin{verbatim}
 data Instr = Nop | Push Int | Call Int | Ret | Add | Load | Store | Halt
 \end{verbatim}
@@ -2377,14 +2388,14 @@ For instance, the following constitute the buggy variations of the
 \hline
 \textbf{Instruction} & \textbf{Precondition Check} & \textbf{Final PC Label} & \textbf{Final Result Label} \\
 \hline
-\texttt{Store} & $l_{pc} \sqsubseteq l_{v}$ & $l_{pc}$ & $l_{v'} \vee l_{pc} \vee l_{p}$ \\
-\texttt{Store} & $l_{p} \sqsubseteq l_{v}$ & $l_{pc}$ & $l_{v'} \vee l_{pc} \vee l_{p}$ \\
+\texttt{Store} & \color{red}{$l_{pc} \sqsubseteq l_{v}$} & $l_{pc}$ & $l_{v'} \vee l_{pc} \vee l_{p}$ \\
+\texttt{Store} & \color{red}{$l_{p} \sqsubseteq l_{v}$} & $l_{pc}$ & $l_{v'} \vee l_{pc} \vee l_{p}$ \\
 \hline
-\texttt{Store} & $l_{pc} \vee l_{p} \sqsubseteq l_{v}$ & $\bot$ & $l_{v'} \vee l_{pc} \vee l_{p}$ \\
+\texttt{Store} & $l_{pc} \vee l_{p} \sqsubseteq l_{v}$ & \color{red}{$\bot$} & $l_{v'} \vee l_{pc} \vee l_{p}$ \\
 \hline
-\texttt{Store} & $l_{pc} \vee l_{p} \sqsubseteq l_{v}$ & $l_{pc}$ & $l_{pc} \vee l_{p}$ \\
-\texttt{Store} & $l_{pc} \vee l_{p} \sqsubseteq l_{v}$ & $l_{pc}$ & $l_{v'} \vee l_{p}$ \\
-\texttt{Store} & $l_{pc} \vee l_{p} \sqsubseteq l_{v}$ & $l_{pc}$ & $l_{v'} \vee l_{pc}$ \\
+\texttt{Store} & $l_{pc} \vee l_{p} \sqsubseteq l_{v}$ & $l_{pc}$ & \color{red}{$l_{pc} \vee l_{p}$} \\
+\texttt{Store} & $l_{pc} \vee l_{p} \sqsubseteq l_{v}$ & $l_{pc}$ & \color{red}{$l_{v'} \vee l_{p}$} \\
+\texttt{Store} & $l_{pc} \vee l_{p} \sqsubseteq l_{v}$ & $l_{pc}$ & \color{red}{$l_{v'} \vee l_{pc}$} \\
 \hline
 \end{tabular}
 \end{center}
@@ -2457,6 +2468,7 @@ the functionality expected from a compliant engine.
 %% \end{wrapfigure}
 
 \begin{table}[b]
+% \vspace{10pt}
 \scriptsize
 \begin{tabular}{|c|c|c|l|}
 \hline
@@ -2493,7 +2505,7 @@ the functionality expected from a compliant engine.
 \end{tabular}
 \caption{\label{table:wasm:bugs}Issues found by \mutagen in
   \textit{haskell-wasm}.}
-\vspace{-10pt}
+% \vspace{-10pt}
 \end{table}
 
 \begin{table}[b]
@@ -2567,7 +2579,7 @@ the functionality expected from a compliant engine.
 \end{tabular}
 \caption{\label{table:wasm:injectedbugs}Bugs injected into
   \textit{haskell-wasm}.}
-\vspace{-30pt}
+\vspace{-20pt}
 \end{table}
 
 Our tool is an attractive match for testing WebAssembly engines:
@@ -2839,13 +2851,14 @@ execution of testing loop.
 \subsection{IFC Stack Machine}
 
 \begin{figure}[b]
+  \vspace{5pt}
   \centering
   \includegraphics[width=\linewidth]{tikz/ifc-mttf.tikz}
   \includegraphics[width=\linewidth]{tikz/ifc-fr.tikz}
-  \vspace{-20pt}
+  \vspace{-15pt}
   \caption{\label{fig:results:ifc} Comparison between \fuzzchick and \mutagen
     across 20 different bugs for the IFC stack machine. }
-\vspace{-5pt}
+% \vspace{-5pt}
 \end{figure}
 
 
@@ -2995,7 +3008,7 @@ queues are not empty) tends to be inconsequential.
 \captionof{table}{\label{table:ifc:tests} Mean tests until first failure and effect size
   comparison between \fuzzchick and \mutagen when considering only successful
   runs.}
-\vspace{-15pt}
+\vspace{-5pt}
 %% \end{wrapfigure}
 \end{wrapfigure}
 
@@ -3117,7 +3130,7 @@ certain bugs at the cost of taking longer (on average) to find some others}.
 
 \begin{table}[t]
 \footnotesize
-%% \vspace{-5pt}
+\vspace{10pt}
 \begin{tabular}{|l|c|c|c|c|}
 \hline
 \multicolumn{1}{|c|}{
@@ -3212,7 +3225,8 @@ same amount of time, \emph{which can ultimately lead us to find bugs faster}.
 
 % Limited evaluation
 Our experiments cover generating test cases in two substantially different
-scenarios (valid IFC machine states and WebAssembly programs). 
+scenarios that require generating highly-structured inputs (valid IFC machine
+states and WebAssembly programs). 
 %
 There, our tool was able to find several planted and real previously-unknown
 bugs. 
@@ -3248,6 +3262,8 @@ Haskell version of the code behaves exactly as the original one.
 
 
 % ----------------------------------------
+
+
 
 \section{Related work}
 \label{sec:related}
@@ -3490,11 +3506,11 @@ Moreover, we show how our tool can be applied in a real-world testing scenario,
 where it quickly discovers 15 planted and 3 previously unknown bugs.
 
 
-As indicated earlier, there are several directions for future work:
-%
-combining \mutagen with specialized generators; enhancing the code
-instrumentation to target mutations towards specific parts of the code; and
-evaluating the effect of lazy pruning; among others.
+% As indicated earlier, there are several directions for future work:
+% %
+% combining \mutagen with specialized generators; enhancing the code
+% instrumentation to target mutations towards specific parts of the code; and
+% evaluating the effect of lazy pruning; among others.
 %% %
 %% In addition, we want to investigate how to redefine our automatically
 %% synthesized mutators in a stateful manner.
