@@ -449,7 +449,9 @@ In particular:
   and can be hard to generalize.
 %to different kinds of testing properties.
 \end{inparaenum}
-
+%
+Overcoming these obstacles is important to make CGPT more suitable for testing
+real-world software. 
 
 %% Moreover, we replicated the Information-Flow Control (IFC) stack machine case
 %% study bundled with \fuzzchick and observed a surprising limitation:
@@ -1325,21 +1327,11 @@ We first focus on pure mutants, which
 %
 encode deterministic transformations over the \emph{outermost} data constructor
 of the input --- recursive mutations will be introduced soon.
-%
-These transformations can either
-%
-\begin{inparaenum}
-\item return an immediate subexpression of the same type as the input, or
-\item swap the outermost data constructor with a (possibly) different one of the
-  same type, reusing the immediate subexpressions of the input in any possible
-  combination that produces a well-typed value.  
-\end{inparaenum}
-
 
 \setlength{\intextsep}{10pt}%
 \setlength{\columnsep}{10pt}%
 \begin{wrapfigure}{r}{0.2\textwidth}
-\vspace{-20pt}
+\vspace{-5pt}
 \begin{verbatim}
 mutate t = case t of 
   Leaf x -> [ 
@@ -1356,8 +1348,21 @@ mutate t = case t of
 \vspace{-10pt}
 \caption{\label{fig:mutagen:mutator}\mutagen mutator for the \texttt{Tree} data
   type.}
-\vspace{-20pt}
+\vspace{-10pt}
 \end{wrapfigure}
+
+
+%
+These transformations can either
+%
+\begin{inparaenum}
+\item return an immediate subexpression of the same type as the input, or
+\item swap the outermost data constructor with a (possibly) different one of the
+  same type, reusing the immediate subexpressions of the input in any possible
+  combination that produces a well-typed value.  
+\end{inparaenum}
+
+
 
 
 
@@ -2139,8 +2144,8 @@ easier it is for the trace log that records executions to get saturated, i.e.,
 when interesting test cases stop getting discovered or are discovered very
 sporadically.
 %
-We realized that we can use this information to automatically optimize the
-number of random mutations used by our tool.
+We realized that we can use this information to dynamically adapt the number of
+random mutations used by our tool.
 %
 This idea is described in Algorithm \ref{algo:mutagen:reset}.
 %
@@ -2207,7 +2212,7 @@ makes the overall test case valid.
     }
   }
 
-\caption{\label{algo:mutagen:reset}Trace Saturation Heuristic}
+\caption{\label{algo:mutagen:reset}Adaptive Random Mutations Heuristic}
 \end{algorithm}
 
 
@@ -2376,10 +2381,10 @@ The symbol $\vee$ simply denotes the join of two labels, i.e., the
 \emph{maximum} of their sensibilities.
 %
 Later, bugs are systematically introduced in the IFC enforcing mechanism by
-removing or weakening the checks stored in this rule table.
+weakening the checks stored in this rule table.
 %
-For instance, the following constitute the buggy variations of the
-\texttt{Store} instruction:
+For instance, the following are the buggy rule variations (in {\color{red} red})
+for the \texttt{Store} instruction:
 
 %% \vspace{-10pt}
 \begin{center}
@@ -2505,7 +2510,7 @@ the functionality expected from a compliant engine.
 \end{tabular}
 \caption{\label{table:wasm:bugs}Issues found by \mutagen in
   \textit{haskell-wasm}.}
-% \vspace{-10pt}
+\vspace{-10pt}
 \end{table}
 
 \begin{table}[b]
@@ -3130,7 +3135,7 @@ certain bugs at the cost of taking longer (on average) to find some others}.
 
 \begin{table}[t]
 \footnotesize
-\vspace{10pt}
+% \vspace{10pt}
 \begin{tabular}{|l|c|c|c|c|}
 \hline
 \multicolumn{1}{|c|}{
