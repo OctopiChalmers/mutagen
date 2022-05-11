@@ -1,15 +1,17 @@
 {-# LANGUAGE TypeFamilies #-}
-module Tracer.TraceLogger where
+module Test.Mutagen.Tracer.TraceLogger where
 
-import Tracer.Trace
-import Tracer.Tree
-import Tracer.Bitmap
+import Data.Kind
+
+import Test.Mutagen.Tracer.Trace
+import Test.Mutagen.Tracer.Tree
+import Test.Mutagen.Tracer.Bitmap
 
 ----------------------------------------
 -- A type class for trace stores
 
 class TraceLogger log where
-  type RegisterRes log :: *
+  type RegisterRes log :: Type
   emptyTraceLog :: Int -> IO log
   resetTraceLog :: log -> IO ()
   registerTrace :: Trace -> log -> IO (RegisterRes log)

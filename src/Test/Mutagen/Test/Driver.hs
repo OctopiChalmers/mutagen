@@ -2,8 +2,8 @@
 {-# LANGUAGE TypeApplications #-}
 module Test.Mutagen.Test.Driver where
 
-import Tracer
-
+import Control.Monad
+import Test.Mutagen.Tracer
 import Test.Mutagen.Property
 import Test.Mutagen.Test.Config
 import Test.Mutagen.Test.State
@@ -26,15 +26,11 @@ mutagenReport :: Testable p  => p -> IO Report
 mutagenReport = mutagenWithReport defaultConfig
 
 mutagenWith :: Testable p => Config -> p -> IO ()
-mutagenWith cfg p = mutagenWithReport cfg p >> return ()
+mutagenWith cfg p = void (mutagenWithReport cfg p)
 
 -- The main driver
 mutagenWithReport :: Testable p => Config -> p -> IO Report
 mutagenWithReport cfg p
-  -- we want to replay a counterexample
-  | Just (rng, size) <- replay cfg = do
-      replayCounterexample (property p) (rng, size)
-  -- this is not a drill!
   -- dispatch the test case runner based on the trace method
   | Tree <- traceMethod cfg = do
       -- create the initial internal state

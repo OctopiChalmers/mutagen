@@ -1,4 +1,4 @@
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskellQuotes #-}
 module Test.Mutagen.TH where
 
 import Language.Haskell.TH
@@ -30,6 +30,14 @@ defaultTHOpts =
 
 ----------------------------------------
 -- | TH dispatchers
+
+deriveAll :: Name -> Q [Dec]
+deriveAll ty = do
+  arb <- deriveInstance ''Arbitrary    ty 
+  mut <- deriveInstance ''Mutable      ty 
+  laz <- deriveInstance ''Lazy         ty 
+  fra <- deriveInstance ''Fragmentable ty 
+  return (arb <> mut <> laz <> fra)
 
 deriveInstance :: Name -> Name -> Q [Dec]
 deriveInstance = deriveInstanceWithOpts defaultTHOpts

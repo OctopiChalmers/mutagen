@@ -1,6 +1,6 @@
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE DeriveDataTypeable #-}
-module Tracer.Plugin
+module Test.Mutagen.Tracer.Plugin
   ( __trace__
   , TraceAnn(TRACE)
   , plugin
@@ -11,13 +11,13 @@ import Control.Monad
 import Data.IORef
 import Data.Generics (mkM, everywhereM, listify, Data)
 
-import System.IO.Unsafe
+import System.IO.Unsafe ( unsafePerformIO )
 
-import GhcPlugins hiding ((<>))
+import GHC.Plugins hiding ((<>))
 import GHC.Hs
-import OccName as Name
+import GHC.Types.Name.Occurrence as Name
 
-import Tracer.Trace
+import Test.Mutagen.Tracer.Trace
 
 ----------------------------------------
 -- | Tracing primitive
@@ -38,6 +38,7 @@ data TraceAnn = TRACE
 
 -- IORefs
 
+{-# NOINLINE uid #-}
 uid :: IORef Int
 uid = unsafePerformIO (newIORef 0)
 
@@ -61,7 +62,7 @@ tracePlugin _cli summary source = do
   -- If not, transform the whole module.
   case extractAnn <$> listify (isAnn flags) hsMod of
     [] -> do
-      message $ "run mode: full module"
+      message "run mode: full module"
       let transform = addTraceImport flags modName
                       >=> everywhereM (mkM (annotateGRHS flags))
                       >=> everywhereM (mkM (annotateIfs  flags))
@@ -69,7 +70,7 @@ tracePlugin _cli summary source = do
       n <- liftIO $ readIORef uid
       liftIO $ writeFile ".tracer" (show n)
       message $ "generated " <> show n <> " trace nodes"
-      message $ "done"
+      message "done"
       return (source { hpm_module = L loc hsMod' })
     anns -> do
       message $ "run mode: trace only " <> showPpr flags anns
@@ -79,34 +80,31 @@ tracePlugin _cli summary source = do
       n <- liftIO $ readIORef uid
       liftIO $ writeFile ".tracer" (show n)
       message $ "generated " <> show n <> " trace nodes"
-      message $ "done"
+      message "done"
       return (source { hpm_module = L loc hsMod' })
 
 -- Include an import to this module, so __trace__ is always in scope
-addTraceImport :: DynFlags -> ModuleName -> HsModule GhcPs -> Hsc (HsModule GhcPs)
+addTraceImport :: DynFlags -> ModuleName -> HsModule -> Hsc HsModule
 addTraceImport flags modName hsMod = do
   message $ "adding tracer import to module " <> showPpr flags (moduleNameFS modName)
-  let theNewImport = pluginLoc (simpleImportDecl this_module_name)
+  let theNewImport = pluginLoc (simpleImportDecl tracerModuleName)
   let hsMod' = hsMod { hsmodImports = theNewImport : hsmodImports hsMod }
   return hsMod'
 
 -- Annotate every RHS with a tracer
 -- They come after: function clauses, case statements, multi-way ifs, etc
 annotateGRHS :: DynFlags -> GRHS GhcPs (LHsExpr GhcPs) -> Hsc (GRHS GhcPs (LHsExpr GhcPs))
-annotateGRHS flags grhs =
-  case grhs of
-    GRHS ext guards body -> do
-      nth <- newUID
-      instrumentedMessage flags "rhs" nth (getLoc body)
-      let body' = wrapTracer nth body
-      return (GRHS ext guards body')
-    x -> return x
+annotateGRHS flags (GRHS ext guards body) = do
+  nth <- newUID
+  instrumentedMessage flags "rhs" nth (getLoc body)
+  let body' = wrapTracer nth body
+  return (GRHS ext guards body')
 
 -- Annotate each branch of an if-then-else expression with a tracer
 annotateIfs :: DynFlags -> HsExpr GhcPs -> Hsc (HsExpr GhcPs)
 annotateIfs flags expr =
   case expr of
-    HsIf ext sexpr cond th el -> do
+    HsIf ext cond th el -> do
       -- then branch
       nth <- newUID
       instrumentedMessage flags "then branch" nth (getLoc th)
@@ -116,7 +114,7 @@ annotateIfs flags expr =
       instrumentedMessage flags "else branch" nel (getLoc el)
       let el' = wrapTracer nel el
       -- wrap it up again
-      return (HsIf ext sexpr cond th' el')
+      return (HsIf ext cond th' el')
     x -> return x
 
 -- Annotate top level functions having TRACE annotation pragmas
@@ -135,7 +133,7 @@ annotateTopLevel flags anns match =
 -- | Helpers
 
 message :: String -> Hsc ()
-message str = liftIO $ putStrLn $ "[Tracer] " <> str
+message str = liftIO $ putStrLn $ "[MUTAGEN] " <> str
 
 instrumentedMessage :: DynFlags -> String -> Int -> SrcSpan -> Hsc ()
 instrumentedMessage flags reason n loc = do
@@ -146,7 +144,7 @@ instrumentedMessage flags reason n loc = do
 -- Wrap an expression with a tracer
 wrapTracer :: Int -> LHsExpr GhcPs -> LHsExpr GhcPs
 wrapTracer n expr =
-  var tracer_fun_name
+  var tracerFunName
   `app` numLit n
   `app` paren expr
 
@@ -160,7 +158,7 @@ pattern HsAnn lhs rhs <-
   (L _ (HsVar _ (L _ rhs)))
 
 isAnn :: DynFlags -> AnnDecl GhcPs -> Bool
-isAnn flags (HsAnn _ rhs) = showPpr flags rhs == showPpr flags trace_ann_name
+isAnn flags (HsAnn _ rhs) = showPpr flags rhs == showPpr flags tracerAnnName
 isAnn _     _             = False
 
 extractAnn :: AnnDecl GhcPs -> RdrName
@@ -175,14 +173,14 @@ isFunRhs _           = False
 ----------------------------------------
 -- | Constant names
 
-tracer_fun_name :: RdrName
-tracer_fun_name = mkRdrName "__trace__"
+tracerFunName :: RdrName
+tracerFunName = mkRdrName "__trace__"
 
-trace_ann_name :: RdrName
-trace_ann_name = mkRdrName "TRACE"
+tracerAnnName :: RdrName
+tracerAnnName = mkRdrName "TRACE"
 
-this_module_name :: ModuleName
-this_module_name = mkModuleName "Tracer.Plugin"
+tracerModuleName :: ModuleName
+tracerModuleName = mkModuleName "Test.Mutagen.Tracer.Plugin"
 
 ----------------------------------------
 -- | Builders

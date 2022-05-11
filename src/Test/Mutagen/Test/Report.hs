@@ -1,7 +1,5 @@
 module Test.Mutagen.Test.Report where
 
-import Test.QuickCheck.Random (QCGen)
-
 import Test.Mutagen.Property
 
 ----------------------------------------
@@ -9,26 +7,25 @@ import Test.Mutagen.Property
 
 data Report =
     AllPassed
-    { numPassed    :: Int
+    { numPassed :: Int
     , numDiscarded :: Int
     }
   | Counterexample
-    { numPassed    :: Int
+    { numPassed :: Int
     , numDiscarded :: Int
-    , failingArgs  :: Args
-    , failingSeed  :: Maybe (QCGen, Int)
+    , failingArgs :: Args
     }
   | GaveUp
-    { why          :: String
-    , numPassed    :: Int
+    { why :: String
+    , numPassed :: Int
     , numDiscarded :: Int
     }
   deriving Show
 
 isSuccess :: Report -> Bool
 isSuccess (AllPassed {}) = True
-isSuccess _           = False
+isSuccess _              = False
 
 isFailure :: Report -> Bool
 isFailure (Counterexample {}) = True
-isFailure _           = False
+isFailure _                   = False

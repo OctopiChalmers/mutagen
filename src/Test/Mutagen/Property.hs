@@ -1,8 +1,8 @@
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE ExistentialQuantification #-}
-{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE PatternSynonyms #-}
 
 module Test.Mutagen.Property where
@@ -10,20 +10,19 @@ module Test.Mutagen.Property where
 import System.Timeout
 import Unsafe.Coerce
 
+import Data.Typeable
+
 import Test.QuickCheck (Gen, Arbitrary, arbitrary)
 
 import Test.Mutagen.Mutation
 import Test.Mutagen.Exception
 import Test.Mutagen.Lazy
+import Test.Mutagen.Fragment
 
 ----------------------------------------
 -- Test arguments hidden behind an existential
 
-#ifdef MUTAGEN_NO_LAZY
-type IsArgs a = (Show a, Arbitrary a, Mutable a)
-#else
-type IsArgs a = (Show a, Arbitrary a, Mutable a, Lazy a)
-#endif
+type IsArgs a = (Show a, Eq a, Ord a, Typeable a, Arbitrary a, Fragmentable a, Mutable a, Lazy a)
 
 data Args = forall a . IsArgs a => Args a
 
@@ -38,11 +37,26 @@ instance Mutable Args where
 
   positions (Args a) = positions a
 
-#ifndef MUTAGEN_NO_LAZY
 instance Lazy Args where
   lazy (Args a) = Args (lazy a)
   lazyNode pre (Args a) = Args (lazyNode pre a)
-#endif
+
+instance Eq Args where
+  Args a == Args b =
+    case cast b of
+      Nothing -> False
+      Just b' -> a == b'
+
+instance Ord Args where
+  compare (Args a) (Args b) =
+    case cast b of
+      Just b' -> compare a b'
+      Nothing -> LT
+      -- Like for the fragments, this shouldn't be needed because the Args
+      -- should be of the same type at this point. I hope it works!!
+
+instance Fragmentable Args where
+  fragmentize (Args a) = fragmentize a
 
 ----------------------------------------
 -- Tests
@@ -127,9 +141,7 @@ discardAfter :: Res a => Int -> a -> Result
 discardAfter millis a = Result $ do
   let iot = unResult (result a)
   mbt <- timeout (millis * 1000) iot
-  case mbt of
-    Nothing -> discard
-    Just t  -> return t
+  maybe discard return mbt
 
 ----------------------------------------
 -- Properties as generators of arguments and runner functions
@@ -149,7 +161,7 @@ instance Testable Property where
 
 -- | Testable properties with one argument
 instance (IsArgs a, Res b) => Testable (a -> b) where
-  property f = forAll arbitrary f
+  property = forAll arbitrary
 
 forAll :: (IsArgs a, Res b) => Gen a -> (a -> b) -> Property
 forAll gen f =

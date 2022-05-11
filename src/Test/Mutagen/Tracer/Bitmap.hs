@@ -1,5 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
-module Tracer.Bitmap
+module Test.Mutagen.Tracer.Bitmap
   ( TraceBitmapLog
   , emptyTraceBitmapLog
   , resetTraceBitmapLog
@@ -12,7 +12,7 @@ import Control.Monad
 import Data.Foldable
 import Data.Array.IO
 
-import Tracer.Trace
+import Test.Mutagen.Tracer.Trace
 
 ----------------------------------------
 -- Edge-based bitmap logs

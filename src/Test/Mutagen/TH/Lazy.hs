@@ -1,4 +1,4 @@
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskellQuotes #-}
 module Test.Mutagen.TH.Lazy where
 
 import Language.Haskell.TH
