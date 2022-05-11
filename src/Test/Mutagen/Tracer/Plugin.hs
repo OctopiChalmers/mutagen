@@ -1,8 +1,5 @@
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE DeriveDataTypeable #-}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Redundant $" #-}
-{-# HLINT ignore "Use camelCase" #-}
 module Test.Mutagen.Tracer.Plugin
   ( __trace__
   , TraceAnn(TRACE)
@@ -65,7 +62,7 @@ tracePlugin _cli summary source = do
   -- If not, transform the whole module.
   case extractAnn <$> listify (isAnn flags) hsMod of
     [] -> do
-      message $ "run mode: full module"
+      message "run mode: full module"
       let transform = addTraceImport flags modName
                       >=> everywhereM (mkM (annotateGRHS flags))
                       >=> everywhereM (mkM (annotateIfs  flags))
@@ -73,7 +70,7 @@ tracePlugin _cli summary source = do
       n <- liftIO $ readIORef uid
       liftIO $ writeFile ".tracer" (show n)
       message $ "generated " <> show n <> " trace nodes"
-      message $ "done"
+      message "done"
       return (source { hpm_module = L loc hsMod' })
     anns -> do
       message $ "run mode: trace only " <> showPpr flags anns
@@ -83,14 +80,14 @@ tracePlugin _cli summary source = do
       n <- liftIO $ readIORef uid
       liftIO $ writeFile ".tracer" (show n)
       message $ "generated " <> show n <> " trace nodes"
-      message $ "done"
+      message "done"
       return (source { hpm_module = L loc hsMod' })
 
 -- Include an import to this module, so __trace__ is always in scope
 addTraceImport :: DynFlags -> ModuleName -> HsModule -> Hsc HsModule
 addTraceImport flags modName hsMod = do
   message $ "adding tracer import to module " <> showPpr flags (moduleNameFS modName)
-  let theNewImport = pluginLoc (simpleImportDecl this_module_name)
+  let theNewImport = pluginLoc (simpleImportDecl tracerModuleName)
   let hsMod' = hsMod { hsmodImports = theNewImport : hsmodImports hsMod }
   return hsMod'
 
@@ -147,7 +144,7 @@ instrumentedMessage flags reason n loc = do
 -- Wrap an expression with a tracer
 wrapTracer :: Int -> LHsExpr GhcPs -> LHsExpr GhcPs
 wrapTracer n expr =
-  var tracer_fun_name
+  var tracerFunName
   `app` numLit n
   `app` paren expr
 
@@ -161,7 +158,7 @@ pattern HsAnn lhs rhs <-
   (L _ (HsVar _ (L _ rhs)))
 
 isAnn :: DynFlags -> AnnDecl GhcPs -> Bool
-isAnn flags (HsAnn _ rhs) = showPpr flags rhs == showPpr flags trace_ann_name
+isAnn flags (HsAnn _ rhs) = showPpr flags rhs == showPpr flags tracerAnnName
 isAnn _     _             = False
 
 extractAnn :: AnnDecl GhcPs -> RdrName
@@ -176,14 +173,14 @@ isFunRhs _           = False
 ----------------------------------------
 -- | Constant names
 
-tracer_fun_name :: RdrName
-tracer_fun_name = mkRdrName "__trace__"
+tracerFunName :: RdrName
+tracerFunName = mkRdrName "__trace__"
 
-trace_ann_name :: RdrName
-trace_ann_name = mkRdrName "TRACE"
+tracerAnnName :: RdrName
+tracerAnnName = mkRdrName "TRACE"
 
-this_module_name :: ModuleName
-this_module_name = mkModuleName "Test.Mutagen.Tracer.Plugin"
+tracerModuleName :: ModuleName
+tracerModuleName = mkModuleName "Test.Mutagen.Tracer.Plugin"
 
 ----------------------------------------
 -- | Builders

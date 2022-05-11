@@ -1,9 +1,9 @@
 {-# LANGUAGE RankNTypes #-}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use fromMaybe" #-}
 module Test.Mutagen.Test.Batch where
 
 import Control.Monad.Extra (concatMapM)
+
+import Data.Maybe
 
 import Test.Mutagen.Mutant
 import Test.Mutagen.Mutation
@@ -30,7 +30,7 @@ newMutationBatch mut_order rand_mut_num rand_mut_size frag_num mut_lim eval_pos 
   MutationBatch
   { mb_value = args
   , mb_past_pos = mempty
-  , mb_next_pos = maybe (mut_order (positions args)) id eval_pos
+  , mb_next_pos = fromMaybe (mut_order (positions args)) eval_pos
   , mb_curr_queue = mempty
   , mb_mut_order = mut_order
   , mb_test_passed = test_passed
@@ -44,7 +44,7 @@ newMutationBatchFromParent :: Mutable a => MutationBatch a -> Maybe [Pos] -> Boo
 newMutationBatchFromParent mb pos test_passed args =
   mb
   { mb_value = args
-  , mb_next_pos = maybe (mb_mut_order mb (positions args)) id pos
+  , mb_next_pos = fromMaybe (mb_mut_order mb (positions args)) pos
   , mb_past_pos = mempty
   , mb_test_passed = test_passed
   , mb_curr_queue = mempty
