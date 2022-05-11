@@ -21,20 +21,40 @@ source-repository head
   type: git
   location: https://github.com/OctopiChalmers/Mutagen
 
-flag MUTAGEN_NO_INHERITANCE
-  default: False
-flag MUTAGEN_NO_FIFO
+flag MUTAGEN_TH_DEBUG
   default: False
 
 library
   exposed-modules:
-    Tracer
     Test.Mutagen
-    Test.Mutagen.Test
     Test.Mutagen.Property
-    Test.Mutagen.Exception
+    Test.Mutagen.Mutant
     Test.Mutagen.Mutation
+    Test.Mutagen.Fragment
+    Test.Mutagen.Exception
+    Test.Mutagen.Lazy
     Test.Mutagen.Shell
+    Test.Mutagen.TH
+    Test.Mutagen.Tracer
+    Test.Mutagen.Tracer.Plugin
+    Test.Mutagen.Tracer.Trace
+    Test.Mutagen.Tracer.TraceLogger
+    Test.Mutagen.Tracer.Tree
+    Test.Mutagen.Tracer.Bitmap
+  other-modules:
+    Test.Mutagen.Test
+    Test.Mutagen.Test.Config
+    Test.Mutagen.Test.State
+    Test.Mutagen.Test.Loop
+    Test.Mutagen.Test.Batch
+    Test.Mutagen.Test.Report
+    Test.Mutagen.Test.Driver
+    Test.Mutagen.Test.Terminal
+    Test.Mutagen.TH.Arbitrary
+    Test.Mutagen.TH.Mutable
+    Test.Mutagen.TH.Lazy
+    Test.Mutagen.TH.Fragmentable
+    Test.Mutagen.TH.Util
   hs-source-dirs:
     src
   build-depends:
@@ -51,13 +71,32 @@ library
     , process
     , ghc
     , syb
+    , array
+    , template-haskell
+    , th-desugar
+    , ansi-terminal
   ghc-options:
     -Wall
   default-extensions:
     CPP
   default-language:
     Haskell2010
-  if flag(MUTAGEN_NO_INHERITANCE)
-    cpp-options: -DMUTAGEN_NO_INHERITANCE
-  if flag(MUTAGEN_NO_FIFO)
-    cpp-options: -DMUTAGEN_NO_FIFO
+  if flag(MUTAGEN_TH_DEBUG)
+    cpp-options: -DMUTAGEN_TH_DEBUG
+
+executable test-re
+  main-is:
+    Main.hs
+  hs-source-dirs:
+    test/re
+  other-modules:
+    RE.Types
+    RE.Match
+    RE.Spec
+  default-language:
+    Haskell2010
+  ghc-options:
+    -Wall -O2 -threaded
+  build-depends:
+      base >=4.7 && <5
+    , Mutagen

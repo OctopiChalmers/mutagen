@@ -8,7 +8,7 @@ import System.Exit
 
 -- Run a shell command passing inputs via stdin and collecting stdout
 shell :: FilePath -> [String] -> String -> IO String
-shell cmd args input = readProcess cmd args input
+shell = readProcess
 
 -- Run a shell command passing inputs via stdin and collecting stdout
 shellExitCode :: Bool -> FilePath -> [String] -> String -> IO ExitCode
