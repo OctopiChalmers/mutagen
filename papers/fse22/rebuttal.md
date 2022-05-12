@@ -82,4 +82,6 @@ In particular, we remark that:
 * The MOpt mutation scheduling optimization designed by Lye et al. is effective
   at improving the behavior of the bit-level mutators used in traditional
   fuzzing tools. However, we argue that bit-level mutations are still far from
-  the expressive power achieved by high-level (as well as grammar-based) mutation tools, where a single mutation can, e.g., transform an `if` statement into a `while` loop by operating directly at the AST level.
+  the expressive power achieved by high-level (as well as grammar-based)
+  mutation tools, where a single mutation can, e.g., transform an `if` statement
+  into a `while` loop by operating directly at the AST level.
