@@ -1,0 +1,3 @@
+- ignore: { name: Redundant <$> }
+- ignore: { name: Avoid lambda }
+- ignore: { name: Use tuple section }

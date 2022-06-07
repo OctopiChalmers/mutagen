@@ -7,7 +7,5 @@ import RE.Match
 
 prop_optimize :: (RE ASCII, [ASCII]) -> Result
 prop_optimize (re, str) =
-  not (null str) &&
-  re `matches` str
-  ==>
+  not (null str) && re `matches` str ==>
   optimize re `matches` str

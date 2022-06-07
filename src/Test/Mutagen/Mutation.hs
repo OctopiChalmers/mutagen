@@ -1,11 +1,8 @@
-{-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE ExistentialQuantification #-}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Avoid lambda" #-}
-{-# HLINT ignore "Use tuple-section" #-}
+
 module Test.Mutagen.Mutation where
 
 import Data.Typeable

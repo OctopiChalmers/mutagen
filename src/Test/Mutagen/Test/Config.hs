@@ -2,6 +2,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+
 module Test.Mutagen.Test.Config where
 
 import Data.Typeable
@@ -34,15 +35,13 @@ data Config
 
   ----------------------------------------
   -- Mutation options
+  , useLIFO :: Bool
+  -- ^ Use last-in-first-out to schedule mutants. If disabled, the scheduling
+  -- defaults to use a single ended queue.
   , randomMutations :: Int
   -- ^ The amount of times to sample the generator associated to a random
   -- mutant. It can be automatically increased over time if `autoResetAfter` is not
   -- set to `Nothing`.
-  , randomFragments :: Int
-  -- ^ The amount of fragments sampled from the global fragment store when
-  -- concretizing a fragment mutant. Can return less than `randomFragments` test
-  -- cases if there are not enough fragments of the type of the target
-  -- subexpression to sample from.
   , mutationLimit :: Maybe Int
   -- ^ The maximum number of ancestors a test case can have before being
   -- discarded. Useful to avoid mutating recursive structures indefinetely.
@@ -64,6 +63,11 @@ data Config
   , useFragments :: Bool
   -- ^ Explode the interesting test cases found during the test loop into typed
   -- fragments. These fragments can be used to concretize fragment mutants.
+  , randomFragments :: Int
+  -- ^ The amount of fragments sampled from the global fragment store when
+  -- concretizing a fragment mutant. Can return less than `randomFragments` test
+  -- cases if there are not enough fragments of the type of the target
+  -- subexpression to sample from.
   , filterFragments :: Maybe [TypeRep]
   -- ^ If not set to `Nothing`, the loop collect and use fragments of only some
   -- specific types.
@@ -96,13 +100,14 @@ defaultConfig =
   , maxDiscardRatio = 1000
   , timeout         = Nothing
   , maxGenSize      = 10
+  , useLIFO         = True
   , randomMutations = 1
-  , randomFragments = 10
   , mutationLimit   = Nothing
   , autoResetAfter  = Just 100
   , useLazyPrunning = True
   , mutationOrder   = levelorder
   , useFragments    = True
+  , randomFragments = 10
   , filterFragments = Nothing
   , examples        = []
   , traceMethod     = Tree

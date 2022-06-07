@@ -1,5 +1,6 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE TypeApplications #-}
+
 module Test.Mutagen.Test.Driver where
 
 import Control.Monad

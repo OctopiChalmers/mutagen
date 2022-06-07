@@ -1,6 +1,3 @@
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use camelCase" #-}
-{-# HLINT ignore "Redundant $" #-}
 module Test.Mutagen.Lazy
   ( __evaluated__
   , addEvaluatedPos
@@ -31,21 +28,21 @@ __evaluated__ pos expr =
 ----------------------------------------
 -- IORef too keep track of the evaluated positions
 
-{-# NOINLINE pos_ref #-}
-pos_ref :: IORef [Pos]
-pos_ref = unsafePerformIO (newIORef [])
+{-# NOINLINE posRef #-}
+posRef :: IORef [Pos]
+posRef = unsafePerformIO (newIORef [])
 
 -- Add a new position to the ref
 addEvaluatedPos :: Pos -> IO ()
-addEvaluatedPos pos = modifyIORef' pos_ref (reverse pos : )
+addEvaluatedPos pos = modifyIORef' posRef (reverse pos : )
 
 -- Reset traces
 resetPosRef :: IO ()
-resetPosRef = modifyIORef' pos_ref (const [])
+resetPosRef = modifyIORef' posRef (const [])
 
 -- Read traces
 readPosRef :: IO [Pos]
-readPosRef = reverse <$> readIORef pos_ref
+readPosRef = reverse <$> readIORef posRef
 
 ----------------------------------------
 -- Lazy class
@@ -105,24 +102,24 @@ instance (Lazy a, Lazy b) => Lazy (Either a b) where
 
 instance Lazy a => Lazy [a] where
   lazyNode pre [] =
-    __evaluated__ pre $
+    __evaluated__ pre
     []
   lazyNode pre (x:xs) =
-    __evaluated__ pre $
+    __evaluated__ pre
     (lazyNode (0:pre) x : lazyNode (1:pre) xs)
 
 -- Tuple instances
 
 instance (Lazy a, Lazy b) => Lazy (a, b) where
   lazyNode pre (a, b) =
-    __evaluated__ pre $
+    __evaluated__ pre
     ( lazyNode (0:pre) a
     , lazyNode (1:pre) b
     )
 
 instance (Lazy a, Lazy b, Lazy c) => Lazy (a, b, c) where
   lazyNode pre (a, b, c) =
-    __evaluated__ pre $
+    __evaluated__ pre
     ( lazyNode (0:pre) a
     , lazyNode (1:pre) b
     , lazyNode (2:pre) c
@@ -130,7 +127,7 @@ instance (Lazy a, Lazy b, Lazy c) => Lazy (a, b, c) where
 
 instance (Lazy a, Lazy b, Lazy c, Lazy d) => Lazy (a, b, c, d) where
   lazyNode pre (a, b, c, d) =
-    __evaluated__ pre $
+    __evaluated__ pre
     ( lazyNode (0:pre) a
     , lazyNode (1:pre) b
     , lazyNode (2:pre) c
@@ -139,7 +136,7 @@ instance (Lazy a, Lazy b, Lazy c, Lazy d) => Lazy (a, b, c, d) where
 
 instance (Lazy a, Lazy b, Lazy c, Lazy d, Lazy e) => Lazy (a, b, c, d, e) where
   lazyNode pre (a, b, c, d, e) =
-    __evaluated__ pre $
+    __evaluated__ pre
     ( lazyNode (0:pre) a
     , lazyNode (1:pre) b
     , lazyNode (2:pre) c
@@ -149,7 +146,7 @@ instance (Lazy a, Lazy b, Lazy c, Lazy d, Lazy e) => Lazy (a, b, c, d, e) where
 
 instance (Lazy a, Lazy b, Lazy c, Lazy d, Lazy e, Lazy f) => Lazy (a, b, c, d, e, f) where
   lazyNode pre (a, b, c, d, e, f) =
-    __evaluated__ pre $
+    __evaluated__ pre
     ( lazyNode (0:pre) a
     , lazyNode (1:pre) b
     , lazyNode (2:pre) c
@@ -160,7 +157,7 @@ instance (Lazy a, Lazy b, Lazy c, Lazy d, Lazy e, Lazy f) => Lazy (a, b, c, d, e
 
 instance (Lazy a, Lazy b, Lazy c, Lazy d, Lazy e, Lazy f, Lazy g) => Lazy (a, b, c, d, e, f, g) where
   lazyNode pre (a, b, c, d, e, f, g) =
-    __evaluated__ pre $
+    __evaluated__ pre
     ( lazyNode (0:pre) a
     , lazyNode (1:pre) b
     , lazyNode (2:pre) c
@@ -172,7 +169,7 @@ instance (Lazy a, Lazy b, Lazy c, Lazy d, Lazy e, Lazy f, Lazy g) => Lazy (a, b,
 
 instance (Lazy a, Lazy b, Lazy c, Lazy d, Lazy e, Lazy f, Lazy g, Lazy h) => Lazy (a, b, c, d, e, f, g, h) where
   lazyNode pre (a, b, c, d, e, f, g, h) =
-    __evaluated__ pre $
+    __evaluated__ pre
     ( lazyNode (0:pre) a
     , lazyNode (1:pre) b
     , lazyNode (2:pre) c
@@ -185,7 +182,7 @@ instance (Lazy a, Lazy b, Lazy c, Lazy d, Lazy e, Lazy f, Lazy g, Lazy h) => Laz
 
 instance (Lazy a, Lazy b, Lazy c, Lazy d, Lazy e, Lazy f, Lazy g, Lazy h, Lazy i) => Lazy (a, b, c, d, e, f, g, h, i) where
   lazyNode pre (a, b, c, d, e, f, g, h, i) =
-    __evaluated__ pre $
+    __evaluated__ pre
     ( lazyNode (0:pre) a
     , lazyNode (1:pre) b
     , lazyNode (2:pre) c
@@ -199,7 +196,7 @@ instance (Lazy a, Lazy b, Lazy c, Lazy d, Lazy e, Lazy f, Lazy g, Lazy h, Lazy i
 
 instance (Lazy a, Lazy b, Lazy c, Lazy d, Lazy e, Lazy f, Lazy g, Lazy h, Lazy i, Lazy j) => Lazy (a, b, c, d, e, f, g, h, i, j) where
   lazyNode pre (a, b, c, d, e, f, g, h, i, j) =
-    __evaluated__ pre $
+    __evaluated__ pre
     ( lazyNode (0:pre) a
     , lazyNode (1:pre) b
     , lazyNode (2:pre) c

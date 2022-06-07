@@ -1,4 +1,5 @@
 {-# LANGUAGE RankNTypes #-}
+
 module Test.Mutagen.Test.Batch where
 
 import Control.Monad.Extra (concatMapM)

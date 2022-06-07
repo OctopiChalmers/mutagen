@@ -1,4 +1,5 @@
 {-# LANGUAGE RankNTypes #-}
+
 module Test.Mutagen.Test.State where
 
 import Data.Typeable
@@ -28,12 +29,13 @@ data State log
   , stMaxDiscardRatio :: !Int
   , stTimeout :: !(Maybe Integer)
   , stMaxGenSize :: !Int
+  , stUseLIFO :: !Bool
   , stRandomMutations :: !Int
-  , stRandomFragments :: !Int
   , stMutationLimit :: !Int
   , stAutoResetAfter :: !(Maybe Int)
   , stUseLazyPrunning :: !Bool
   , stMutationOrder :: !MutationOrder
+  , stRandomFragments :: !Int
   , stUseFragments :: !Bool
   , stFilterFragments :: !(Maybe [TypeRep])
   , stMaxTraceLength :: !(Maybe Int)
@@ -106,6 +108,7 @@ createInitialState cfg (Property gen argsRunner) = do
     , stMaxDiscardRatio = maxDiscardRatio cfg
     , stTimeout = timeout cfg
     , stMaxGenSize = maxGenSize cfg
+    , stUseLIFO = useLIFO cfg
     , stRandomMutations = randomMutations cfg
     , stRandomFragments = randomFragments cfg
     , stMutationLimit = maybe (maxGenSize cfg) id (mutationLimit cfg)

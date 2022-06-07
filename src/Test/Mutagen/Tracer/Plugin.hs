@@ -11,7 +11,7 @@ import Control.Monad
 import Data.IORef
 import Data.Generics (mkM, everywhereM, listify, Data)
 
-import System.IO.Unsafe ( unsafePerformIO )
+import System.IO.Unsafe (unsafePerformIO)
 
 import GHC.Plugins hiding ((<>))
 import GHC.Hs
@@ -63,9 +63,9 @@ tracePlugin _cli summary source = do
   case extractAnn <$> listify (isAnn flags) hsMod of
     [] -> do
       message "run mode: full module"
-      let transform = addTraceImport flags modName
-                      >=> everywhereM (mkM (annotateGRHS flags))
-                      >=> everywhereM (mkM (annotateIfs  flags))
+      let transform = addTraceImport flags modName >=>
+                      everywhereM (mkM (annotateGRHS flags)) >=>
+                      everywhereM (mkM (annotateIfs  flags))
       hsMod' <- transform hsMod
       n <- liftIO $ readIORef uid
       liftIO $ writeFile ".tracer" (show n)
@@ -74,8 +74,8 @@ tracePlugin _cli summary source = do
       return (source { hpm_module = L loc hsMod' })
     anns -> do
       message $ "run mode: trace only " <> showPpr flags anns
-      let transform = addTraceImport flags modName
-                      >=> everywhereM (mkM (annotateTopLevel flags anns))
+      let transform = addTraceImport flags modName >=>
+                      everywhereM (mkM (annotateTopLevel flags anns))
       hsMod' <- transform hsMod
       n <- liftIO $ readIORef uid
       liftIO $ writeFile ".tracer" (show n)

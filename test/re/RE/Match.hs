@@ -1,14 +1,11 @@
 {-# OPTIONS_GHC -fplugin=Test.Mutagen.Tracer #-}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# OPTIONS_GHC -Wno-unused-imports #-}
-{-# HLINT ignore "Redundant bracket" #-}
+
 module RE.Match where
 
-import RE.Types ( RE(..) )
+import RE.Types (RE(..))
 
 ----------------------------------------
 -- | Regular expressions matcher
-
 
 matches :: Eq a => RE a -> [a] -> Bool
 matches re xs = match re (zip [0..] xs) null
