@@ -1,12 +1,12 @@
 cabal-version:  2.2
 
-name:           Mutagen
+name:           mutagen
 version:        0.1.0.0
 synopsis:       Property-based testing framework for Haskell using type-preserving mutations.
-description:    Please see the README on GitHub at <https://github.com/agustinmista/Mutagen#readme>
+description:    Please see the README on GitHub at <https://github.com/agustinmista/mutagen#readme>
 category:       Testing
-homepage:       https://github.com/OctopiChalmers/Mutagen#readme
-bug-reports:    https://github.com/OctopiChalmers/Mutagen/issues
+homepage:       https://github.com/OctopiChalmers/mutagen#readme
+bug-reports:    https://github.com/OctopiChalmers/mutagen/issues
 author:         Agustin Mista
 copyright:      2021 Agustin Mista
 maintainer:     mista@chalmers.se
@@ -19,7 +19,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/OctopiChalmers/Mutagen
+  location: https://github.com/OctopiChalmers/mutagen
 
 flag MUTAGEN_TH_DEBUG
   default: False
@@ -99,4 +99,4 @@ executable test-re
     -Wall -O2 -threaded
   build-depends:
       base >=4.7 && <5
-    , Mutagen
+    , mutagen

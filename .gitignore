@@ -21,4 +21,11 @@ cabal.project.local
 cabal.project.local~
 .HTF/
 .ghc.environment.*
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.pdf
+*.synctex.gz
 .tracer
