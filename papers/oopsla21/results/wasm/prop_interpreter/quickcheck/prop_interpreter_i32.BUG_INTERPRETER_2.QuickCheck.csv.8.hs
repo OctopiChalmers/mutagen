@@ -1,1 +1,0 @@
-["(1,1.1363442,Function {funcType = 0, localTypes = [I64,I64,F64], body = [CurrentMemory]})"]

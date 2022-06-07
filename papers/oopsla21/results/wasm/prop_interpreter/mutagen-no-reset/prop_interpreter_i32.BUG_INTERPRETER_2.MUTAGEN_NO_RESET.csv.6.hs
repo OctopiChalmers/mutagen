@@ -1,1 +1,0 @@
-(2,-0.25019035,Function {funcType = 0, localTypes = [I32,I64], body = [Block {resultType = [], body = [F32Const 0.0,F64Const 0.0,CurrentMemory,GetLocal 0,Block {resultType = [F32,F32,F32], body = [CurrentMemory,Return,FConvertIS BS32 BS64]},Br 0]},GetLocal 2,I64ExtendSI32,GetLocal 0,FConvertIU BS64 BS32,I32Const 0,Return,GrowMemory]})

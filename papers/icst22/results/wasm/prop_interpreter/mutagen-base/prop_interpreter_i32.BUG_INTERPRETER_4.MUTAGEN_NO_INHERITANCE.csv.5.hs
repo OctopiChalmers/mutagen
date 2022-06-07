@@ -1,1 +1,0 @@
-(1,1.3121986,Function {funcType = 0, localTypes = [], body = [Block {resultType = [I32,I32], body = [GetLocal 0,Br 0]},I32Const 2,Return]})

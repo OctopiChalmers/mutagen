@@ -1,1 +1,0 @@
-Module {types = [FuncType {params = [], results = []}], functions = [Function {funcType = 0, localTypes = [], body = [Nop]}], tables = [], mems = [Memory (Limit 5 Nothing),Memory (Limit 0 (Just 3)),Memory (Limit 3 (Just 10))], globals = [], elems = [], datas = [], start = Nothing, imports = [], exports = []}

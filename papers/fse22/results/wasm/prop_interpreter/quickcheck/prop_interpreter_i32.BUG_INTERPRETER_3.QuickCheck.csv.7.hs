@@ -1,1 +1,0 @@
-["(0,0.0,Function {funcType = 0, localTypes = [I64,F32], body = [I64Const 110,I64Eqz,CurrentMemory,IBinOp BS32 IShrU]})"]

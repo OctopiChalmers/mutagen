@@ -1,1 +1,0 @@
-(0,-2.5966632,Function {funcType = 0, localTypes = [I64], body = [CurrentMemory,GetLocal 0,IBinOp BS32 IShrU]})

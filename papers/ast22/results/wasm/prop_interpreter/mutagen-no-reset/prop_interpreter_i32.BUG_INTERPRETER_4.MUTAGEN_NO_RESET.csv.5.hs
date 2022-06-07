@@ -1,1 +1,0 @@
-(2,2.8953357,Function {funcType = 0, localTypes = [], body = [Block {resultType = [], body = [Nop]},Loop {resultType = [F32,F32], body = [Nop,F32Const 2.4063056,F32Const (-2.6060343)]},CurrentMemory,I64Load32U (MemArg {offset = 0, align = 1}),I32Const 1,Return]})

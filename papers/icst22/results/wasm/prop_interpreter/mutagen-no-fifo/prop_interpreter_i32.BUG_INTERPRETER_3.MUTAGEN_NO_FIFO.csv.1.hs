@@ -1,1 +1,0 @@
-(2,-2.8128443,Function {funcType = 0, localTypes = [F32], body = [I32Const 2,CurrentMemory,IBinOp BS32 IShrU]})

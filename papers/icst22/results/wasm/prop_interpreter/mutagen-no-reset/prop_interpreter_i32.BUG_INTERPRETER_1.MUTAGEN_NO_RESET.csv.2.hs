@@ -1,1 +1,0 @@
-(2,-0.66693777,Function {funcType = 0, localTypes = [I64,I64,F32,I32], body = [GetLocal 3,IUnOp BS64 IClz,TeeLocal 3,FConvertIS BS64 BS64,I32Const 0,Drop,F64Const 2.315996532863911,CurrentMemory,GetLocal 0,IBinOp BS32 ISub,Return]})

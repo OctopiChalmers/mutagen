@@ -1,1 +1,0 @@
-(0,-2.999885,Function {funcType = 0, localTypes = [F32,I32,F32], body = [I64Const 0,Loop {resultType = [], body = []},GetLocal 3,I64Load32U (MemArg {offset = 3, align = 2}),Drop,Loop {resultType = [I32,I32], body = [F32Const (-6.970115e-2),ITruncFU BS32 BS32,Br 1]},I32Const 2,Br 0]})

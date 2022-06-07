@@ -1,1 +1,0 @@
-Module {types = [FuncType {params = [], results = []}], functions = [Function {funcType = 0, localTypes = [], body = [I64Eqz,Drop]}], tables = [], mems = [], globals = [], elems = [], datas = [], start = Just (StartFunction 0), imports = [Import {sourceModule = "O\155034\DC1\CAN\1051623\&9\n\\\1059979", name = "\vz \1055840Er+-", desc = ImportGlobal (Const F32)}], exports = []}

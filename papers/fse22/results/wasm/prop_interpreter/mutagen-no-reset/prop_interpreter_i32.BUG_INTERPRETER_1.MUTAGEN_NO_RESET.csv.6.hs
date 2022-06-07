@@ -1,1 +1,0 @@
-(0,-1.3019286,Function {funcType = 0, localTypes = [], body = [F64Const 0.0,I32Const 0,FConvertIU BS64 BS32,Loop {resultType = [F32,I32], body = [I32Const 0,Return]},CurrentMemory,I64Load32S (MemArg {offset = 2, align = 2}),GetLocal 0,F32Load (MemArg {offset = 2, align = 0}),I32Const 2,Br 0]})

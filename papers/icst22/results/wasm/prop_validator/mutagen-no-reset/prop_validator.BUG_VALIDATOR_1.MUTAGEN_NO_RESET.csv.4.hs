@@ -1,1 +1,0 @@
-Module {types = [FuncType {params = [], results = []}], functions = [Function {funcType = 0, localTypes = [], body = [I32Const 0,Loop {resultType = [F32,I64,F32,F32,F32,I32,F32,I64,F64], body = [Return,Drop]},Nop,Br 0]}], tables = [], mems = [], globals = [], elems = [], datas = [], start = Nothing, imports = [], exports = []}

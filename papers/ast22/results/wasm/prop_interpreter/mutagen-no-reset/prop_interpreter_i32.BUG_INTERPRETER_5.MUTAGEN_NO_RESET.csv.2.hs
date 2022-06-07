@@ -1,1 +1,0 @@
-(1,-0.25035825,Function {funcType = 0, localTypes = [I32,F64], body = [GetLocal 3,I32Const 0,I64ExtendSI32,I32Const 0,I64Load (MemArg {offset = 1, align = 1}),CurrentMemory,I64Load32U (MemArg {offset = 3, align = 2}),Loop {resultType = [F32,F64], body = [F64Const (-1.293630419139644),I32Const 2,Return]},GetLocal 0,Return,I32Eqz,GrowMemory]})
