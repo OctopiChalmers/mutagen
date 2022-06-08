@@ -203,35 +203,18 @@ instance (Mutable a, Mutable b) => Mutable (Either a b) where
   inside (0:ps) mut (Right a) = wrap (inside ps mut a) (\x -> Right x)
   inside pos    _   _         = invalidPosition pos
 
-instance (Arbitrary a, Mutable a) => Mutable [a] where
+instance Mutable a => Mutable [a] where
   positions []     = node []
   positions (x:xs) = node [ (0, positions x), (1, positions xs) ]
 
   def = []
 
-  mutate [] =
-    [ Pure [def]
-    , Rand $ sized $ \s -> do
-        n <- choose (1,s `div` 2)
-        vectorOf n arbitrary
-    ]
-  mutate [x] =
-    [ Pure [], Pure [x,x]
-    , Rand $ sized $ \s -> do
-        n <- choose (1,s `div` 2)
-        y <- vectorOf n arbitrary
-        return (x:y)
-    ]
-  mutate (x:xs) =
-    [ Pure [], Pure xs, Pure (x:x:xs)
-    , Rand $ sized $ \s -> do
-        n <- choose (1,s `div` 2)
-        y <- vectorOf n arbitrary
-        return (x:y<>xs)
-    ]
+  mutate []     = [ Pure [def] ]
+  mutate [x]    = [ Pure [], Pure [x,x] ]
+  mutate (x:xs) = [ Pure [], Pure xs, Pure (x:x:xs) ]
 
   inside []     mut xs     = mut xs
-  inside (0:ps) mut (a:as) = wrap (inside ps mut a) (: as)
+  inside (0:ps) mut (a:as) = wrap (inside ps mut a)  (\x ->  x:as)
   inside (1:ps) mut (a:as) = wrap (inside ps mut as) (\xs -> a:xs)
   inside pos    _   _      = invalidPosition pos
 
