@@ -27,8 +27,10 @@ instance Functor Mutant where
   fmap f (Frag fun) = Frag (fmap (fmap (fmap f)) fun)
 
 data MutantKind = PureMutant | RandMutant | FragMutant
+  deriving Show
 
 data Concretized a = Concretized MutantKind a
+  deriving Show
 
 concretize :: Typeable a => (Int, Int) -> (Int, FragmentStore) -> Mutant a -> IO [Concretized a]
 concretize _ _ (Pure mut) = do

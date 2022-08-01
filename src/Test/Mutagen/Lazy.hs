@@ -12,6 +12,9 @@ import System.IO.Unsafe
 -- For providing some default Lazy instances
 import Data.Word
 
+import Data.Map (Map)
+import qualified Data.Map as Map
+
 import Test.Mutagen.Mutation (Pos)
 
 ----------------------------------------
@@ -107,6 +110,10 @@ instance Lazy a => Lazy [a] where
   lazyNode pre (x:xs) =
     __evaluated__ pre
     (lazyNode (0:pre) x : lazyNode (1:pre) xs)
+
+instance Lazy v => Lazy (Map k v) where
+  lazyNode pre m =
+    snd (Map.mapAccum (\c v -> (c+1, __evaluated__ pre (lazyNode (c:pre) v))) 0 m)
 
 -- Tuple instances
 

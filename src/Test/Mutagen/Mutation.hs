@@ -9,6 +9,9 @@ import Data.Typeable
 import Data.List
 import Data.Tree
 
+import Data.Map (Map)
+import qualified Data.Map as Map
+
 import Test.QuickCheck
 
 -- For providing some default Mutable instances
@@ -218,6 +221,15 @@ instance Mutable a => Mutable [a] where
   inside (1:ps) mut (a:as) = wrap (inside ps mut as) (\xs -> a:xs)
   inside pos    _   _      = invalidPosition pos
 
+instance (Typeable k, Mutable v) => Mutable (Map k v) where
+  positions m = node [ (k, positions v) | (k, v) <- zip [0..] (Map.elems m) ]
+
+  def = Map.empty
+
+  inside []     mut m = mut m
+  inside (n:ps) mut m
+    | n >= 0 && n < Map.size m = wrap (inside ps mut (snd (Map.elemAt n m))) (\x -> Map.updateAt (\_ _ -> Just x) n m)
+    | otherwise                = invalidPosition (n:ps)
 
 -- Tuple instances
 

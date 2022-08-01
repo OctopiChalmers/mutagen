@@ -157,6 +157,9 @@ instance Fragmentable a => Fragmentable [a] where
   fragmentize []     = singleton @[a] []
   fragmentize (x:xs) = singleton @[a] (x:xs) <> fragmentize x <> fragmentize xs
 
+instance (Fragmentable k, Fragmentable v) => Fragmentable (Map k v) where
+  fragmentize m = mconcat [ fragmentize k <> fragmentize v | (k, v) <- Map.toList m ]
+
 -- Tuple instances
 
 instance (Fragmentable a, Fragmentable b) => Fragmentable (a, b) where
