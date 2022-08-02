@@ -19,9 +19,15 @@ main = do
       -- Disable LIFO scheduling
       -- useLIFO = False,
 
-      -- The tracing backend, either Tree or Bitmap
-      traceMethod = Tree,       -- Prefix trees (Tries)
+      -- The tracing backend, either Tree or Bitmap (default)
+      -- traceMethod = Tree,    -- Prefix trees (Tries)
       -- traceMethod = Bitmap,  -- Edge-based bitmaps (like AFL)
+
+      -- Use lazyness to prune mutations that affect unevaluated subexpressions
+      useLazyPrunning = True,
+
+      -- Keep a store of test case fragments to be reused
+      useFragments = True,
 
       -- We can provide examples to initialize the fragment store
       examples = [
@@ -29,8 +35,7 @@ main = do
         example (Plus Eps (Atom (ASCII 'X')))
       ],
 
-      -- Only store fragments of the following types
-      -- (default is all types)
+      -- Only store fragments of the following types (default is all types)
       filterFragments = Just [
         allow @(RE ASCII),
         allow @ASCII
